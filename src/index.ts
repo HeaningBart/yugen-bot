@@ -66,43 +66,6 @@ client.on('interactionCreate', async (interaction) => {
                 await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
                 await interaction.editReply('done');
                 await interaction.channel?.send('im done bitch')
-            case 'add':
-                const title = interaction.options.getString('title')!;
-                const kakaoid = interaction.options.getString('kakaoid')!;
-                const cron = interaction.options.getString('cron')!;
-                const role = interaction.options.getRole('role')!;
-                const channel = interaction.options.getChannel('channel')!;
-                const weekly = interaction.options.getBoolean('weekly')!;
-
-                const response = await createSeries({ title, kakaoid, cron, role: role.id, channel: channel.id, weekly });
-                await interaction.editReply(response);
-                return;
-            case 'get':
-                const link = interaction.options.getString('link');
-                if (link) await interaction.editReply(link);
-                interaction.channel?.send({
-                    content: 'roi'
-                })
-                return;
-            case 'ping':
-                interaction.editReply({
-                    files: [
-                        "./chapter0-McWBqXox0SUNx2mhnqJUIZ2i35KMxddL.zip"
-                    ]
-                })
-                return;
-            case 'download':
-                const option = interaction.options.getString('options');
-                const series_link = interaction.options.getString('link');
-                const free_amount = interaction.options.getNumber('freeamount');
-                if (option && series_link && free_amount) {
-                    const files: any = await downloadAllFree(series_link, free_amount);
-                    console.log(files);
-                    await Promise.all(files.map((file: any) => interaction.channel?.send({ files: [file] })))
-                    await interaction.channel?.send('im done bitch')
-                }
-                await interaction.editReply('done');
-                return;
             default:
                 await interaction.editReply('u gae');
                 return;
