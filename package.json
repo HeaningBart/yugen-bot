@@ -1,0 +1,36 @@
+{
+  "name": "discord",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/rest": "^0.3.0",
+    "@prisma/client": "^3.9.2",
+    "@types/adm-zip": "^0.4.34",
+    "@types/download": "^8.0.1",
+    "adm-zip": "^0.5.9",
+    "discord-api-types": "^0.27.1",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
+    "download": "^8.0.0",
+    "pg": "^8.7.3",
+    "puppeteer": "^13.3.2",
+    "randomstring": "^1.2.2"
+  },
+  "devDependencies": {
+    "@types/latinize": "^0.2.15",
+    "@types/node": "^17.0.17",
+    "latinize": "^0.5.0",
+    "nodemon": "^2.0.15",
+    "prisma": "^3.9.2",
+    "ts-node": "^10.5.0"
+  }
+}
