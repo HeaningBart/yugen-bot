@@ -1,22 +1,11 @@
 import { Client, Intents } from 'discord.js';
 const { token } = require('../config.json')
-const { downloadAllFree, buyTicket } = require('./rawhandler/index.js');
+const { buyTicket } = require('./rawhandler/index.js');
 import initialize from './commands';
-import { PrismaClient } from '@prisma/client';
 import Handler from './handlers';
 
 const allowedUsers = ['397857749938995201', '345938621137944577']
 
-type createPayload = {
-    title: string;
-    kakaoid: string;
-    cron: string;
-    weekly: boolean;
-    channel: string;
-    role: string;
-}
-
-const prisma = new PrismaClient();
 
 
 const client = new Client({
@@ -27,21 +16,7 @@ const client = new Client({
     ]
 });
 
-const createSeries = async ({ title, kakaoid, cron, weekly, channel, role }: createPayload) => {
-    const slug = Handler.toUrl(title);
-    const series = await prisma.series.create({
-        data: {
-            title,
-            kakaoId: kakaoid,
-            cron,
-            weekly,
-            role,
-            channel,
-            slug
-        }
-    })
-    return `The series (Title: ${series.title}) has been created.`
-}
+
 
 client.on('ready', () => {
     console.log('The bot is ready!')
@@ -73,6 +48,8 @@ client.on('interactionCreate', async (interaction) => {
     }
 
 })
+
+buyTicket('58634756');
 
 client.login(token);
 initialize();
