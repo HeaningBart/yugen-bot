@@ -54,7 +54,7 @@ const buyTicket = async (seriesId, discord_instance) => {
     let series_url = 'https://page.kakao.com/home?seriesId=' + seriesId;
     let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     const pageTarget = page.target();
     await page.setViewport({ width: 1080, height: 1080 });
