@@ -1,0 +1,1 @@
+console.log('estou sendo executado a partir da linha de comando')

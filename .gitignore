@@ -3,5 +3,4 @@ config.json
 *.png
 node_modules
 prisma/migrations
-src/rawhandler
 *.zip
