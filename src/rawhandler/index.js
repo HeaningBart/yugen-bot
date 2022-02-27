@@ -78,7 +78,6 @@ const buyTicket = async (seriesId, discord_instance) => {
         path: './afterlogin.png'
     });
 
-    await page.waitForTimeout(45000);
 
     await page.screenshot({
         path: './afterlogintrue.png'
