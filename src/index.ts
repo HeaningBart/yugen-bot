@@ -37,8 +37,8 @@ client.on('interactionCreate', async (interaction) => {
         switch (type) {
             case 'mass':
                 const id = interaction.options.getString('kakaoid')!;
-                const chapters = await buyTicket(id);
-                await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
+                const discord_instance = interaction;
+                await buyTicket(id, discord_instance.channel?.send);
                 await interaction.editReply('done');
                 await interaction.channel?.send('im done bitch')
             default:
@@ -48,8 +48,6 @@ client.on('interactionCreate', async (interaction) => {
     }
 
 })
-
-buyTicket('58634756');
 
 client.login(token);
 initialize();
