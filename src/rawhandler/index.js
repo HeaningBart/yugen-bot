@@ -84,30 +84,31 @@ const buyTicket = async (seriesId, discord_instance) => {
         path: './afterlogintrue.png'
     })
 
-    await page.goto(buy_url);
-    await page.waitForNetworkIdle();
-    await page.screenshot({
-        path: './buypage.png'
-    });
+    // await page.goto(buy_url);
+    // await page.waitForNetworkIdle();
+    // await page.screenshot({
+    //     path: './buypage.png'
+    // });
 
-    let tickets = await page.evaluate(() => {
-        let div = Array.from(document.querySelectorAll('div'))
-        div = div.find(element => element.innerHTML.includes('대여권') && element.innerHTML.length < 20);
-        var x = div.innerText.replaceAll(/\D/g, "");
-        if (x == '' || !x) return 0;
-        x = parseInt(x);
-        return x;
-    })
+    // let tickets = await page.evaluate(() => {
+    //     let div = Array.from(document.querySelectorAll('div'))
+    //     div = div.find(element => element.innerHTML.includes('대여권') && element.innerHTML.length < 20);
+    //     var x = div.innerText.replaceAll(/\D/g, "");
+    //     if (x == '' || !x) return 0;
+    //     x = parseInt(x);
+    //     return x;
+    // })
 
-    if (tickets == 0) {
-        await page.click('input[type="radio"]');
-        await page.click('button[type="submit"]');
-        await page.click('button[type="button"].btnBuy');
-        await page.waitForTimeout(5000);
-        await page.click('span.btnBox');
-        await page.waitForNavigation();
-        await page.waitForNetworkIdle();
-    } else await page.goto(series_url);
+    // if (tickets == 0) {
+    //     await page.click('input[type="radio"]');
+    //     await page.click('button[type="submit"]');
+    //     await page.click('button[type="button"].btnBuy');
+    //     await page.waitForTimeout(5000);
+    //     await page.click('span.btnBox');
+    //     await page.waitForNavigation();
+    //     await page.waitForNetworkIdle();
+    // } else
+    await page.goto(series_url);
 
     const free_chapters = await page.evaluate(() => {
         const chaps = document.querySelectorAll("li[data-available='true'][data-free='true']");
