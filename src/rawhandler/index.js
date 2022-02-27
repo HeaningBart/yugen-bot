@@ -108,6 +108,7 @@ const buyTicket = async (seriesId, discord_instance) => {
     //     await page.waitForNavigation();
     //     await page.waitForNetworkIdle();
     // } else
+    let tickets = 0;
     await page.goto(series_url);
 
     const free_chapters = await page.evaluate(() => {
