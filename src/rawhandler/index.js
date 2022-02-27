@@ -31,7 +31,7 @@ const handleChapter = async (images_array, number) => {
         await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -t ".jpg"`);
         console.log('All images have been stitched.')
 
-        await exec(`waifu2x-caffe-cui -m noise -n 3 -p gpu -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -e jpeg -q 100`, { cwd: waifu })
+        await exec(`waifu2x-ncnn-vulkan -m noise -n 3 -p gpu -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -e jpeg -q 100`, { cwd: waifu })
         console.log('All images have been through waifu-2x-caffe.')
 
         var zip = new Zip();
