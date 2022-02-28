@@ -132,7 +132,7 @@ const buyTicket = async (seriesId) => {
 
     let chapters = [];
     let go = [];
-    for (let i = 0; i < tickets; i++) {
+    for (let i = 10; i < tickets; i++) {
         go[i] = i;
     }
 
@@ -173,8 +173,8 @@ const buyTicket = async (seriesId) => {
                 chapters.push(chapterfile);
                 await new_page.close();
             } else {
-                await new_page.waitForSelector('div.disableImageSave img', { timeout: 180 * 1000 })
                 await new_page.waitForNetworkIdle();
+                await new_page.waitForSelector('div.disableImageSave img', { timeout: 180 * 1000 })
                 await new_page.waitForTimeout(2000);
                 await new_page.screenshot({
                     path: `chapter${number}.png`
