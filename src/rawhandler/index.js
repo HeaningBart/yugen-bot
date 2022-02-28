@@ -159,7 +159,7 @@ const buyTicket = async (seriesId) => {
                     Array.from(
                         document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
                 )
-                const real_number = number;
+                const real_number = number - 1;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 chapters.push(chapterfile);
                 await new_page.close();
@@ -176,7 +176,7 @@ const buyTicket = async (seriesId) => {
                     Array.from(
                         document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
                 )
-                const real_number = number;
+                const real_number = number - 1;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
                 await new_page.close();
