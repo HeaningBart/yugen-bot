@@ -28,7 +28,7 @@ const handleChapter = async (images_array, number) => {
         })));
         console.log('All images have been downloaded.')
 
-        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 10000 -cw 800 -w 2 -t ".jpg" -s 90`);
+        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 10000 -cw 800 -w 2 -t ".jpeg" -s 90`);
         console.log('All images have been stitched.')
 
         await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg`, { cwd: waifu })
@@ -189,7 +189,7 @@ const buyTicket = async (seriesId) => {
 
     }
     let split_promises = [];
-    var size = 5;
+    var size = 10;
     for (var i = 0; i < go.length; i += size) {
         split_promises.push(go.slice(i, i + size));
     }
