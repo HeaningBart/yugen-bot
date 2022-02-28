@@ -98,19 +98,19 @@ const buyTicket = async (seriesId) => {
         return x;
     })
 
-    if (tickets < 20) {
-        await page.evaluate(() => {
-            var inputs = document.querySelectorAll('input');
-            inputs[3].click();
-        })
-        await page.screenshot({ path: 'afterevaluate.png' })
-        await page.click('button[type="submit"]');
-        await page.click('button[type="button"].btnBuy');
-        await page.waitForTimeout(5000);
-        await page.click('span.btnBox');
-        await page.waitForNavigation();
-        await page.waitForNetworkIdle();
-    } else await page.goto(series_url);
+    // if (tickets < 20) {
+    //     await page.evaluate(() => {
+    //         var inputs = document.querySelectorAll('input');
+    //         inputs[3].click();
+    //     })
+    //     await page.screenshot({ path: 'afterevaluate.png' })
+    //     await page.click('button[type="submit"]');
+    //     await page.click('button[type="button"].btnBuy');
+    //     await page.waitForTimeout(5000);
+    //     await page.click('span.btnBox');
+    //     await page.waitForNavigation();
+    //     await page.waitForNetworkIdle();
+    // } else await page.goto(series_url);
     await page.goto(series_url);
 
     const free_chapters = await page.evaluate(() => {
@@ -168,7 +168,7 @@ const buyTicket = async (seriesId) => {
                     Array.from(
                         document.querySelectorAll('div.disableImageSave img'), img => img.src)
                 )
-                const real_number = number + 1;
+                const real_number = number;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 chapters.push(chapterfile);
                 await new_page.close();
@@ -183,7 +183,7 @@ const buyTicket = async (seriesId) => {
                     Array.from(
                         document.querySelectorAll('div.disableImageSave img'), img => img.src)
                 )
-                const real_number = number + 1;
+                const real_number = number;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
                 await new_page.close();
