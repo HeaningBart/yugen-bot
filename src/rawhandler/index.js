@@ -132,8 +132,9 @@ const buyTicket = async (seriesId) => {
 
     var chapters_ids = await page.evaluate(() => {
         let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
-        chapterss = chapterss.map((chapter) => chapter.attributes['data-productid'].value);
-        return chapterss;
+        let all = [];
+        chapterss = chapterss.forEach((chapter) => all.push({ id: chapter.attributes['data-productid'].value, number: chapter.childElementCount }));
+        return all;
     })
 
     let chapters = [];
@@ -262,9 +263,9 @@ const buyTicket = async (seriesId) => {
     }
 
     // console.log(split_promises);
-
+    console.log(chapters_ids);
     for (let i = 0; i <= split_promises.length - 1; i++) {
-        await Promise.all(split_promises[i].map((ch, number) => downloadChapter(ch, number)));
+        await Promise.all(split_promises[i].map(({ id, number }) => downloadChapter(id, number)));
     }
     console.log(chapters);
     await browser.close();
