@@ -406,7 +406,7 @@ const buyTicket = async (seriesId) => {
             await new_page.setViewport({ width: 1080, height: 1080 });
             await new_page.goto(url);
             console.log('vou começar a esperar agora')
-            await new_page.waitForNetworkIdle();
+            await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
             const need_ticket = await new_page.evaluate(() => {
                 const button = document.querySelector('span.btnBox > span:nth-child(2)');
                 if (button) return true;
@@ -415,7 +415,6 @@ const buyTicket = async (seriesId) => {
             if (need_ticket) {
                 console.log('começando a esperar pela que precisa de ticket')
                 await new_page.waitForNetworkIdle();
-                await new_page.waitForTimeout(2000);
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
                         document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
@@ -429,7 +428,6 @@ const buyTicket = async (seriesId) => {
                 console.log('começando a esperar pela q nao precisa de ticket');
                 console.log(new_page.url());
                 await new_page.waitForNetworkIdle();
-                await new_page.waitForTimeout(2000);
                 await new_page.screenshot({
                     path: `chapter${number}.png`
                 })
