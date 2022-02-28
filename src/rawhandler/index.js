@@ -153,7 +153,9 @@ const buyTicket = async (seriesId) => {
                     chap.remove();
                 }
             })
+
             await new_page.click(`li[data-available='true']:nth-child(${number + 1})`);
+            await new_page.waitForNavigation();
             await new_page.waitForNetworkIdle({ timeout: 180 * 1000 });
             const need_ticket = await new_page.evaluate(() => {
                 const button = document.querySelector('span.btnBox > span:nth-child(2)');
