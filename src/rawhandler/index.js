@@ -163,7 +163,7 @@ const buyTicket = async (seriesId) => {
             if (need_ticket) {
                 await new_page.click('span.btnBox > span:nth-child(2)');
                 await new_page.waitForNetworkIdle();
-                await new_page.waitForSelector('div.disableImageSave img')
+                await new_page.waitForSelector('div.disableImageSave img', { timeout: 180 * 1000 })
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
                         document.querySelectorAll('div.disableImageSave img'), img => img.src)
