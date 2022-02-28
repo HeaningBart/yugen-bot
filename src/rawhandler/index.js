@@ -154,12 +154,13 @@ const buyTicket = async (seriesId) => {
             if (need_ticket) {
                 console.log('começando a esperar pela que precisa de ticket')
                 await new_page.waitForNetworkIdle();
-                await new_page.waitForSelector('img.comic-viewer-content-img', { timeout: 180 * 1000 })
+                await new_page.waitForTimeout(2000);
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
                         document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
                 )
                 const real_number = number;
+                console.log(imagefiles)
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 chapters.push(chapterfile);
                 await new_page.close();
@@ -167,7 +168,6 @@ const buyTicket = async (seriesId) => {
                 console.log('começando a esperar pela q nao precisa de ticket');
                 console.log(new_page.url());
                 await new_page.waitForNetworkIdle();
-                await new_page.waitForSelector('img.comic-viewer-content-img', { timeout: 180 * 1000 })
                 await new_page.waitForTimeout(2000);
                 await new_page.screenshot({
                     path: `chapter${number}.png`
@@ -176,6 +176,7 @@ const buyTicket = async (seriesId) => {
                     Array.from(
                         document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
                 )
+                console.log(imagefiles)
                 const real_number = number;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
