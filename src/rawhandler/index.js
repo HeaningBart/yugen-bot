@@ -133,7 +133,7 @@ const buyTicket = async (seriesId) => {
     var chapters_ids = await page.evaluate(() => {
         let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
         let all = [];
-        chapterss = chapterss.forEach((chapter) => all.push({ id: chapter.attributes['data-productid'].value, number: chapter.childElementCount }));
+        chapterss = chapterss.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
         return all;
     })
 
@@ -159,7 +159,7 @@ const buyTicket = async (seriesId) => {
                     Array.from(
                         document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
                 )
-                const real_number = number - 1;
+                const real_number = number;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 chapters.push(chapterfile);
                 await new_page.close();
@@ -176,7 +176,7 @@ const buyTicket = async (seriesId) => {
                     Array.from(
                         document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
                 )
-                const real_number = number - 1;
+                const real_number = number;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
                 await new_page.close();
