@@ -175,6 +175,10 @@ const buyTicket = async (seriesId) => {
             } else {
                 console.log('começando a esperar pela q nao precisa de ticket');
                 await new_page.waitForNetworkIdle();
+                await new_page.evaluate(() => {
+                    var oi = document.querySelector('div.iconWrap');
+                    oi.click();
+                })
                 await new_page.waitForSelector('img.comic-viewer-content-img', { timeout: 180 * 1000 })
                 await new_page.waitForTimeout(2000);
                 await new_page.screenshot({
