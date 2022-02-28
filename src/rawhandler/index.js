@@ -174,6 +174,7 @@ const buyTicket = async (seriesId) => {
                 await new_page.close();
             } else {
                 console.log('começando a esperar pela q nao precisa de ticket');
+                console.log(new_page.url());
                 await new_page.waitForNetworkIdle();
                 await new_page.waitForSelector('img.comic-viewer-content-img', { timeout: 180 * 1000 })
                 await new_page.waitForTimeout(2000);
