@@ -200,7 +200,7 @@ const buyTicket = async (seriesId, discord_instance) => {
     for (let i = 0; i <= split_promises.length - 1; i++) {
         await Promise.all(split_promises[i].map((ch) => downloadChapter(ch, discord_instance)));
     }
-
+    await Promise.all(chapters.map((chapter) => discord_instance({ files: [chapter] })))
     console.log(chapters);
     await browser.close();
     return chapters;
