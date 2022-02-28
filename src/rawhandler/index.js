@@ -139,7 +139,7 @@ const buyTicket = async (seriesId) => {
             await new_page.setViewport({ width: 1080, height: 1080 });
             await new_page.goto(series_url);
             console.log('vou começar a esperar agora')
-            await new_page.waitForNetworkIdle({ timeout: 180 * 100 });
+            await new_page.waitForNetworkIdle({ timeout: 180 * 1000 });
 
             await new_page.evaluate(() => {
                 const chapsnot = document.querySelectorAll("li[data-available='false']");
@@ -189,7 +189,7 @@ const buyTicket = async (seriesId) => {
 
     }
     let split_promises = [];
-    var size = 5;
+    var size = 10;
     for (var i = 0; i < go.length; i += size) {
         split_promises.push(go.slice(i, i + size));
     }
