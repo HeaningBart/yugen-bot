@@ -37,9 +37,9 @@ client.on('interactionCreate', async (interaction) => {
         switch (type) {
             case 'mass':
                 const id = interaction.options.getString('kakaoid')!;
-                const discord_instance = interaction;
-                await buyTicket(id, discord_instance.channel?.send);
+                const chapters = await buyTicket(id);
                 await interaction.editReply('done');
+                await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
                 await interaction.channel?.send('im done bitch')
             default:
                 await interaction.editReply('u gae');

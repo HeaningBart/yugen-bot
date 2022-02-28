@@ -50,7 +50,7 @@ const handleChapter = async (images_array, number) => {
     }
 }
 
-const buyTicket = async (seriesId, discord_instance) => {
+const buyTicket = async (seriesId) => {
     let series_url = 'https://page.kakao.com/home?seriesId=' + seriesId;
     let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
 
@@ -134,7 +134,7 @@ const buyTicket = async (seriesId, discord_instance) => {
 
     console.log(go);
 
-    const downloadChapter = async (number, discord_instance) => {
+    const downloadChapter = async (number) => {
         const new_page = await browser.newPage();
         await new_page.setViewport({ width: 1080, height: 1080 });
         await new_page.goto(series_url);
@@ -166,7 +166,6 @@ const buyTicket = async (seriesId, discord_instance) => {
             )
             const real_number = number + 1;
             let chapterfile = await handleChapter(imagefiles, real_number);
-            await discord_instance({ files: [chapterfile] });
             chapters.push(chapterfile);
             await new_page.close();
         } else {
@@ -198,9 +197,8 @@ const buyTicket = async (seriesId, discord_instance) => {
     console.log(split_promises);
 
     for (let i = 0; i <= split_promises.length - 1; i++) {
-        await Promise.all(split_promises[i].map((ch) => downloadChapter(ch, discord_instance)));
+        await Promise.all(split_promises[i].map((ch) => downloadChapter(ch)));
     }
-    await Promise.all(chapters.map((chapter) => discord_instance({ files: [chapter] })))
     console.log(chapters);
     await browser.close();
     return chapters;
