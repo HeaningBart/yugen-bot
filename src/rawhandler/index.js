@@ -28,7 +28,7 @@ const handleChapter = async (images_array, number) => {
         })));
         console.log('All images have been downloaded.')
 
-        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 10000 -cw 800 -w 2 -t ".jpg" -s 90`);
         console.log('All images have been stitched.')
 
         await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg`, { cwd: waifu })
@@ -136,7 +136,8 @@ const buyTicket = async (seriesId) => {
         const new_page = await browser.newPage();
         await new_page.setViewport({ width: 1080, height: 1080 });
         await new_page.goto(series_url);
-        await new_page.waitForNetworkIdle();
+        console.log('vou começar a esperar agora')
+        await new_page.waitForNetworkIdle({ timeout: 30 * 1000 });
 
         await new_page.evaluate(() => {
             const chapsnot = document.querySelectorAll("li[data-available='false']");
@@ -144,11 +145,8 @@ const buyTicket = async (seriesId) => {
                 chap.remove();
             }
         })
-        await new_page.screenshot({
-            path: `before-buy-chapter-${number}.jpeg`
-        })
         await new_page.click(`li[data-available='true']:nth-child(${number + 1})`);
-        await new_page.waitForNetworkIdle();
+        await new_page.waitForNetworkIdle({ timeout: 30 * 1000 });
         const need_ticket = await new_page.evaluate(() => {
             const button = document.querySelector('span.btnBox > span:nth-child(2)');
             if (button) return true;
