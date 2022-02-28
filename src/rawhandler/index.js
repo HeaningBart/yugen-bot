@@ -147,13 +147,15 @@ const buyTicket = async (seriesId) => {
                     chap.remove();
                 }
             })
+            console.log('passei do esperar ali de cima');
             await new_page.click(`li[data-available='true']:nth-child(${number + 1})`);
-            await new_page.waitForNetworkIdle({ timeout: 30 * 1000 });
+            await new_page.waitForNetworkIdle({ timeout: 180 * 1000 });
             const need_ticket = await new_page.evaluate(() => {
                 const button = document.querySelector('span.btnBox > span:nth-child(2)');
                 if (button) return true;
                 else return false;
             })
+            console.log('passei da verificação de ticket');
             if (need_ticket) {
                 await new_page.click('span.btnBox > span:nth-child(2)');
                 await new_page.waitForNetworkIdle();
