@@ -66,6 +66,14 @@ const commands = [
         .addStringOption(string =>
             string.setName('kakaoid')
                 .setDescription('Type the kakaoID of the series.')
+                .setRequired(true)),
+
+    new SlashCommandBuilder()
+        .setName('tlonly')
+        .setDescription('Mass download a series without waifu.')
+        .addStringOption(string =>
+            string.setName('kakaoid')
+                .setDescription('Type the kakaoID of the series.')
                 .setRequired(true))
 ]
 

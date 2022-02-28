@@ -1,6 +1,6 @@
 import { Client, Intents } from 'discord.js';
 const { token } = require('../config.json')
-const { buyTicket } = require('./rawhandler/index.js');
+const { buyTicket, translateOnly } = require('./rawhandler/index.js');
 import initialize from './commands';
 import Handler from './handlers';
 
@@ -40,6 +40,12 @@ client.on('interactionCreate', async (interaction) => {
                 const chapters = await buyTicket(id);
                 await interaction.editReply('Done.');
                 await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
+                await interaction.channel?.send('RP done.')
+            case 'tlonly':
+                const idd = interaction.options.getString('kakaoid')!;
+                const chapterss = await translateOnly(idd);
+                await interaction.editReply('Done.');
+                await Promise.all(chapterss.map((file: any) => interaction.channel?.send({ files: [file] })))
                 await interaction.channel?.send('RP done.')
             default:
                 await interaction.editReply('Done.');
