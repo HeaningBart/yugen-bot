@@ -31,18 +31,18 @@ client.on('interactionCreate', async (interaction) => {
     await interaction.deferReply();
     const user = interaction.member?.user.id!;
     if (!allowedUsers.includes(user)) {
-        await interaction.editReply(`You're not allowed to use this shit my man hmmm`)
+        await interaction.editReply(`You're not allowed to use this command.`)
         return;
     } else {
         switch (type) {
             case 'mass':
                 const id = interaction.options.getString('kakaoid')!;
                 const chapters = await buyTicket(id);
-                await interaction.editReply('done');
+                await interaction.editReply('Done.');
                 await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
-                await interaction.channel?.send('im done bitch')
+                await interaction.channel?.send('RP done.')
             default:
-                await interaction.editReply('u gae');
+                await interaction.editReply('Done.');
                 return;
         }
     }

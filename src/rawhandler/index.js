@@ -7,7 +7,7 @@ const Zip = require('adm-zip');
 const fs = require('fs').promises
 const path = require('path');
 const randomstring = require('randomstring');
-
+const { email, password } = require('../../config.json');
 
 
 
@@ -66,46 +66,51 @@ const buyTicket = async (seriesId) => {
     })
     console.log(newPage.url());
     await newPage.setViewport({ width: 1080, height: 1080 });
-    await newPage.type('input[name="email"]', 'kakaoreaper1@gmail.com');
-    await newPage.type('input[name="password"]', 'sY4x3w567#b');
+    await newPage.type('input[name="email"]', email);
+    await newPage.type('input[name="password"]', password);
     await newPage.click('input#staySignedIn');
     await newPage.click('button.btn_confirm');
+
 
 
     await newPage.screenshot({
         path: './afterlogin.png'
     });
 
+    await page.waitForTimeout(15000);
 
     await page.screenshot({
         path: './afterlogintrue.png'
     })
 
-    // await page.goto(buy_url);
-    // await page.waitForNetworkIdle();
-    // await page.screenshot({
-    //     path: './buypage.png'
-    // });
+    await page.goto(buy_url);
+    await page.waitForNetworkIdle();
+    await page.screenshot({
+        path: './buypage.png'
+    });
 
-    // let tickets = await page.evaluate(() => {
-    //     let div = Array.from(document.querySelectorAll('div'))
-    //     div = div.find(element => element.innerHTML.includes('대여권') && element.innerHTML.length < 20);
-    //     var x = div.innerText.replaceAll(/\D/g, "");
-    //     if (x == '' || !x) return 0;
-    //     x = parseInt(x);
-    //     return x;
-    // })
+    let tickets = await page.evaluate(() => {
+        let div = Array.from(document.querySelectorAll('div'))
+        div = div.find(element => element.innerHTML.includes('대여권') && element.innerHTML.length < 20);
+        var x = div.innerText.replaceAll(/\D/g, "");
+        if (x == '' || !x) return 0;
+        x = parseInt(x);
+        return x;
+    })
 
-    // if (tickets == 0) {
-    //     await page.click('input[type="radio"]');
-    //     await page.click('button[type="submit"]');
-    //     await page.click('button[type="button"].btnBuy');
-    //     await page.waitForTimeout(5000);
-    //     await page.click('span.btnBox');
-    //     await page.waitForNavigation();
-    //     await page.waitForNetworkIdle();
-    // } else
-    let tickets = 0;
+    if (tickets < 20) {
+        await page.evaluate(() => {
+            var inputs = document.querySelectorAll('input');
+            inputs[3].click();
+        })
+        await page.screenshot({ path: 'afterevaluate.png' })
+        await page.click('button[type="submit"]');
+        await page.click('button[type="button"].btnBuy');
+        await page.waitForTimeout(5000);
+        await page.click('span.btnBox');
+        await page.waitForNavigation();
+        await page.waitForNetworkIdle();
+    } else await page.goto(series_url);
     await page.goto(series_url);
 
     const free_chapters = await page.evaluate(() => {
@@ -113,6 +118,7 @@ const buyTicket = async (seriesId) => {
         return chaps.length;
     })
     tickets += free_chapters;
+    tickets = 19;
     console.log(tickets);
 
     await page.screenshot({ path: './teste.png' });
