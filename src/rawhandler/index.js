@@ -139,7 +139,7 @@ const buyTicket = async (seriesId) => {
             await new_page.setViewport({ width: 1080, height: 1080 });
             await new_page.goto(series_url);
             console.log('vou começar a esperar agora')
-            await new_page.waitForNetworkIdle({ timeout: 180 * 1000 });
+            await new_page.waitForNetworkIdle();
 
             await new_page.evaluate(() => {
                 const chapsnot = document.querySelectorAll("li[data-available='false']");
@@ -147,7 +147,6 @@ const buyTicket = async (seriesId) => {
                     chap.remove();
                 }
             })
-            console.log('passei do esperar ali de cima');
             await new_page.click(`li[data-available='true']:nth-child(${number + 1})`);
             await new_page.waitForNetworkIdle({ timeout: 180 * 1000 });
             const need_ticket = await new_page.evaluate(() => {
@@ -155,7 +154,6 @@ const buyTicket = async (seriesId) => {
                 if (button) return true;
                 else return false;
             })
-            console.log('passei da verificação de ticket');
             if (need_ticket) {
                 await new_page.click('span.btnBox > span:nth-child(2)');
                 await new_page.waitForNetworkIdle();
@@ -181,7 +179,7 @@ const buyTicket = async (seriesId) => {
                 )
                 const real_number = number + 1;
                 let chapterfile = await handleChapter(imagefiles, real_number);
-                chapters.push(chapterfile);
+                if (chapterfile) chapters.push(chapterfile);
                 await new_page.close();
             }
         } catch (error) {
@@ -191,7 +189,7 @@ const buyTicket = async (seriesId) => {
 
     }
     let split_promises = [];
-    var size = 8;
+    var size = 7;
     for (var i = 0; i < go.length; i += size) {
         split_promises.push(go.slice(i, i + size));
     }
