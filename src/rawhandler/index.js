@@ -173,7 +173,7 @@ const buyTicket = async (seriesId) => {
                 chapters.push(chapterfile);
                 await new_page.close();
             } else {
-                await new_page.waitForSelector('div.disableImageSave img')
+                await new_page.waitForSelector('div.disableImageSave img', { timeout: 180 * 1000 })
                 await new_page.waitForNetworkIdle();
                 await new_page.waitForTimeout(2000);
                 await new_page.screenshot({
