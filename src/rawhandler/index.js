@@ -130,33 +130,20 @@ const buyTicket = async (seriesId) => {
         }
     })
 
-    let chapters = [];
-    let go = [];
-    for (let i = 10; i < tickets; i++) {
-        go[i] = i;
-    }
+    var chapters_ids = await page.evaluate(() => {
+        let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
+        chapterss = chapterss.map((chapter) => chapter.attributes['data-productid'].value);
+        return chapterss;
+    })
 
-    console.log(go);
-
-    const downloadChapter = async (number) => {
+    const downloadChapter = async (productid, number) => {
         try {
-
             const new_page = await browser.newPage();
+            const url = 'https://page.kakao.com/viewer?productId=' + productid;
             await new_page.setViewport({ width: 1080, height: 1080 });
-            await new_page.goto(series_url);
+            await new_page.goto(url);
             console.log('vou começar a esperar agora')
             await new_page.waitForNetworkIdle();
-
-            await new_page.evaluate(() => {
-                const chapsnot = document.querySelectorAll("li[data-available='false']");
-                for (let chap of chapsnot) {
-                    chap.remove();
-                }
-            })
-
-            await new_page.click(`li[data-available='true']:nth-child(${number + 1})`);
-            await new_page.waitForNavigation();
-            await new_page.waitForNetworkIdle({ timeout: 180 * 1000 });
             const need_ticket = await new_page.evaluate(() => {
                 const button = document.querySelector('span.btnBox > span:nth-child(2)');
                 if (button) return true;
@@ -195,19 +182,88 @@ const buyTicket = async (seriesId) => {
         } catch (error) {
             console.log(error)
         }
-
-
     }
+
+
+
+    // let chapters = [];
+    // let go = [];
+    // for (let i = 10; i < tickets; i++) {
+    //     go[i] = i;
+    // }
+
+    // console.log(go);
+
+    // const downloadChapter = async (number) => {
+    //     try {
+
+    //         const new_page = await browser.newPage();
+    //         await new_page.setViewport({ width: 1080, height: 1080 });
+    //         await new_page.goto(series_url);
+    //         console.log('vou começar a esperar agora')
+    //         await new_page.waitForNetworkIdle();
+
+    //         await new_page.evaluate(() => {
+    //             const chapsnot = document.querySelectorAll("li[data-available='false']");
+    //             for (let chap of chapsnot) {
+    //                 chap.remove();
+    //             }
+    //         })
+
+    //         await new_page.click(`li[data-available='true']:nth-child(${number + 1})`);
+    //         await new_page.waitForNavigation();
+    //         await new_page.waitForNetworkIdle({ timeout: 180 * 1000 });
+    //         const need_ticket = await new_page.evaluate(() => {
+    //             const button = document.querySelector('span.btnBox > span:nth-child(2)');
+    //             if (button) return true;
+    //             else return false;
+    //         })
+    //         if (need_ticket) {
+    //             console.log('começando a esperar pela que precisa de ticket')
+    //             await new_page.waitForNetworkIdle();
+    //             await new_page.waitForSelector('img.comic-viewer-content-img', { timeout: 180 * 1000 })
+    //             let imagefiles = await new_page.evaluate(() =>
+    //                 Array.from(
+    //                     document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
+    //             )
+    //             const real_number = number;
+    //             let chapterfile = await handleChapter(imagefiles, real_number);
+    //             chapters.push(chapterfile);
+    //             await new_page.close();
+    //         } else {
+    //             console.log('começando a esperar pela q nao precisa de ticket');
+    //             console.log(new_page.url());
+    //             await new_page.waitForNetworkIdle();
+    //             await new_page.waitForSelector('img.comic-viewer-content-img', { timeout: 180 * 1000 })
+    //             await new_page.waitForTimeout(2000);
+    //             await new_page.screenshot({
+    //                 path: `chapter${number}.png`
+    //             })
+    //             let imagefiles = await new_page.evaluate(() =>
+    //                 Array.from(
+    //                     document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
+    //             )
+    //             const real_number = number;
+    //             let chapterfile = await handleChapter(imagefiles, real_number);
+    //             if (chapterfile) chapters.push(chapterfile);
+    //             await new_page.close();
+    //         }
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+
+
+    // }
     let split_promises = [];
     var size = 4;
     for (var i = 0; i < go.length; i += size) {
-        split_promises.push(go.slice(i, i + size));
+        split_promises.push(chapters_ids.slice(i, i + size));
     }
 
-    console.log(split_promises);
+    // console.log(split_promises);
 
     for (let i = 0; i <= split_promises.length - 1; i++) {
-        await Promise.all(split_promises[i].map((ch) => downloadChapter(ch)));
+        await Promise.all(split_promises[i].map((ch, number) => downloadChapter(ch, number)));
     }
     console.log(chapters);
     await browser.close();
