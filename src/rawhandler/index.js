@@ -136,6 +136,7 @@ const buyTicket = async (seriesId) => {
         return chapterss;
     })
 
+    let chapters = [];
     const downloadChapter = async (productid, number) => {
         try {
             const new_page = await browser.newPage();
