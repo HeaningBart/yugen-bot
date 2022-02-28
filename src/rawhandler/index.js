@@ -256,7 +256,7 @@ const buyTicket = async (seriesId) => {
     // }
     let split_promises = [];
     var size = 4;
-    for (var i = 0; i < go.length; i += size) {
+    for (var i = 0; i < chapters_ids.length; i += size) {
         split_promises.push(chapters_ids.slice(i, i + size));
     }
 
