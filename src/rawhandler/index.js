@@ -133,52 +133,57 @@ const buyTicket = async (seriesId) => {
     console.log(go);
 
     const downloadChapter = async (number) => {
-        const new_page = await browser.newPage();
-        await new_page.setViewport({ width: 1080, height: 1080 });
-        await new_page.goto(series_url);
-        console.log('vou começar a esperar agora')
-        await new_page.waitForNetworkIdle({ timeout: 30 * 1000 });
+        try {
 
-        await new_page.evaluate(() => {
-            const chapsnot = document.querySelectorAll("li[data-available='false']");
-            for (let chap of chapsnot) {
-                chap.remove();
-            }
-        })
-        await new_page.click(`li[data-available='true']:nth-child(${number + 1})`);
-        await new_page.waitForNetworkIdle({ timeout: 30 * 1000 });
-        const need_ticket = await new_page.evaluate(() => {
-            const button = document.querySelector('span.btnBox > span:nth-child(2)');
-            if (button) return true;
-            else return false;
-        })
-        if (need_ticket) {
-            await new_page.click('span.btnBox > span:nth-child(2)');
-            await new_page.waitForNetworkIdle();
-            await new_page.waitForSelector('div.disableImageSave img')
-            let imagefiles = await new_page.evaluate(() =>
-                Array.from(
-                    document.querySelectorAll('div.disableImageSave img'), img => img.src)
-            )
-            const real_number = number + 1;
-            let chapterfile = await handleChapter(imagefiles, real_number);
-            chapters.push(chapterfile);
-            await new_page.close();
-        } else {
-            await new_page.waitForSelector('div.disableImageSave img')
-            await new_page.waitForNetworkIdle();
-            await new_page.waitForTimeout(2000);
-            await new_page.screenshot({
-                path: `chapter${number}.png`
+            const new_page = await browser.newPage();
+            await new_page.setViewport({ width: 1080, height: 1080 });
+            await new_page.goto(series_url);
+            console.log('vou começar a esperar agora')
+            await new_page.waitForNetworkIdle({ timeout: 60 * 100 });
+
+            await new_page.evaluate(() => {
+                const chapsnot = document.querySelectorAll("li[data-available='false']");
+                for (let chap of chapsnot) {
+                    chap.remove();
+                }
             })
-            let imagefiles = await new_page.evaluate(() =>
-                Array.from(
-                    document.querySelectorAll('div.disableImageSave img'), img => img.src)
-            )
-            const real_number = number + 1;
-            let chapterfile = await handleChapter(imagefiles, real_number);
-            chapters.push(chapterfile);
-            await new_page.close();
+            await new_page.click(`li[data-available='true']:nth-child(${number + 1})`);
+            await new_page.waitForNetworkIdle({ timeout: 30 * 1000 });
+            const need_ticket = await new_page.evaluate(() => {
+                const button = document.querySelector('span.btnBox > span:nth-child(2)');
+                if (button) return true;
+                else return false;
+            })
+            if (need_ticket) {
+                await new_page.click('span.btnBox > span:nth-child(2)');
+                await new_page.waitForNetworkIdle();
+                await new_page.waitForSelector('div.disableImageSave img')
+                let imagefiles = await new_page.evaluate(() =>
+                    Array.from(
+                        document.querySelectorAll('div.disableImageSave img'), img => img.src)
+                )
+                const real_number = number + 1;
+                let chapterfile = await handleChapter(imagefiles, real_number);
+                chapters.push(chapterfile);
+                await new_page.close();
+            } else {
+                await new_page.waitForSelector('div.disableImageSave img')
+                await new_page.waitForNetworkIdle();
+                await new_page.waitForTimeout(2000);
+                await new_page.screenshot({
+                    path: `chapter${number}.png`
+                })
+                let imagefiles = await new_page.evaluate(() =>
+                    Array.from(
+                        document.querySelectorAll('div.disableImageSave img'), img => img.src)
+                )
+                const real_number = number + 1;
+                let chapterfile = await handleChapter(imagefiles, real_number);
+                chapters.push(chapterfile);
+                await new_page.close();
+            }
+        } catch (error) {
+            console.log(error)
         }
 
 
