@@ -44,7 +44,7 @@ const handleChapter = async (images_array, number) => {
         return `./${chaptername}.7z`
     } catch (error) {
         console.log(error);
-        return `An error in chapter ${number} has occurred during download/stitching/waifu.`
+        console.log(`An error in chapter ${number} has occurred during download/stitching/waifu.`)
     }
 }
 
@@ -191,7 +191,7 @@ const buyTicket = async (seriesId) => {
 
     }
     let split_promises = [];
-    var size = 10;
+    var size = 8;
     for (var i = 0; i < go.length; i += size) {
         split_promises.push(go.slice(i, i + size));
     }
