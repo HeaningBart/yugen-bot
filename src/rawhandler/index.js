@@ -229,7 +229,8 @@ const ripLatest = async (seriesId, starts_at) => {
         path: './afterlogin.png'
     });
 
-    await page.waitForTimeout(15000);
+
+    await page.waitForTimeout(20000);
 
     await page.screenshot({
         path: './afterlogintrue.png'
@@ -284,7 +285,7 @@ const ripLatest = async (seriesId, starts_at) => {
                 console.log(imagefiles)
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
-                else chapters.push(`chapter${number}.jpeg`);
+                else chapters.push(`./afterlogintrue.png`);
                 await new_page.close();
             } else {
                 console.log('começando a esperar pela q nao precisa de ticket');
@@ -301,7 +302,7 @@ const ripLatest = async (seriesId, starts_at) => {
                 const real_number = number + starts_at;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
-                else chapters.push(`chapter${number}.jpeg`);
+                else chapters.push(`./afterlogintrue.png`);
                 await new_page.close();
             }
         } catch (error) {
