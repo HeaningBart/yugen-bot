@@ -241,6 +241,7 @@ const ripLatest = async (seriesId, starts_at) => {
     });
 
 
+
     await page.waitForTimeout(20000);
 
     await page.screenshot({
@@ -253,6 +254,9 @@ const ripLatest = async (seriesId, starts_at) => {
         path: './buypage.png'
     });
 
+    await newPage.screenshot({
+        path: './captcha.png'
+    })
 
     await page.evaluate(() => {
         const chapsnot = document.querySelectorAll("li[data-available='false']");
@@ -296,7 +300,7 @@ const ripLatest = async (seriesId, starts_at) => {
                 console.log(imagefiles)
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
-                else chapters.push(`./afterlogin.png`);
+                else chapters.push(`./captcha.png`);
                 await new_page.close();
             } else {
                 console.log('começando a esperar pela q nao precisa de ticket');
@@ -313,7 +317,7 @@ const ripLatest = async (seriesId, starts_at) => {
                 const real_number = number + starts_at;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
-                else chapters.push(`./afterlogin.png`);
+                else chapters.push(`./captcha.png`);
                 await new_page.close();
             }
         } catch (error) {
