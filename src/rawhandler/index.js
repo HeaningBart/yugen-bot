@@ -1,14 +1,5 @@
 // Requirements
-const puppeteer = require('puppeteer-extra');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin())
-const RecaptchaPlugin = require('puppeteer-extra-plugin-recaptcha')
-puppeteer.use(
-    RecaptchaPlugin({
-        provider: { id: '2captcha', token: '0f072094b870ccff32282446d3a3cc5e' },
-        visualFeedback: true // colorize reCAPTCHAs (violet = detected, green = solved)
-    })
-)
+const puppeteer = require('puppeteer');
 const download = require('download')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec);
@@ -209,10 +200,7 @@ const buyTicket = async (seriesId, starts_at) => {
     return chapters;
 }
 
-const ripLatest = async (seriesId, starts_at) => {
-    let series_url = 'https://page.kakao.com/home?seriesId=' + seriesId + '&orderby=desc';
-    let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
-
+const ripLatest = async (series_array) => {
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     const pageTarget = page.target();
@@ -247,91 +235,92 @@ const ripLatest = async (seriesId, starts_at) => {
     await page.screenshot({
         path: './afterlogintrue.png'
     })
-
-    await page.goto(series_url);
-    await page.waitForNetworkIdle();
-    await page.screenshot({
-        path: './buypage.png'
-    });
-
-    await page.evaluate(() => {
-        const chapsnot = document.querySelectorAll("li[data-available='false']");
-        for (let chap of chapsnot) {
-            chap.remove();
-        }
-    })
-
-    await page.screenshot({ path: './teste.png' });
-
-    var chapters_ids = await page.evaluate(() => {
-        let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
-        let all = [];
-        chapterss = chapterss.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
-        return [all[0]];
-    })
-
     let chapters = [];
-    const downloadChapter = async (productid, number, starts_at) => {
-        try {
-            const new_page = await browser.newPage();
-            const url = 'https://page.kakao.com/viewer?productId=' + productid;
-            await new_page.setViewport({ width: 1080, height: 1080 });
-            await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
-            await new_page.goto(url);
-            console.log('vou começar a esperar agora')
-            await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
-            const need_ticket = await new_page.evaluate(() => {
-                const button = document.querySelector('span.btnBox > span:nth-child(2)');
-                if (button) return true;
-                else return false;
-            })
-            if (need_ticket) {
-                console.log('começando a esperar pela que precisa de ticket')
-                await new_page.waitForNetworkIdle();
-                let imagefiles = await new_page.evaluate(() =>
-                    Array.from(
-                        document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
-                )
-                const real_number = number + starts_at;
-                console.log(imagefiles)
-                let chapterfile = await handleChapter(imagefiles, real_number);
-                if (chapterfile) chapters.push(chapterfile);
-                else chapters.push(`./chapter-${productid}.jpeg`);
-                await new_page.close();
-            } else {
-                console.log('começando a esperar pela q nao precisa de ticket');
-                console.log(new_page.url());
-                await new_page.waitForNetworkIdle();
-                await new_page.screenshot({
-                    path: `chapter${number}.jpeg`
+
+    const handleSeries = async (seriesID) => {
+        let series_url = 'https://page.kakao.com/home?seriesId=' + seriesID + '&orderby=desc';
+        let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesID;
+
+        const series_page = await browser.newPage();
+        // await series_page.goto(buy_url);
+        // await series_page.click('button[type="submit"]');
+        // await series_page.click('button[type="button"].btnBuy');
+        // await series_page.waitForTimeout(5000);
+        // await series_page.click('span.btnBox');
+        // await series_page.waitForNavigation();
+        // await series_page.waitForNetworkIdle();
+        await series_page.goto(series_url);
+
+        let chapter_id = await page.evaluate(() => {
+            let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
+            let all = [];
+            chapterss = chapterss.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
+            return [all[0]];
+        })
+
+        const downloadChapter = async (productid) => {
+            try {
+                const new_page = await browser.newPage();
+                const url = 'https://page.kakao.com/viewer?productId=' + productid;
+                await new_page.setViewport({ width: 1080, height: 1080 });
+                await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
+                await new_page.goto(url);
+                console.log('vou começar a esperar agora')
+                await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
+                const need_ticket = await new_page.evaluate(() => {
+                    const button = document.querySelector('span.btnBox > span:nth-child(2)');
+                    if (button) return true;
+                    else return false;
                 })
-                let imagefiles = await new_page.evaluate(() =>
-                    Array.from(
-                        document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
-                )
-                console.log(imagefiles)
-                const real_number = number + starts_at;
-                let chapterfile = await handleChapter(imagefiles, real_number);
-                if (chapterfile) chapters.push(chapterfile);
-                else chapters.push(`./chapter-${productid}.jpeg`);
-                await new_page.close();
+                if (need_ticket) {
+                    console.log('começando a esperar pela que precisa de ticket')
+                    await new_page.waitForNetworkIdle();
+                    let imagefiles = await new_page.evaluate(() =>
+                        Array.from(
+                            document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
+                    )
+                    console.log(imagefiles)
+                    let chapterfile = await handleChapter(imagefiles, real_number);
+                    if (chapterfile) chapters.push(chapterfile);
+                    else chapters.push(`./chapter-${productid}.jpeg`);
+                    await new_page.close();
+                } else {
+                    console.log('começando a esperar pela q nao precisa de ticket');
+                    console.log(new_page.url());
+                    await new_page.waitForNetworkIdle();
+                    await new_page.screenshot({
+                        path: `chapter${productid}.jpeg`
+                    })
+                    let imagefiles = await new_page.evaluate(() =>
+                        Array.from(
+                            document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
+                    )
+                    console.log(imagefiles)
+                    let chapterfile = await handleChapter(imagefiles, real_number);
+                    if (chapterfile) chapters.push(chapterfile);
+                    else chapters.push(`./chapter-${productid}.jpeg`);
+                    await new_page.close();
+                }
+            } catch (error) {
+                console.log(error)
+                return `./chapter-${productid}.jpeg`
             }
-        } catch (error) {
-            console.log(error)
-            return `./chapter-${productid}.jpeg`
         }
+
+        await downloadChapter(chapter_id);
+
     }
+
 
     let split_promises = [];
     var size = 4;
-    for (var i = 0; i < chapters_ids.length; i += size) {
-        split_promises.push(chapters_ids.slice(i, i + size));
+    for (var i = 0; i < series_array.length; i += size) {
+        split_promises.push(series_array.slice(i, i + size));
     }
 
-    // console.log(split_promises);
-    console.log(chapters_ids);
+    console.log(series_array);
     for (let i = 0; i <= split_promises.length - 1; i++) {
-        await Promise.all(split_promises[i].map(({ id, number }) => downloadChapter(id, number, starts_at)));
+        await Promise.all(split_promises[i].map((series) => handleSeries(series)));
     }
     console.log(chapters);
     await browser.close();

@@ -109,7 +109,7 @@ client.on('interactionCreate', async (interaction) => {
             case 'latest':
                 const kakao_id = interaction.options.getString('kakaoid')!;
                 const number = interaction.options.getNumber('startsat');
-                const chapterss = await ripLatest(kakao_id, number);
+                const chapterss = await ripLatest([58502656, 58095657]);
                 await interaction.editReply('Done.');
                 await Promise.all(chapterss.map((file: any) => interaction.channel?.send({ files: [file] })))
                 await Promise.all(chapterss.map((chapter: any) => fs.unlink(chapter)));
@@ -122,6 +122,8 @@ client.on('interactionCreate', async (interaction) => {
     }
 
 })
+
+
 
 client.login(token);
 initialize();
