@@ -3,35 +3,8 @@ import { REST } from '@discordjs/rest'
 import { Routes } from 'discord-api-types/v9';
 const { token, clientID } = require('../../config.json');
 
-const commands = [
-    new SlashCommandBuilder()
-        .setName('ping')
-        .setDescription('Replis with pong!'),
-    new SlashCommandBuilder()
-        .setName('get')
-        .setDescription('Get the raws from a public chapter').addStringOption(string =>
-            string.setName('link')
-                .setDescription('Link from where the raws are being ripped off.')
-                .setRequired(true)
-        ),
-    new SlashCommandBuilder()
-        .setName('download')
-        .setDescription('Downloads a full series or its free chapters')
-        .addStringOption(string =>
-            string.setName('options')
-                .setDescription('choose between free or full (full requires auth)')
-                .setRequired(true)
-                .addChoice('Full Series', 'full')
-                .addChoice('Free chapters', 'free'))
-        .addStringOption(string =>
-            string.setName('link')
-                .setDescription('link to the series')
-                .setRequired(true))
-        .addNumberOption(number =>
-            number.setName('freeamount')
-                .setDescription('How many free chapters this series has.')
-                .setRequired(true)),
 
+const commands = [
     new SlashCommandBuilder()
         .setName('add')
         .setDescription('Add a new series to the database, which you will be able to download raws from.')
@@ -43,10 +16,18 @@ const commands = [
             string.setName('kakaoid')
                 .setDescription('Type the kakao ID from this series')
                 .setRequired(true))
-        .addStringOption(number =>
-            number.setName('cron')
+        .addStringOption(string =>
+            string.setName('cron')
                 .setRequired(true)
-                .setDescription('Cron time for the series weekly. Example: If the series releases 10PM KST, you must type 10'))
+                .setDescription('Release day of the series, it must be one of the options already set')
+                .addChoice('Monday', 'monday')
+                .addChoice('Tuesday', 'tuesday')
+                .addChoice('Wednesday', 'wednesday')
+                .addChoice('Thursday', 'thursday')
+                .addChoice('Friday', 'friday')
+                .addChoice('Saturday', 'saturday')
+                .addChoice('Sunday', 'sunday')
+        )
         .addBooleanOption(boolean =>
             boolean.setName('weekly')
                 .setRequired(true)
@@ -66,15 +47,53 @@ const commands = [
         .addStringOption(string =>
             string.setName('kakaoid')
                 .setDescription('Type the kakaoID of the series.')
+                .setRequired(true))
+        .addNumberOption(number =>
+            number.setName('startsat')
+                .setDescription('enter the number that chapter numbering starts')
                 .setRequired(true)),
 
     new SlashCommandBuilder()
-        .setName('tlonly')
-        .setDescription('Mass download a series without waifu.')
+        .setName('getseries')
+        .setDescription('Get all series from database')
+        .addStringOption(string =>
+            string.setName('releaseday')
+                .setDescription('Choose the release day')
+                .addChoice('Monday', 'monday')
+                .addChoice('Tuesday', 'tuesday')
+                .addChoice('Wednesday', 'wednesday')
+                .addChoice('Thursday', 'thursday')
+                .addChoice('Friday', 'friday')
+                .addChoice('Saturday', 'saturday')
+                .addChoice('Sunday', 'sunday')
+                .setRequired(true)
+        ),
+
+    new SlashCommandBuilder()
+        .setName('edit')
+        .setDescription('Edit a series from the database')
+        .addNumberOption(number =>
+            number.setName('id')
+                .setDescription('Enter the series ID (from our database).')
+                .setRequired(true)
+        )
+        .addBooleanOption(boolean =>
+            boolean.setName('weekly')
+                .setDescription('Enter the weekly status of this series.')
+                .setRequired(true)),
+
+    new SlashCommandBuilder()
+        .setName('latest')
+        .setDescription('Download the latest chapter of a series')
         .addStringOption(string =>
             string.setName('kakaoid')
                 .setDescription('Type the kakaoID of the series.')
                 .setRequired(true))
+        .addNumberOption(number =>
+            number.setName('startsat')
+                .setDescription('enter the number of the latest chapter')
+                .setRequired(true)),
+
 ]
 
 const rest = new REST({ version: '9' }).setToken(token);
