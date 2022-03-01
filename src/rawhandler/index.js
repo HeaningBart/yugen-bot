@@ -235,26 +235,12 @@ const ripLatest = async (seriesId, starts_at) => {
         path: './afterlogintrue.png'
     })
 
-    await page.goto(buy_url);
+    await page.goto(series_url);
     await page.waitForNetworkIdle();
     await page.screenshot({
         path: './buypage.png'
     });
 
-    console.log(page.url());
-
-    // await page.screenshot({ path: 'afterevaluate.png' })
-    // await page.click('button[type="submit"]');
-    // await page.click('button[type="button"].btnBuy');
-    // await page.waitForTimeout(5000);
-    // await page.click('span.btnBox');
-    // await page.waitForNavigation();
-    // await page.waitForNetworkIdle();
-    await page.goto(series_url);
-
-
-    await page.waitForNetworkIdle();
-    await page.screenshot({ path: './teste.png' });
 
     await page.evaluate(() => {
         const chapsnot = document.querySelectorAll("li[data-available='false']");
@@ -263,9 +249,10 @@ const ripLatest = async (seriesId, starts_at) => {
         }
     })
 
+    await page.screenshot({ path: './teste.png' });
+
     var chapters_ids = await page.evaluate(() => {
         let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
-        console.log(chapterss);
         let all = [];
         chapterss = chapterss.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
         return [all[0]];
@@ -280,13 +267,11 @@ const ripLatest = async (seriesId, starts_at) => {
             await new_page.goto(url);
             console.log('vou começar a esperar agora')
             await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
-            await new_page.waitForTimeout(2000)
             const need_ticket = await new_page.evaluate(() => {
                 const button = document.querySelector('span.btnBox > span:nth-child(2)');
                 if (button) return true;
                 else return false;
             })
-            console.log(need_ticket);
             if (need_ticket) {
                 console.log('começando a esperar pela que precisa de ticket')
                 await new_page.waitForNetworkIdle();
@@ -336,6 +321,7 @@ const ripLatest = async (seriesId, starts_at) => {
     await browser.close();
     return chapters;
 }
+
 
 
 
