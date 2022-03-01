@@ -285,6 +285,7 @@ const ripLatest = async (seriesId, starts_at) => {
                 if (button) return true;
                 else return false;
             })
+            console.log(need_ticket);
             if (need_ticket) {
                 console.log('começando a esperar pela que precisa de ticket')
                 await new_page.waitForNetworkIdle();
