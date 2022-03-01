@@ -219,8 +219,6 @@ const ripLatest = async (series_array) => {
     await newPage.type('input[name="password"]', password);
     await newPage.click('input#staySignedIn');
     await newPage.click('button.btn_confirm');
-    await newPage.solveRecaptchas();
-    await newPage.click('button.btn_confirm');
 
 
 
