@@ -280,6 +280,7 @@ const ripLatest = async (seriesId, starts_at) => {
             await new_page.goto(url);
             console.log('vou começar a esperar agora')
             await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
+            await new_page.waitForTimeout(2000)
             const need_ticket = await new_page.evaluate(() => {
                 const button = document.querySelector('span.btnBox > span:nth-child(2)');
                 if (button) return true;
