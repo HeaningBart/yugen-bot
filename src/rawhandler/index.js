@@ -35,7 +35,7 @@ const handleChapter = async (images_array, number) => {
         })));
         console.log('All images have been downloaded.')
 
-        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 10000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 10000 -cw 800 -w 2 -t ".png" -s 90`);
         console.log('All images have been stitched.')
 
         await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg`, { cwd: waifu })
@@ -296,7 +296,7 @@ const ripLatest = async (seriesId, starts_at) => {
                 console.log(imagefiles)
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
-                else chapters.push(`./captcha.png`);
+                else chapters.push(`./chapter-${productid}.jpeg`);
                 await new_page.close();
             } else {
                 console.log('começando a esperar pela q nao precisa de ticket');
@@ -313,7 +313,7 @@ const ripLatest = async (seriesId, starts_at) => {
                 const real_number = number + starts_at;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
-                else chapters.push(`./captcha.png`);
+                else chapters.push(`./chapter-${productid}.jpeg`);
                 await new_page.close();
             }
         } catch (error) {
