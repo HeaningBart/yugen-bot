@@ -306,6 +306,7 @@ const ripLatest = async (seriesId, starts_at) => {
             }
         } catch (error) {
             console.log(error)
+            return `./chapter-${productid}.jpeg`
         }
     }
 
