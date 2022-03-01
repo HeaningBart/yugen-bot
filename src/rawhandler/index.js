@@ -254,10 +254,6 @@ const ripLatest = async (seriesId, starts_at) => {
         path: './buypage.png'
     });
 
-    await newPage.screenshot({
-        path: './captcha.png'
-    })
-
     await page.evaluate(() => {
         const chapsnot = document.querySelectorAll("li[data-available='false']");
         for (let chap of chapsnot) {
