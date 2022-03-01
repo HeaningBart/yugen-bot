@@ -276,6 +276,7 @@ const ripLatest = async (seriesId, starts_at) => {
             if (need_ticket) {
                 console.log('começando a esperar pela que precisa de ticket')
                 await new_page.waitForNetworkIdle();
+                await new_page.waitForTimeout(10000);
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
                         document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
@@ -289,6 +290,7 @@ const ripLatest = async (seriesId, starts_at) => {
                 console.log('começando a esperar pela q nao precisa de ticket');
                 console.log(new_page.url());
                 await new_page.waitForNetworkIdle();
+                await new_page.waitForTimeout(10000);
                 await new_page.screenshot({
                     path: `chapter${number}.png`
                 })
