@@ -1,5 +1,14 @@
 // Requirements
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+puppeteer.use(StealthPlugin())
+const RecaptchaPlugin = require('puppeteer-extra-plugin-recaptcha')
+puppeteer.use(
+    RecaptchaPlugin({
+        provider: { id: '2captcha', token: '0f072094b870ccff32282446d3a3cc5e' },
+        visualFeedback: true // colorize reCAPTCHAs (violet = detected, green = solved)
+    })
+)
 const download = require('download')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec);
@@ -221,6 +230,8 @@ const ripLatest = async (seriesId, starts_at) => {
     await newPage.type('input[name="email"]', email);
     await newPage.type('input[name="password"]', password);
     await newPage.click('input#staySignedIn');
+    await newPage.click('button.btn_confirm');
+    await newPage.solveRecaptchas();
     await newPage.click('button.btn_confirm');
 
 

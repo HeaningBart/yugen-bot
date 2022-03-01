@@ -24,6 +24,9 @@
     "node-schedule": "^2.1.0",
     "pg": "^8.7.3",
     "puppeteer": "^13.3.2",
+    "puppeteer-extra": "^3.2.3",
+    "puppeteer-extra-plugin-recaptcha": "^3.5.0",
+    "puppeteer-extra-plugin-stealth": "^2.9.0",
     "randomstring": "^1.2.2"
   },
   "devDependencies": {
