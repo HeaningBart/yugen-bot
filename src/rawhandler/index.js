@@ -264,6 +264,7 @@ const ripLatest = async (seriesId, starts_at) => {
             const new_page = await browser.newPage();
             const url = 'https://page.kakao.com/viewer?productId=' + productid;
             await new_page.setViewport({ width: 1080, height: 1080 });
+            await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
             await new_page.goto(url);
             console.log('vou começar a esperar agora')
             await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
