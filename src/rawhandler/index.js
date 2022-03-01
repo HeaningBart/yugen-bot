@@ -110,6 +110,7 @@ const buyTicket = async (seriesId, starts_at) => {
         await page.waitForNetworkIdle();
     } else await page.goto(series_url);
     await page.goto(series_url);
+    await page.waitForNetworkIdle();
 
     const free_chapters = await page.evaluate(() => {
         const chaps = document.querySelectorAll("li[data-available='true'][data-free='true']");
@@ -240,18 +241,19 @@ const ripLatest = async (seriesId, starts_at) => {
         path: './buypage.png'
     });
 
+    console.log(page.url());
 
-    await page.screenshot({ path: 'afterevaluate.png' })
-    await page.click('button[type="submit"]');
-    await page.click('button[type="button"].btnBuy');
-    await page.waitForTimeout(5000);
-    await page.click('span.btnBox');
-    await page.waitForNavigation();
-    await page.waitForNetworkIdle();
+    // await page.screenshot({ path: 'afterevaluate.png' })
+    // await page.click('button[type="submit"]');
+    // await page.click('button[type="button"].btnBuy');
+    // await page.waitForTimeout(5000);
+    // await page.click('span.btnBox');
+    // await page.waitForNavigation();
+    // await page.waitForNetworkIdle();
     await page.goto(series_url);
 
 
-
+    await page.waitForNetworkIdle();
     await page.screenshot({ path: './teste.png' });
 
     await page.evaluate(() => {
@@ -263,6 +265,7 @@ const ripLatest = async (seriesId, starts_at) => {
 
     var chapters_ids = await page.evaluate(() => {
         let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
+        console.log(chapterss);
         let all = [];
         chapterss = chapterss.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
         return [all[0]];
