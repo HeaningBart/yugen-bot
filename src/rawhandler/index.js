@@ -278,6 +278,7 @@ const ripLatest = async (series_array) => {
                             document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
                     )
                     console.log(imagefiles)
+                    const real_number = 'latest'
                     let chapterfile = await handleChapter(imagefiles, real_number);
                     if (chapterfile) chapters.push(chapterfile);
                     else chapters.push(`./chapter-${productid}.jpeg`);
@@ -285,6 +286,7 @@ const ripLatest = async (series_array) => {
                 } else {
                     console.log('começando a esperar pela q nao precisa de ticket');
                     console.log(new_page.url());
+                    const real_number = 'latest'
                     await new_page.waitForNetworkIdle();
                     await new_page.screenshot({
                         path: `chapter${productid}.jpeg`
