@@ -241,11 +241,6 @@ const ripLatest = async (seriesId, starts_at) => {
     });
 
 
-
-    await page.evaluate(() => {
-        var inputs = document.querySelectorAll('input');
-        inputs[1].click();
-    })
     await page.screenshot({ path: 'afterevaluate.png' })
     await page.click('button[type="submit"]');
     await page.click('button[type="button"].btnBuy');
