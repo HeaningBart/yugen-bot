@@ -276,7 +276,6 @@ const ripLatest = async (seriesId, starts_at) => {
             if (need_ticket) {
                 console.log('começando a esperar pela que precisa de ticket')
                 await new_page.waitForNetworkIdle();
-                await new_page.waitForTimeout(10000);
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
                         document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
@@ -284,15 +283,15 @@ const ripLatest = async (seriesId, starts_at) => {
                 const real_number = number + starts_at;
                 console.log(imagefiles)
                 let chapterfile = await handleChapter(imagefiles, real_number);
-                chapters.push(chapterfile);
+                if (chapterfile) chapters.push(chapterfile);
+                else chapters.push(`chapter${number}.jpeg`);
                 await new_page.close();
             } else {
                 console.log('começando a esperar pela q nao precisa de ticket');
                 console.log(new_page.url());
                 await new_page.waitForNetworkIdle();
-                await new_page.waitForTimeout(10000);
                 await new_page.screenshot({
-                    path: `chapter${number}.png`
+                    path: `chapter${number}.jpeg`
                 })
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
@@ -302,6 +301,7 @@ const ripLatest = async (seriesId, starts_at) => {
                 const real_number = number + starts_at;
                 let chapterfile = await handleChapter(imagefiles, real_number);
                 if (chapterfile) chapters.push(chapterfile);
+                else chapters.push(`chapter${number}.jpeg`);
                 await new_page.close();
             }
         } catch (error) {
