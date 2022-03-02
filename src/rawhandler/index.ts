@@ -323,7 +323,7 @@ async function ripLatest(series_array: string[]) {
                 }
             } catch (error) {
                 console.log(error)
-                return `./chapter-${productid}.jpeg`
+                chapters.push(`./chapter-${productid}.jpeg`);
             }
         }
 
