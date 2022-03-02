@@ -215,11 +215,8 @@ async function ripLatest(series_array: string[]) {
     const newPage = await newTarget.page();
     if (newPage) {
         await newPage.waitForNetworkIdle();
-        await newPage.screenshot({
-            path: './kakaologin.png'
-        })
         console.log(newPage.url());
-        await newPage.setViewport({ width: 1080, height: 1080 });
+        await newPage.setViewport({ width: 1665, height: 941 });
         await newPage.type('input[name="email"]', email);
         await newPage.type('input[name="password"]', password);
         await newPage.click('input#staySignedIn');
@@ -247,7 +244,8 @@ async function ripLatest(series_array: string[]) {
 
         console.log(series_url)
         console.log(buy_url);
-        const series_page = await browser.newPage();
+        const new_page = await browser.newPage();
+        await new_page.setViewport({ width: 1665, height: 941 });
         // await series_page.goto(buy_url);
         // await series_page.waitForNetworkIdle();
         // await series_page.click('button[type="submit"]');
@@ -256,10 +254,10 @@ async function ripLatest(series_array: string[]) {
         // await series_page.click('span.btnBox');
         // await series_page.waitForNavigation();
         // await series_page.waitForNetworkIdle();
-        await series_page.goto(series_url);
+        await new_page.goto(series_url);
 
-        await series_page.waitForNetworkIdle();
-        let chapter_id = await series_page.evaluate(() => {
+        await new_page.waitForNetworkIdle();
+        let chapter_id = await new_page.evaluate(() => {
             let chapterss = Array.from(document.querySelectorAll<Chapter>('li[data-available="true"]'));
             let all: string[] = [];
             chapterss.forEach((chapter, index) => all.push(chapter.attributes['data-productid'].value));
@@ -270,12 +268,9 @@ async function ripLatest(series_array: string[]) {
 
         const downloadChapter = async (productid: string) => {
             try {
-                const new_page = await browser.newPage();
                 const url = 'https://page.kakao.com/viewer?productId=' + productid;
-                await new_page.setViewport({ width: 1665, height: 941 });
                 await new_page.goto(url);
                 console.log('vou começar a esperar agora')
-                await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                 await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
                 const need_ticket = await new_page.evaluate(() => {
                     const button = document.querySelector<HTMLDivElement>('div.preventMobileBodyScroll');
@@ -284,12 +279,13 @@ async function ripLatest(series_array: string[]) {
                 })
                 if (need_ticket) {
                     console.log('começando a esperar pela que precisa de ticket')
+                    await new_page.waitForNetworkIdle();
+                    await new_page.waitForTimeout(2000);
+                    await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                     await new_page.evaluate(() => {
                         const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
                         button.click();
                     })
-                    await new_page.waitForNetworkIdle();
-                    await new_page.waitForTimeout(2000);
                     await new_page.evaluate(() => {
                         const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
                         button.click();
@@ -308,6 +304,7 @@ async function ripLatest(series_array: string[]) {
                     console.log('começando a esperar pela q nao precisa de ticket');
                     await new_page.waitForNetworkIdle();
                     await new_page.waitForTimeout(2000);
+                    await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                     console.log(new_page.url());
                     let real_number = 'latest';
                     await new_page.screenshot({
