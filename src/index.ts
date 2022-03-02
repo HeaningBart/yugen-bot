@@ -122,9 +122,8 @@ client.on('interactionCreate', async (interaction) => {
                 return;
             case 'latest':
                 const kakao_id = interaction.options.getString('kakaoid')!;
-                const number = interaction.options.getNumber('startsat');
-                const day_series = await prisma.series.findMany({ where: { cron: 'wednesday' } });
-                console.log(day_series);
+                await prisma.series.delete({ where: { id: parseInt(kakao_id) } });
+                await interaction.editReply('Done.');
                 return;
             default:
                 await interaction.editReply('Done.');
