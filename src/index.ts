@@ -109,11 +109,8 @@ client.on('interactionCreate', async (interaction) => {
             case 'latest':
                 const kakao_id = interaction.options.getString('kakaoid')!;
                 const number = interaction.options.getNumber('startsat');
-                const chapterss = await ripLatest([58502656, 58095657]);
-                await interaction.editReply('Done.');
-                await Promise.all(chapterss.map((file: any) => interaction.channel?.send({ files: [file] })))
-                await Promise.all(chapterss.map((chapter: any) => fs.unlink(chapter)));
-                await interaction.channel?.send('RP done.')
+                const day_series = await prisma.series.findMany({ where: { cron: 'tuesday' } });
+                console.log(day_series);
                 return;
             default:
                 await interaction.editReply('Done.');
