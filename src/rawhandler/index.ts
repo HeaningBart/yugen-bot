@@ -35,11 +35,11 @@ async function handleChapter(images_array: string[], number: string, title: stri
         await fs.mkdir(waifu_directory);
 
         await Promise.all(images_array.map((image, index) => download(image, `./${directory}`, {
-            filename: `image-${index}.jpeg`
+            filename: `image-${index}.jpg`
         })));
         console.log('All images have been downloaded.')
 
-        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 10000 -cw 800 -w 2 -t ".png" -s 90`);
+        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 10000 -cw 800 -w 2 -t ".jpg" -s 90`);
         console.log('All images have been stitched.')
 
         await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg`, { cwd: waifu })
@@ -47,10 +47,10 @@ async function handleChapter(images_array: string[], number: string, title: stri
 
         await exec(`7z a ${chaptername}.7z  ./${waifu_directory}/*`)
 
-        await fs.rm(`./${directory}`, { recursive: true })
-        await fs.rm(`./${waifu_directory}`, { recursive: true })
+        fs.rm(`./${directory}`, { recursive: true })
+        fs.rm(`./${waifu_directory}`, { recursive: true })
 
-        console.log('Temporary directories have been removed.')
+        console.log('Temp directories are being removed.')
 
         return `./${chaptername}.7z`
     } catch (error) {
@@ -339,7 +339,7 @@ async function ripLatest(series_array: SeriesItem[]) {
 
 
     let split_promises = [];
-    var size = 1;
+    var size = 2;
     for (var i = 0; i < series_array.length; i += size) {
         split_promises.push(series_array.slice(i, i + size));
     }
