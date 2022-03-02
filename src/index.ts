@@ -27,7 +27,7 @@ client.on('ready', () => {
     console.log('The bot is ready!')
     const channel = client.channels.cache.get('948063125486329876')
     if (channel?.isText()) {
-        channel.send('./afterlogintrue.png')
+        channel.send({ files: ['./afterlogintrue.png'] })
     }
 });
 
