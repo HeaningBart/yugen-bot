@@ -60,7 +60,7 @@ async function handleChapter(images_array: string[], number: string, title: stri
 }
 
 async function handleTicket(seriesId: string, starts_at: number, series_title: string) {
-    const series_url = 'https://page.kakao.com/home?seriesId=' + seriesId;
+    const series_url = 'https://page.kakao.com/home?seriesId=' + seriesId + '&orderby=asc';
     const buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
 
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
@@ -102,17 +102,17 @@ async function handleTicket(seriesId: string, starts_at: number, series_title: s
         path: './buypage.png'
     });
 
-    await page.evaluate(() => {
-        var inputs = document.querySelectorAll('input');
-        inputs[3].click();
-    })
-    await page.screenshot({ path: 'afterevaluate.png' })
-    await page.click('button[type="submit"]');
-    await page.click('button[type="button"].btnBuy');
-    await page.waitForTimeout(5000);
-    await page.click('span.btnBox');
-    await page.waitForNavigation();
-    await page.waitForNetworkIdle();
+    // await page.evaluate(() => {
+    //     var inputs = document.querySelectorAll('input');
+    //     inputs[3].click();
+    // })
+    // await page.screenshot({ path: 'afterevaluate.png' })
+    // await page.click('button[type="submit"]');
+    // await page.click('button[type="button"].btnBuy');
+    // await page.waitForTimeout(5000);
+    // await page.click('span.btnBox');
+    // await page.waitForNavigation();
+    // await page.waitForNetworkIdle();
     await page.goto(series_url);
 
     await page.waitForNetworkIdle();
