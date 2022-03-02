@@ -42,11 +42,15 @@ const job = schedule.scheduleJob('2 22 * * 3', async function () {
     const files = await ripLatest(ids);
 
     for (let i = 0; i <= files.length - 1; i++) {
-        const channel = client.channels.cache.get(daily_series[i].channel);
-        if (channel?.isText()) {
-            await channel.send({ files: [files[i]] })
-            await channel.send(`<@&${daily_series[i].role}>`)
-            await channel.send('Weekly RP done.')
+        try {
+            const channel = client.channels.cache.get(daily_series[i].channel);
+            if (channel?.isText()) {
+                await channel.send({ files: [files[i]] })
+                await channel.send(`<@&${daily_series[i].role}>`)
+                await channel.send('Weekly RP done.')
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
