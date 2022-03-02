@@ -287,10 +287,6 @@ async function ripLatest(series_array: string[]) {
                         const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
                         button.click();
                     })
-                    await new_page.evaluate(() => {
-                        const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
-                        button.click();
-                    })
                     let real_number = 'latest';
                     let imagefiles = await new_page.evaluate(() =>
                         Array.from(
