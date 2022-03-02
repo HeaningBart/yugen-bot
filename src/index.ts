@@ -45,11 +45,14 @@ async function latest() {
     let ids: SeriesItem[] = [];
     daily_series.forEach(series => ids.push({ id: series.kakaoId, title: series.slug }));
     const files = await ripLatest(ids);
+    console.log(daily_series);
+    console.log(ids);
 
     for (let i = 0; i <= files.length - 1; i++) {
         try {
             const channel = client.channels.cache.get(daily_series[i].channel);
             if (channel?.isText()) {
+                const file = files.filter(file => file.includes(daily_series[i].slug))
                 await channel.send({ files: [files[i]] })
                 // await channel.send(`<@&${daily_series[i].role}>`)
                 await channel.send('Weekly RP done.')
