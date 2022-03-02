@@ -292,7 +292,7 @@ async function ripLatest(series_array: SeriesItem[]) {
                     let real_number = await new_page.evaluate(() => {
                         const title = document.querySelector<HTMLDivElement>('div.titleWrap');
                         if (title) {
-                            return title.innerText.replaceAll(/\D/g, "");
+                            return title.innerText.slice(-4).replaceAll(/\D/g, "");
                         }
                         else return 'latest';
                     })
@@ -312,7 +312,7 @@ async function ripLatest(series_array: SeriesItem[]) {
                     let real_number = await new_page.evaluate(() => {
                         const title = document.querySelector<HTMLDivElement>('div.titleWrap');
                         if (title) {
-                            return title.innerText.replaceAll(/\D/g, "");
+                            return title.innerText.slice(-4).replaceAll(/\D/g, "");
                         }
                         else return 'latest';
                     })
