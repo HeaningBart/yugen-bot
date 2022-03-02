@@ -242,9 +242,6 @@ async function ripLatest(series_array: string[]) {
     const handleSeries = async (seriesID: string, browser: Browser) => {
         let series_url = 'https://page.kakao.com/home?seriesId=' + seriesID + '&orderby=desc';
         let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesID;
-
-        console.log(series_url)
-        console.log(buy_url);
         const new_page = await browser.newPage();
         await new_page.setViewport({ width: 1080, height: 1080 });
         // await series_page.goto(buy_url);
@@ -256,8 +253,9 @@ async function ripLatest(series_array: string[]) {
         // await series_page.waitForNavigation();
         // await series_page.waitForNetworkIdle();
         await new_page.goto(series_url);
-
         await new_page.waitForNetworkIdle();
+        await new_page.screenshot({ path: `./series-${seriesID}.png` })
+        console.log(new_page.cookies());
         let chapter_id = await new_page.evaluate(() => {
             let chapterss = Array.from(document.querySelectorAll<Chapter>('li[data-available="true"]'));
             let all: string[] = [];
