@@ -217,6 +217,7 @@ async function ripLatest(series_array: string[]) {
         await newPage.waitForNetworkIdle();
         console.log(newPage.url());
         await newPage.setViewport({ width: 1080, height: 1080 });
+        await newPage.screenshot({ path: './beforelogin.png' })
         await newPage.type('input[name="email"]', email);
         await newPage.type('input[name="password"]', password);
         await newPage.click('input#staySignedIn');
