@@ -35,11 +35,21 @@ const handleSeries = async (series: Series) => {
     }
 }
 
-const job = schedule.scheduleJob('21 1 * * 2', async function () {
-    const tuesday_series = await prisma.series.findMany({ where: { cron: 'tuesday' } });
-    if (tuesday_series) {
-        await Promise.all(tuesday_series.map((series) => handleSeries(series)));
+const job = schedule.scheduleJob('0 22 * * 3', async function () {
+    const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday' } });
+    let ids: string[] = [];
+    daily_series.forEach(series => ids.push(series.kakaoId));
+    const files = await ripLatest(ids);
+
+    for (let i = 0; i <= files.length - 1; i++) {
+        const channel = client.channels.cache.get(daily_series[i].channel);
+        if (channel?.isText()) {
+            await channel.send({ files: [files[i]] })
+            await channel.send(`<@&${daily_series[i].role}>`)
+            await channel.send('Weekly RP done.')
+        }
     }
+
 })
 
 
