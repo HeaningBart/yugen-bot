@@ -25,6 +25,10 @@ function toUrl(string: string): string {
 
 client.on('ready', () => {
     console.log('The bot is ready!')
+    const channel = client.channels.cache.get('948063125486329876')
+    if (channel?.isText()) {
+        channel.send('./afterlogintrue.png')
+    }
 });
 
 
@@ -55,6 +59,8 @@ const job = schedule.scheduleJob('47 22 * * 3', async function () {
     }
 
 })
+
+
 
 
 client.on('interactionCreate', async (interaction) => {
