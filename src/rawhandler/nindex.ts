@@ -1,18 +1,18 @@
-// Requirements
-const puppeteer = require('puppeteer');
-const download = require('download')
-const util = require('util')
+import puppeteer from 'puppeteer';
+import download from 'download';
+import util from 'util';
 const exec = util.promisify(require('child_process').exec);
-const Zip = require('adm-zip');
-const fs = require('fs').promises
-const path = require('path');
-const randomstring = require('randomstring');
+import fs from 'fs/promises'
+import path from 'path';
+import randomstring from 'randomstring';
 const { email, password } = require('../../config.json');
+
 // Relative paths
 const waifu = path.resolve(__dirname);
 
 
-const handleChapter = async (images_array, number) => {
+
+async function handleChapter(images_array: string[], number: string) {
     try {
         const random = randomstring.generate();
         const directory = `dist-${number}-${random}`;
@@ -46,9 +46,9 @@ const handleChapter = async (images_array, number) => {
     }
 }
 
-const buyTicket = async (seriesId, starts_at) => {
-    let series_url = 'https://page.kakao.com/home?seriesId=' + seriesId;
-    let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
+async function handleTicket(seriesId: string, starts_at: number) {
+    const series_url = 'https://page.kakao.com/home?seriesId=' + seriesId;
+    const buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
 
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
@@ -87,38 +87,20 @@ const buyTicket = async (seriesId, starts_at) => {
         path: './buypage.png'
     });
 
-    let tickets = await page.evaluate(() => {
-        let div = Array.from(document.querySelectorAll('div'))
-        div = div.find(element => element.innerHTML.includes('대여권') && element.innerHTML.length < 20);
-        var x = div.innerText.replaceAll(/\D/g, "");
-        if (x == '' || !x) return 0;
-        x = parseInt(x);
-        return x;
+    await page.evaluate(() => {
+        var inputs = document.querySelectorAll('input');
+        inputs[3].click();
     })
-
-    if (tickets < 20) {
-        await page.evaluate(() => {
-            var inputs = document.querySelectorAll('input');
-            inputs[3].click();
-        })
-        await page.screenshot({ path: 'afterevaluate.png' })
-        await page.click('button[type="submit"]');
-        await page.click('button[type="button"].btnBuy');
-        await page.waitForTimeout(5000);
-        await page.click('span.btnBox');
-        await page.waitForNavigation();
-        await page.waitForNetworkIdle();
-    } else await page.goto(series_url);
-    await page.goto(series_url);
+    await page.screenshot({ path: 'afterevaluate.png' })
+    await page.click('button[type="submit"]');
+    await page.click('button[type="button"].btnBuy');
+    await page.waitForTimeout(5000);
+    await page.click('span.btnBox');
+    await page.waitForNavigation();
     await page.waitForNetworkIdle();
+    await page.goto(series_url);
 
-    const free_chapters = await page.evaluate(() => {
-        const chaps = document.querySelectorAll("li[data-available='true'][data-free='true']");
-        return chaps.length;
-    })
-    tickets += free_chapters;
-    tickets = 19;
-    console.log(tickets);
+    await page.waitForNetworkIdle();
 
     await page.screenshot({ path: './teste.png' });
 
@@ -130,14 +112,15 @@ const buyTicket = async (seriesId, starts_at) => {
     })
 
     var chapters_ids = await page.evaluate(() => {
-        let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
+        let chapters = Array.from(document.querySelectorAll('li[data-available="true"]'));
         let all = [];
-        chapterss = chapterss.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
+        chapters.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
         return all;
     })
 
     let chapters = [];
-    const downloadChapter = async (productid, number, starts_at) => {
+
+    const downloadChapter = async (productid: string, number: number, starts_at: number) => {
         try {
             const new_page = await browser.newPage();
             const url = 'https://page.kakao.com/viewer?productId=' + productid;
@@ -155,11 +138,11 @@ const buyTicket = async (seriesId, starts_at) => {
                 await new_page.waitForNetworkIdle();
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
-                        document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
+                        document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
                 )
                 const real_number = number + starts_at;
                 console.log(imagefiles)
-                let chapterfile = await handleChapter(imagefiles, real_number);
+                let chapterfile = await handleChapter(imagefiles, real_number.toString());
                 chapters.push(chapterfile);
                 await new_page.close();
             } else {
@@ -171,11 +154,11 @@ const buyTicket = async (seriesId, starts_at) => {
                 })
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
-                        document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
+                        document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
                 )
                 console.log(imagefiles)
                 const real_number = number + starts_at;
-                let chapterfile = await handleChapter(imagefiles, real_number);
+                let chapterfile = await handleChapter(imagefiles, real_number.toString());
                 if (chapterfile) chapters.push(chapterfile);
                 await new_page.close();
             }
@@ -200,7 +183,7 @@ const buyTicket = async (seriesId, starts_at) => {
     return chapters;
 }
 
-const ripLatest = async (series_array) => {
+async function ripLatest(series_array: string[]) {
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     const pageTarget = page.target();
@@ -255,13 +238,13 @@ const ripLatest = async (series_array) => {
         let chapter_id = await series_page.evaluate(() => {
             let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
             let all = [];
-            chapterss = chapterss.forEach((chapter, index) => all.push(chapter.attributes['data-productid'].value));
+            chapterss.forEach((chapter, index) => all.push(chapter.attributes['data-productid'].value));
             return all[0];
         })
 
         console.log(chapter_id);
 
-        const downloadChapter = async (productid) => {
+        const downloadChapter = async (productid: string) => {
             try {
                 const new_page = await browser.newPage();
                 const url = 'https://page.kakao.com/viewer?productId=' + productid;
@@ -280,7 +263,7 @@ const ripLatest = async (series_array) => {
                     await new_page.waitForNetworkIdle();
                     let imagefiles = await new_page.evaluate(() =>
                         Array.from(
-                            document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
+                            document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
                     )
                     console.log(imagefiles)
                     const real_number = 'latest'
@@ -298,7 +281,7 @@ const ripLatest = async (series_array) => {
                     })
                     let imagefiles = await new_page.evaluate(() =>
                         Array.from(
-                            document.querySelectorAll('img.comic-viewer-content-img'), img => img.src)
+                            document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
                     )
                     console.log(imagefiles)
                     let chapterfile = await handleChapter(imagefiles, real_number);
@@ -333,81 +316,4 @@ const ripLatest = async (series_array) => {
 }
 
 
-
-
-// const handleWeeklySeries = async (series_array) => {
-//     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-//     const page = await browser.newPage();
-//     const pageTarget = page.target();
-//     await page.setViewport({ width: 1080, height: 1080 });
-//     await page.goto('https://page.kakao.com/main');
-//     await page.click('div.css-vurnku:nth-child(3)');
-//     const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
-//     const newPage = await newTarget.page();
-//     await newPage.waitForNetworkIdle();
-//     await newPage.screenshot({
-//         path: './kakaologin.png'
-//     })
-//     console.log(newPage.url());
-//     await newPage.setViewport({ width: 1080, height: 1080 });
-//     await newPage.type('input[name="email"]', email);
-//     await newPage.type('input[name="password"]', password);
-//     await newPage.click('input#staySignedIn');
-//     await newPage.click('button.btn_confirm');
-
-
-
-//     await newPage.screenshot({
-//         path: './afterlogin.png'
-//     });
-
-//     await page.waitForTimeout(15000);
-
-//     await page.screenshot({
-//         path: './afterlogintrue.png'
-//     })
-
-
-//     const buyLatest = async (seriesId) => {
-//         let series_url = 'https://page.kakao.com/home?seriesId=' + seriesId + '&orderby=desc';
-//         let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
-
-//         const new_page = await browser.newPage()
-//         await new_page.goto(buy_url);
-//         await new_page.waitForNetworkIdle();
-//         await new_page.screenshot({
-//             path: './buypage.png'
-//         });
-
-
-//         await new_page.evaluate(() => {
-//             var inputs = document.querySelectorAll('input');
-//             inputs[1].click();
-//         })
-//         await new_page.screenshot({ path: 'afterevaluate.png' })
-//         await new_page.click('button[type="submit"]');
-//         await new_page.click('button[type="button"].btnBuy');
-//         await new_page.waitForTimeout(5000);
-//         await new_page.click('span.btnBox');
-//         await new_page.waitForNavigation();
-//         await new_page.waitForNetworkIdle();
-//         await new_page.goto(series_url);
-//         chosen.innerText.replaceAll(/\D/g, "")
-
-//         var chapters_id = await page.evaluate(() => {
-//             let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
-//             let all = [];
-//             chapterss = chapterss.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
-//             return all[0];
-//         })
-
-
-
-
-
-//     }
-
-
-// }
-
-module.exports = { buyTicket, ripLatest };
+export { handleChapter, handleTicket, ripLatest };
