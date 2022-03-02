@@ -25,10 +25,6 @@ function toUrl(string: string): string {
 
 client.on('ready', () => {
     console.log('The bot is ready!')
-    const channel = client.channels.cache.get('948063125486329876')
-    if (channel?.isText()) {
-        channel.send({ files: ['./afterlogintrue.png'] })
-    }
 });
 
 
