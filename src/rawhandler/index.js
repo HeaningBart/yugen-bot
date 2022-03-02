@@ -239,6 +239,8 @@ const ripLatest = async (series_array) => {
         let series_url = 'https://page.kakao.com/home?seriesId=' + seriesID + '&orderby=desc';
         let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesID;
 
+        console.log(series_url)
+        console.log(buy_url);
         const series_page = await browser.newPage();
         // await series_page.goto(buy_url);
         // await series_page.click('button[type="submit"]');
@@ -249,12 +251,15 @@ const ripLatest = async (series_array) => {
         // await series_page.waitForNetworkIdle();
         await series_page.goto(series_url);
 
-        let chapter_id = await page.evaluate(() => {
+        await series_page.waitForNetworkIdle();
+        let chapter_id = await series_page.evaluate(() => {
             let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
             let all = [];
-            chapterss = chapterss.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
-            return [all[0]];
+            chapterss = chapterss.forEach((chapter, index) => all.push(chapter.attributes['data-productid'].value));
+            return all[0];
         })
+
+        console.log(chapter_id);
 
         const downloadChapter = async (productid) => {
             try {
