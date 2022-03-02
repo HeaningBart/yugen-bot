@@ -216,7 +216,7 @@ async function ripLatest(series_array: string[]) {
     if (newPage) {
         await newPage.waitForNetworkIdle();
         console.log(newPage.url());
-        await newPage.setViewport({ width: 1665, height: 941 });
+        await newPage.setViewport({ width: 1080, height: 1080 });
         await newPage.type('input[name="email"]', email);
         await newPage.type('input[name="password"]', password);
         await newPage.click('input#staySignedIn');
@@ -245,7 +245,7 @@ async function ripLatest(series_array: string[]) {
         console.log(series_url)
         console.log(buy_url);
         const new_page = await browser.newPage();
-        await new_page.setViewport({ width: 1665, height: 941 });
+        await new_page.setViewport({ width: 1080, height: 1080 });
         // await series_page.goto(buy_url);
         // await series_page.waitForNetworkIdle();
         // await series_page.click('button[type="submit"]');
