@@ -43,10 +43,10 @@ const job = schedule.scheduleJob('33 22 * * 3', async function () {
 
     for (let i = 0; i <= files.length - 1; i++) {
         try {
-            const channel = client.channels.cache.get(daily_series[i].channel);
+            const channel = client.channels.cache.get('948063125486329876');
             if (channel?.isText()) {
                 await channel.send({ files: [files[i]] })
-                await channel.send(`<@&${daily_series[i].role}>`)
+                // await channel.send(`<@&${daily_series[i].role}>`)
                 await channel.send('Weekly RP done.')
             }
         } catch (error) {

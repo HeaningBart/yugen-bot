@@ -143,6 +143,7 @@ async function handleTicket(seriesId: string, starts_at: number) {
             await new_page.goto(url);
             console.log('vou começar a esperar agora')
             await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
+            await new_page.waitForTimeout(2000);
             const need_ticket = await new_page.evaluate(() => {
                 const button = document.querySelector('span.btnBox > span:nth-child(2)');
                 if (button) return true;
@@ -151,6 +152,10 @@ async function handleTicket(seriesId: string, starts_at: number) {
             if (need_ticket) {
                 console.log('começando a esperar pela que precisa de ticket')
                 await new_page.waitForNetworkIdle();
+                await new_page.evaluate(() => {
+                    const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
+                    button.click();
+                })
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
                         document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
@@ -164,6 +169,7 @@ async function handleTicket(seriesId: string, starts_at: number) {
                 console.log('começando a esperar pela q nao precisa de ticket');
                 console.log(new_page.url());
                 await new_page.waitForNetworkIdle();
+                await new_page.waitForTimeout(2000);
                 await new_page.screenshot({
                     path: `chapter${number}.png`
                 })
@@ -242,14 +248,14 @@ async function ripLatest(series_array: string[]) {
         console.log(series_url)
         console.log(buy_url);
         const series_page = await browser.newPage();
-        await series_page.goto(buy_url);
-        await series_page.waitForNetworkIdle();
-        await series_page.click('button[type="submit"]');
-        await series_page.click('button[type="button"].btnBuy');
-        await series_page.waitForTimeout(5000);
-        await series_page.click('span.btnBox');
-        await series_page.waitForNavigation();
-        await series_page.waitForNetworkIdle();
+        // await series_page.goto(buy_url);
+        // await series_page.waitForNetworkIdle();
+        // await series_page.click('button[type="submit"]');
+        // await series_page.click('button[type="button"].btnBuy');
+        // await series_page.waitForTimeout(5000);
+        // await series_page.click('span.btnBox');
+        // await series_page.waitForNavigation();
+        // await series_page.waitForNetworkIdle();
         await series_page.goto(series_url);
 
         await series_page.waitForNetworkIdle();
@@ -267,9 +273,9 @@ async function ripLatest(series_array: string[]) {
                 const new_page = await browser.newPage();
                 const url = 'https://page.kakao.com/viewer?productId=' + productid;
                 await new_page.setViewport({ width: 1080, height: 1080 });
-                await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                 await new_page.goto(url);
                 console.log('vou começar a esperar agora')
+                await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                 await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
                 const need_ticket = await new_page.evaluate(() => {
                     const button = document.querySelector('span.btnBox > span:nth-child(2)');
