@@ -154,7 +154,7 @@ async function handleTicket(seriesId: string, starts_at: number, series_title: s
                 await new_page.waitForNetworkIdle();
                 await new_page.evaluate(() => {
                     const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
-                    button.click();
+                    if (button) button.click();
                 })
                 let imagefiles = await new_page.evaluate(() =>
                     Array.from(
