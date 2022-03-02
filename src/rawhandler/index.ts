@@ -260,7 +260,7 @@ async function ripLatest(series_array: SeriesItem[]) {
         await new_page.goto(series_url);
         await new_page.waitForNetworkIdle();
         await new_page.screenshot({ path: `./series-${seriesID}.png` })
-        console.log(new_page.cookies());
+        console.log(await new_page.cookies());
         let chapter_id = await new_page.evaluate(() => {
             let chapterss = Array.from(document.querySelectorAll<Chapter>('li[data-available="true"]'));
             let all: string[] = [];
@@ -291,7 +291,13 @@ async function ripLatest(series_array: SeriesItem[]) {
                         if (button) button.click();
                     })
 
-                    let real_number = 'latest';
+                    let real_number = await new_page.evaluate(() => {
+                        const title = document.querySelector<HTMLDivElement>('div.titleWrap');
+                        if (title) {
+                            return title.innerText.replaceAll(/\D/g, "");
+                        }
+                        else return 'latest';
+                    })
                     let imagefiles = await new_page.evaluate(() =>
                         Array.from(
                             document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
