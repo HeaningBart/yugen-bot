@@ -51,6 +51,10 @@ const commands = [
         .addNumberOption(number =>
             number.setName('startsat')
                 .setDescription('enter the number that chapter numbering starts')
+                .setRequired(true))
+        .addStringOption(string =>
+            string.setName('title')
+                .setDescription('name of the series')
                 .setRequired(true)),
 
     new SlashCommandBuilder()
