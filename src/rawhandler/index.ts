@@ -25,9 +25,9 @@ type ChapterProps = {
 
 type Chapter = HTMLDivElement & ChapterProps;
 
-async function handleChapter(images_array: string[], number: string) {
+async function handleChapter(images_array: string[], number: string, title: string) {
     try {
-        const random = randomstring.generate();
+        const random = title;
         const directory = `dist-${number}-${random}`;
         const waifu_directory = `waifu-${number}-${random}`;
         const chaptername = `chapter-${number}-${random}`;
@@ -59,7 +59,7 @@ async function handleChapter(images_array: string[], number: string) {
     }
 }
 
-async function handleTicket(seriesId: string, starts_at: number) {
+async function handleTicket(seriesId: string, starts_at: number, series_title: string) {
     const series_url = 'https://page.kakao.com/home?seriesId=' + seriesId;
     const buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
 
@@ -135,7 +135,7 @@ async function handleTicket(seriesId: string, starts_at: number) {
 
     let chapters: string[] = [];
 
-    const downloadChapter = async (productid: string, number: number, starts_at: number) => {
+    const downloadChapter = async (productid: string, number: number, starts_at: number, title: string) => {
         try {
             const new_page = await browser.newPage();
             const url = 'https://page.kakao.com/viewer?productId=' + productid;
@@ -162,7 +162,7 @@ async function handleTicket(seriesId: string, starts_at: number) {
                 )
                 const real_number = number + starts_at;
                 console.log(imagefiles)
-                let chapterfile = await handleChapter(imagefiles, real_number.toString());
+                let chapterfile = await handleChapter(imagefiles, real_number.toString(), title);
                 if (chapterfile) chapters.push(chapterfile);
                 await new_page.close();
             } else {
@@ -179,7 +179,7 @@ async function handleTicket(seriesId: string, starts_at: number) {
                 )
                 console.log(imagefiles)
                 const real_number = number + starts_at;
-                let chapterfile = await handleChapter(imagefiles, real_number.toString());
+                let chapterfile = await handleChapter(imagefiles, real_number.toString(), title);
                 if (chapterfile) chapters.push(chapterfile);
                 await new_page.close();
             }
@@ -197,14 +197,19 @@ async function handleTicket(seriesId: string, starts_at: number) {
     // console.log(split_promises);
     console.log(chapters_ids);
     for (let i = 0; i <= split_promises.length - 1; i++) {
-        await Promise.all(split_promises[i].map(({ id, number }) => downloadChapter(id, parseInt(number), starts_at)));
+        await Promise.all(split_promises[i].map(({ id, number }) => downloadChapter(id, parseInt(number), starts_at, series_title)));
     }
     console.log(chapters);
     await browser.close();
     return chapters;
 }
 
-async function ripLatest(series_array: string[]) {
+type SeriesItem = {
+    id: string;
+    title: string;
+}
+
+async function ripLatest(series_array: SeriesItem[]) {
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     const pageTarget = page.target();
@@ -239,7 +244,7 @@ async function ripLatest(series_array: string[]) {
     })
     let chapters: string[] = [];
 
-    const handleSeries = async (seriesID: string, browser: Browser) => {
+    const handleSeries = async (seriesID: string, browser: Browser, series_name: string) => {
         let series_url = 'https://page.kakao.com/home?seriesId=' + seriesID + '&orderby=desc';
         let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesID;
         const new_page = await browser.newPage();
@@ -265,7 +270,7 @@ async function ripLatest(series_array: string[]) {
 
         console.log(chapter_id);
 
-        const downloadChapter = async (productid: string) => {
+        const downloadChapter = async (productid: string, title: string) => {
             try {
                 const url = 'https://page.kakao.com/viewer?productId=' + productid;
                 await new_page.goto(url);
@@ -292,7 +297,7 @@ async function ripLatest(series_array: string[]) {
                             document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
                     )
                     console.log(imagefiles)
-                    let chapterfile = await handleChapter(imagefiles, real_number);
+                    let chapterfile = await handleChapter(imagefiles, real_number, title);
                     if (chapterfile) chapters.push(chapterfile);
                     else chapters.push(`./chapter-${productid}.jpeg`);
                     await new_page.close();
@@ -311,7 +316,7 @@ async function ripLatest(series_array: string[]) {
                             document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
                     )
                     console.log(imagefiles)
-                    let chapterfile = await handleChapter(imagefiles, real_number);
+                    let chapterfile = await handleChapter(imagefiles, real_number, title);
                     if (chapterfile) chapters.push(chapterfile);
                     else chapters.push(`./chapter-${productid}.jpeg`);
                     await new_page.close();
@@ -322,7 +327,7 @@ async function ripLatest(series_array: string[]) {
             }
         }
 
-        await downloadChapter(chapter_id);
+        await downloadChapter(chapter_id, series_name);
 
     }
 
@@ -335,7 +340,7 @@ async function ripLatest(series_array: string[]) {
 
     console.log(series_array);
     for (let i = 0; i <= split_promises.length - 1; i++) {
-        await Promise.all(split_promises[i].map((series) => handleSeries(series, browser)));
+        await Promise.all(split_promises[i].map(({ id, title }) => handleSeries(id, browser, title)));
     }
     console.log(chapters);
     await browser.close();
