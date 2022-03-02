@@ -243,6 +243,7 @@ async function ripLatest(series_array: string[]) {
         console.log(buy_url);
         const series_page = await browser.newPage();
         await series_page.goto(buy_url);
+        await series_page.waitForNetworkIdle();
         await series_page.click('button[type="submit"]');
         await series_page.click('button[type="button"].btnBuy');
         await series_page.waitForTimeout(5000);
