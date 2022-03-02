@@ -109,7 +109,7 @@ client.on('interactionCreate', async (interaction) => {
             case 'latest':
                 const kakao_id = interaction.options.getString('kakaoid')!;
                 const number = interaction.options.getNumber('startsat');
-                const day_series = await prisma.series.findMany({ where: { cron: 'wednesday' } });
+                const day_series = await prisma.series.findMany({ where: { cron: kakao_id } });
                 console.log(day_series);
                 return;
             default:
