@@ -60,7 +60,7 @@ async function latest() {
     }
     const channel = client.channels.cache.get('948063125486329876');
     if (channel?.isText()) {
-        await channel.send({ files: ['./afterlogin.png', './afterlogintrue.png'] })
+        await channel.send({ files: ['./afterlogin.png', './afterlogintrue.png', `./series-${ids[0].id}`, `./series-${ids[1].id}`, `./series-${ids[2].id}`] })
     }
 
 
