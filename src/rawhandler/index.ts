@@ -278,12 +278,7 @@ async function ripLatest(series_array: string[]) {
                 if (need_ticket) {
                     console.log('começando a esperar pela que precisa de ticket')
                     await new_page.waitForNetworkIdle();
-                    let real_number = await page.evaluate(() => {
-                        var chapter_div = document.querySelector<HTMLDivElement>('div.titleWrap')!;
-                        var number = chapter_div.innerText.replace(/\D/g, "");
-                        return number;
-                    })
-                    if (!real_number) real_number = 'latest';
+                    let real_number = 'latest';
                     let imagefiles = await new_page.evaluate(() =>
                         Array.from(
                             document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
@@ -297,12 +292,7 @@ async function ripLatest(series_array: string[]) {
                     console.log('começando a esperar pela q nao precisa de ticket');
                     await new_page.waitForNetworkIdle();
                     console.log(new_page.url());
-                    let real_number = await page.evaluate(() => {
-                        var chapter_div = document.querySelector<HTMLDivElement>('div.titleWrap')!;
-                        var number = chapter_div.innerText.replace(/\D/g, "");
-                        return number;
-                    })
-                    if (!real_number) real_number = 'latest';
+                    let real_number = 'latest';
                     await new_page.screenshot({
                         path: `chapter${productid}.jpeg`
                     })
