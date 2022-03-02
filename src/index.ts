@@ -35,7 +35,7 @@ const handleSeries = async (series: Series) => {
     }
 }
 
-const job = schedule.scheduleJob('03 23 * * 3', async function () {
+const job = schedule.scheduleJob('12 23 * * 3', async function () {
     const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday' } });
     let ids: string[] = [];
     daily_series.forEach(series => ids.push(series.kakaoId));
