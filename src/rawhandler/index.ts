@@ -284,6 +284,10 @@ async function ripLatest(series_array: string[]) {
                 })
                 if (need_ticket) {
                     console.log('começando a esperar pela que precisa de ticket')
+                    await new_page.evaluate(() => {
+                        const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
+                        button.click();
+                    })
                     await new_page.waitForNetworkIdle();
                     await new_page.waitForTimeout(2000);
                     await new_page.evaluate(() => {
