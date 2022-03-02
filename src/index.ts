@@ -53,7 +53,7 @@ async function latest() {
             const channel = client.channels.cache.get(daily_series[i].channel);
             if (channel?.isText()) {
                 const file = files.filter(file => file.includes(daily_series[i].slug))
-                await channel.send({ files: [files[i]] })
+                await channel.send({ files: [file[0]] })
                 // await channel.send(`<@&${daily_series[i].role}>`)
                 await channel.send('Weekly RP done.')
             }
