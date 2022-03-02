@@ -282,8 +282,8 @@ async function ripLatest(series_array: string[]) {
                     await new_page.waitForTimeout(2000);
                     await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                     await new_page.evaluate(() => {
-                        const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
-                        button.click();
+                        const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)');
+                        if (button) button.click();
                     })
 
                     let real_number = 'latest';
