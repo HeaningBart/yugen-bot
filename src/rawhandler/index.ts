@@ -10,7 +10,20 @@ const { email, password } = require('../../config.json');
 // Relative paths
 const waifu = path.resolve(__dirname);
 
+type chapterItem = {
+    id: string;
+    number: string;
+}
 
+type ChapterProps = {
+    attributes: {
+        'data-productid': {
+            value: string;
+        }
+    }
+}
+
+type Chapter = HTMLDivElement & ChapterProps;
 
 async function handleChapter(images_array: string[], number: string) {
     try {
@@ -58,22 +71,24 @@ async function handleTicket(seriesId: string, starts_at: number) {
     await page.click('div.css-vurnku:nth-child(3)');
     const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
     const newPage = await newTarget.page();
-    await newPage.waitForNetworkIdle();
-    await newPage.screenshot({
-        path: './kakaologin.png'
-    })
-    console.log(newPage.url());
-    await newPage.setViewport({ width: 1080, height: 1080 });
-    await newPage.type('input[name="email"]', email);
-    await newPage.type('input[name="password"]', password);
-    await newPage.click('input#staySignedIn');
-    await newPage.click('button.btn_confirm');
+    if (newPage) {
+        await newPage.waitForNetworkIdle();
+        await newPage.screenshot({
+            path: './kakaologin.png'
+        })
+        console.log(newPage.url());
+        await newPage.setViewport({ width: 1080, height: 1080 });
+        await newPage.type('input[name="email"]', email);
+        await newPage.type('input[name="password"]', password);
+        await newPage.click('input#staySignedIn');
+        await newPage.click('button.btn_confirm');
 
 
 
-    await newPage.screenshot({
-        path: './afterlogin.png'
-    });
+        await newPage.screenshot({
+            path: './afterlogin.png'
+        });
+    }
 
     await page.waitForTimeout(15000);
 
@@ -105,20 +120,20 @@ async function handleTicket(seriesId: string, starts_at: number) {
     await page.screenshot({ path: './teste.png' });
 
     await page.evaluate(() => {
-        const chapsnot = document.querySelectorAll("li[data-available='false']");
+        const chapsnot = document.querySelectorAll<HTMLDivElement>("li[data-available='false']");
         for (let chap of chapsnot) {
             chap.remove();
         }
     })
 
     var chapters_ids = await page.evaluate(() => {
-        let chapters = Array.from(document.querySelectorAll('li[data-available="true"]'));
-        let all = [];
-        chapters.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
+        let chapters = Array.from(document.querySelectorAll<Chapter>('li[data-available="true"]'));
+        let all: chapterItem[] = [];
+        chapters.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index.toString() }));
         return all;
     })
 
-    let chapters = [];
+    let chapters: string[] = [];
 
     const downloadChapter = async (productid: string, number: number, starts_at: number) => {
         try {
@@ -143,7 +158,7 @@ async function handleTicket(seriesId: string, starts_at: number) {
                 const real_number = number + starts_at;
                 console.log(imagefiles)
                 let chapterfile = await handleChapter(imagefiles, real_number.toString());
-                chapters.push(chapterfile);
+                if (chapterfile) chapters.push(chapterfile);
                 await new_page.close();
             } else {
                 console.log('começando a esperar pela q nao precisa de ticket');
@@ -176,7 +191,7 @@ async function handleTicket(seriesId: string, starts_at: number) {
     // console.log(split_promises);
     console.log(chapters_ids);
     for (let i = 0; i <= split_promises.length - 1; i++) {
-        await Promise.all(split_promises[i].map(({ id, number }) => downloadChapter(id, number, starts_at)));
+        await Promise.all(split_promises[i].map(({ id, number }) => downloadChapter(id, parseInt(number), starts_at)));
     }
     console.log(chapters);
     await browser.close();
@@ -192,22 +207,24 @@ async function ripLatest(series_array: string[]) {
     await page.click('div.css-vurnku:nth-child(3)');
     const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
     const newPage = await newTarget.page();
-    await newPage.waitForNetworkIdle();
-    await newPage.screenshot({
-        path: './kakaologin.png'
-    })
-    console.log(newPage.url());
-    await newPage.setViewport({ width: 1080, height: 1080 });
-    await newPage.type('input[name="email"]', email);
-    await newPage.type('input[name="password"]', password);
-    await newPage.click('input#staySignedIn');
-    await newPage.click('button.btn_confirm');
+    if (newPage) {
+        await newPage.waitForNetworkIdle();
+        await newPage.screenshot({
+            path: './kakaologin.png'
+        })
+        console.log(newPage.url());
+        await newPage.setViewport({ width: 1080, height: 1080 });
+        await newPage.type('input[name="email"]', email);
+        await newPage.type('input[name="password"]', password);
+        await newPage.click('input#staySignedIn');
+        await newPage.click('button.btn_confirm');
+        await newPage.screenshot({
+            path: './afterlogin.png'
+        });
+    }
 
 
 
-    await newPage.screenshot({
-        path: './afterlogin.png'
-    });
 
 
 
@@ -216,9 +233,9 @@ async function ripLatest(series_array: string[]) {
     await page.screenshot({
         path: './afterlogintrue.png'
     })
-    let chapters = [];
+    let chapters: string[] = [];
 
-    const handleSeries = async (seriesID) => {
+    const handleSeries = async (seriesID: string) => {
         let series_url = 'https://page.kakao.com/home?seriesId=' + seriesID + '&orderby=desc';
         let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesID;
 
@@ -236,8 +253,8 @@ async function ripLatest(series_array: string[]) {
 
         await series_page.waitForNetworkIdle();
         let chapter_id = await series_page.evaluate(() => {
-            let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
-            let all = [];
+            let chapterss = Array.from(document.querySelectorAll<Chapter>('li[data-available="true"]'));
+            let all: string[] = [];
             chapterss.forEach((chapter, index) => all.push(chapter.attributes['data-productid'].value));
             return all[0];
         })
@@ -261,21 +278,29 @@ async function ripLatest(series_array: string[]) {
                 if (need_ticket) {
                     console.log('começando a esperar pela que precisa de ticket')
                     await new_page.waitForNetworkIdle();
+                    const real_number = await page.evaluate(() => {
+                        var chapter_div = document.querySelector<HTMLDivElement>('div.titleWrap')!;
+                        var number = chapter_div.innerText.replace(/\D/g, "");
+                        return number;
+                    })
                     let imagefiles = await new_page.evaluate(() =>
                         Array.from(
                             document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
                     )
                     console.log(imagefiles)
-                    const real_number = 'latest'
                     let chapterfile = await handleChapter(imagefiles, real_number);
                     if (chapterfile) chapters.push(chapterfile);
                     else chapters.push(`./chapter-${productid}.jpeg`);
                     await new_page.close();
                 } else {
                     console.log('começando a esperar pela q nao precisa de ticket');
-                    console.log(new_page.url());
-                    const real_number = 'latest'
                     await new_page.waitForNetworkIdle();
+                    console.log(new_page.url());
+                    const real_number = await page.evaluate(() => {
+                        var chapter_div = document.querySelector<HTMLDivElement>('div.titleWrap')!;
+                        var number = chapter_div.innerText.replace(/\D/g, "");
+                        return number;
+                    })
                     await new_page.screenshot({
                         path: `chapter${productid}.jpeg`
                     })

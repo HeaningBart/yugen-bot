@@ -1,6 +1,6 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
-const { buyTicket, ripLatest } = require('./rawhandler/index.js');
+import { handleTicket as buyTicket, ripLatest } from './rawhandler'
 import initialize from './commands';
 import Handler from './handlers';
 import fs from 'fs/promises'

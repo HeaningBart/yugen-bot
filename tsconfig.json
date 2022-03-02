@@ -6,10 +6,12 @@
     "rootDir": "./src",
     "lib": [
       "ES6",
-      "es2021"
+      "es2021",
+      "DOM",
+      "DOM.Iterable"
     ],
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
   },
   "include": [
     "src/**/*",

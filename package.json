@@ -16,6 +16,7 @@
     "@prisma/client": "^3.9.2",
     "@types/adm-zip": "^0.4.34",
     "@types/download": "^8.0.1",
+    "@types/randomstring": "^1.1.8",
     "adm-zip": "^0.5.9",
     "discord-api-types": "^0.27.1",
     "discord.js": "^13.6.0",
