@@ -285,6 +285,11 @@ async function ripLatest(series_array: string[]) {
                 if (need_ticket) {
                     console.log('começando a esperar pela que precisa de ticket')
                     await new_page.waitForNetworkIdle();
+                    await new_page.waitForTimeout(2000);
+                    await new_page.evaluate(() => {
+                        const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
+                        button.click();
+                    })
                     let real_number = 'latest';
                     let imagefiles = await new_page.evaluate(() =>
                         Array.from(
@@ -298,6 +303,7 @@ async function ripLatest(series_array: string[]) {
                 } else {
                     console.log('começando a esperar pela q nao precisa de ticket');
                     await new_page.waitForNetworkIdle();
+                    await new_page.waitForTimeout(2000);
                     console.log(new_page.url());
                     let real_number = 'latest';
                     await new_page.screenshot({
