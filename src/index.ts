@@ -35,10 +35,15 @@ const handleSeries = async (series: Series) => {
     }
 }
 
+type SeriesItem = {
+    id: string;
+    title: string;
+}
+
 async function latest() {
     const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday' } });
-    let ids: string[] = [];
-    daily_series.forEach(series => ids.push(series.kakaoId));
+    let ids: SeriesItem[] = [];
+    daily_series.forEach(series => ids.push({ id: series.kakaoId, title: series.slug }));
     const files = await ripLatest(ids);
 
     for (let i = 0; i <= files.length - 1; i++) {
@@ -77,14 +82,14 @@ client.on('interactionCreate', async (interaction) => {
     } else {
         switch (type) {
             case 'mass':
-                const id = interaction.options.getString('kakaoid')!;
-                const starts_at = interaction.options.getNumber('startsat')!;
-                const chapters = await buyTicket(id, starts_at);
-                await interaction.editReply('Done.');
-                await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
-                await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
-                await interaction.channel?.send('RP done.')
-                return;
+            // const id = interaction.options.getString('kakaoid')!;
+            // const starts_at = interaction.options.getNumber('startsat')!;
+            // const chapters = await buyTicket(id, starts_at);
+            // await interaction.editReply('Done.');
+            // await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
+            // await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
+            // await interaction.channel?.send('RP done.')
+            // return;
             case 'add':
                 const role = interaction.options.getRole('role')!;
                 const channel = interaction.options.getChannel('channel')!;
