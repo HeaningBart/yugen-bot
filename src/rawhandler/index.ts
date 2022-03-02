@@ -272,13 +272,13 @@ async function ripLatest(series_array: string[]) {
             try {
                 const new_page = await browser.newPage();
                 const url = 'https://page.kakao.com/viewer?productId=' + productid;
-                await new_page.setViewport({ width: 1080, height: 1080 });
+                await new_page.setViewport({ width: 1665, height: 941 });
                 await new_page.goto(url);
                 console.log('vou começar a esperar agora')
                 await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                 await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
                 const need_ticket = await new_page.evaluate(() => {
-                    const button = document.querySelector('span.btnBox > span:nth-child(2)');
+                    const button = document.querySelector<HTMLDivElement>('div.preventMobileBodyScroll');
                     if (button) return true;
                     else return false;
                 })
