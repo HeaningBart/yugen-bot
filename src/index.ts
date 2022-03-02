@@ -48,7 +48,7 @@ async function latest() {
 
     for (let i = 0; i <= files.length - 1; i++) {
         try {
-            const channel = client.channels.cache.get('948063125486329876');
+            const channel = client.channels.cache.get(daily_series[i].channel);
             if (channel?.isText()) {
                 await channel.send({ files: [files[i]] })
                 // await channel.send(`<@&${daily_series[i].role}>`)
