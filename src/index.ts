@@ -35,7 +35,7 @@ const handleSeries = async (series: Series) => {
     }
 }
 
-const job = schedule.scheduleJob('2 22 * * 3', async function () {
+const job = schedule.scheduleJob('25 22 * * 3', async function () {
     const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday' } });
     let ids: string[] = [];
     daily_series.forEach(series => ids.push(series.kakaoId));
@@ -121,8 +121,6 @@ client.on('interactionCreate', async (interaction) => {
                 await interaction.editReply('Done.');
                 return;
             case 'latest':
-                const kakao_id = interaction.options.getString('kakaoid')!;
-                await prisma.series.delete({ where: { id: parseInt(kakao_id) } });
                 await interaction.editReply('Done.');
                 return;
             default:
