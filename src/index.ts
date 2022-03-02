@@ -53,6 +53,11 @@ async function latest() {
             console.log(error);
         }
     }
+    const channel = client.channels.cache.get('948063125486329876');
+    if (channel?.isText()) {
+        await channel.send({ files: ['./afterlogin.png', './afterlogintrue.png', ''] })
+    }
+
 
 }
 
