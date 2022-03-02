@@ -339,7 +339,7 @@ async function ripLatest(series_array: SeriesItem[]) {
 
 
     let split_promises = [];
-    var size = 4;
+    var size = 1;
     for (var i = 0; i < series_array.length; i += size) {
         split_promises.push(series_array.slice(i, i + size));
     }
