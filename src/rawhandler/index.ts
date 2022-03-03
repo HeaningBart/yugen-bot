@@ -190,7 +190,7 @@ async function handleTicket(seriesId: string, starts_at: number, series_title: s
         }
 
         let split_promises = [];
-        var size = 4;
+        var size = 3;
         for (var i = 0; i < chapters_ids.length; i += size) {
             split_promises.push(chapters_ids.slice(i, i + size));
         }
