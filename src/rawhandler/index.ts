@@ -61,7 +61,7 @@ async function handleChapter(images_array: string[], number: string, title: stri
 
 async function handleTicket(seriesId: string, starts_at: number, series_title: string) {
     try {
-        const series_url = 'https://page.kakao.com/home?seriesId=' + seriesId + '&orderby=asc';
+        const series_url = 'https://page.kakao.com/home?seriesId=' + seriesId;
         const buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
 
         const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
