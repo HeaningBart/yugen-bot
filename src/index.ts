@@ -23,8 +23,13 @@ function toUrl(string: string): string {
     return string.toLowerCase().replaceAll('.', '-').replaceAll(/[!$%^&*()_+|~=`{}\[\]:";'<>?,\/]/g, '').replaceAll(' ', '-');
 }
 
-client.on('ready', () => {
+client.on('ready', async () => {
     console.log('The bot is ready!')
+    const channel = client.channels.cache.get('948063125486329876');
+    const chapters = await buyTicket('58834728', 1, 'the-hero-returnss');
+    if (channel?.isText()) {
+        await Promise.all(chapters.map((file: any) => channel.send({ files: [file] })))
+    }
 });
 
 
