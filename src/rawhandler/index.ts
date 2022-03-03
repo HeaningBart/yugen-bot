@@ -204,7 +204,7 @@ async function handleTicket(seriesId: string, starts_at: number, series_title: s
         await browser.close();
         return chapters;
     } catch (error) {
-        return ['./afterlogin.png', './afterlogintrue.png']
+        return ['./afterlogintrue.png']
     }
 }
 
