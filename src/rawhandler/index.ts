@@ -98,22 +98,22 @@ async function handleTicket(seriesId: string, starts_at: number, series_title: s
         })
 
         await page.goto(buy_url);
-        await page.waitForNetworkIdle();
-        await page.screenshot({
-            path: './buypage.png'
-        });
+        // await page.waitForNetworkIdle();
+        // await page.screenshot({
+        //     path: './buypage.png'
+        // });
 
-        await page.evaluate(() => {
-            var inputs = document.querySelectorAll('input');
-            inputs[3].click();
-        })
-        await page.screenshot({ path: 'afterevaluate.png' })
-        await page.click('button[type="submit"]');
-        await page.click('button[type="button"].btnBuy');
-        await page.waitForTimeout(5000);
-        await page.click('span.btnBox');
-        await page.waitForNavigation();
-        await page.waitForNetworkIdle();
+        // await page.evaluate(() => {
+        //     var inputs = document.querySelectorAll('input');
+        //     inputs[3].click();
+        // })
+        // await page.screenshot({ path: 'afterevaluate.png' })
+        // await page.click('button[type="submit"]');
+        // await page.click('button[type="button"].btnBuy');
+        // await page.waitForTimeout(5000);
+        // await page.click('span.btnBox');
+        // await page.waitForNavigation();
+        // await page.waitForNetworkIdle();
         await page.goto(series_url);
 
         await page.waitForNetworkIdle();
