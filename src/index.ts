@@ -87,6 +87,8 @@ client.on('interactionCreate', async (interaction) => {
                 await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
                 await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
                 await interaction.channel?.send('RP done.')
+                await interaction.editReply('Done.');
+                return;
             // return;
             case 'add':
                 const role = interaction.options.getRole('role')!;
@@ -128,10 +130,6 @@ client.on('interactionCreate', async (interaction) => {
                     await prisma.series.update({ where: { id: series_id }, data: { weekly: weekly_status } });
                     await interaction.channel?.send('Series updated.');
                 } else await interaction.channel?.send('Series does not exist.')
-                await interaction.editReply('Done.');
-                return;
-            case 'latest':
-                await latest();
                 await interaction.editReply('Done.');
                 return;
             default:

@@ -249,14 +249,14 @@ async function ripLatest(series_array: SeriesItem[]) {
         let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesID;
         const new_page = await browser.newPage();
         await new_page.setViewport({ width: 1080, height: 1080 });
-        // await series_page.goto(buy_url);
-        // await series_page.waitForNetworkIdle();
-        // await series_page.click('button[type="submit"]');
-        // await series_page.click('button[type="button"].btnBuy');
-        // await series_page.waitForTimeout(5000);
-        // await series_page.click('span.btnBox');
-        // await series_page.waitForNavigation();
-        // await series_page.waitForNetworkIdle();
+        await new_page.goto(buy_url);
+        await new_page.waitForNetworkIdle();
+        await new_page.click('button[type="submit"]');
+        await new_page.click('button[type="button"].btnBuy');
+        await new_page.waitForTimeout(5000);
+        await new_page.click('span.btnBox');
+        await new_page.waitForNavigation();
+        await new_page.waitForNetworkIdle();
         await new_page.goto(series_url);
         await new_page.waitForNetworkIdle();
         await new_page.screenshot({ path: `./series-${seriesID}.png` })

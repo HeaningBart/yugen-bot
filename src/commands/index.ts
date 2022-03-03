@@ -87,16 +87,12 @@ const commands = [
                 .setRequired(true)),
 
     new SlashCommandBuilder()
-        .setName('latest')
-        .setDescription('Download the latest chapter of a series')
+        .setName('remove')
+        .setDescription('Remove a series from our database')
         .addStringOption(string =>
             string.setName('kakaoid')
                 .setDescription('Type the kakaoID of the series.')
                 .setRequired(true))
-        .addNumberOption(number =>
-            number.setName('startsat')
-                .setDescription('enter the number of the latest chapter')
-                .setRequired(true)),
 
 ]
 
