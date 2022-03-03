@@ -60,148 +60,152 @@ async function handleChapter(images_array: string[], number: string, title: stri
 }
 
 async function handleTicket(seriesId: string, starts_at: number, series_title: string) {
-    const series_url = 'https://page.kakao.com/home?seriesId=' + seriesId + '&orderby=asc';
-    const buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
+    try {
+        const series_url = 'https://page.kakao.com/home?seriesId=' + seriesId + '&orderby=asc';
+        const buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-    const page = await browser.newPage();
-    const pageTarget = page.target();
-    await page.setViewport({ width: 1080, height: 1080 });
-    await page.goto('https://page.kakao.com/main');
-    await page.click('div.css-vurnku:nth-child(3)');
-    const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
-    const newPage = await newTarget.page();
-    if (newPage) {
-        await newPage.waitForNetworkIdle();
-        await newPage.screenshot({
-            path: './kakaologin.png'
-        })
-        console.log(newPage.url());
-        await newPage.setViewport({ width: 1080, height: 1080 });
-        await newPage.type('input[name="email"]', email);
-        await newPage.type('input[name="password"]', password);
-        await newPage.click('input#staySignedIn');
-        await newPage.click('button.btn_confirm');
-
-
-
-        await newPage.screenshot({
-            path: './afterlogin.png'
-        });
-    }
-
-    await page.waitForTimeout(15000);
-
-    await page.screenshot({
-        path: './afterlogintrue.png'
-    })
-
-    await page.goto(buy_url);
-    await page.waitForNetworkIdle();
-    await page.screenshot({
-        path: './buypage.png'
-    });
-
-    // await page.evaluate(() => {
-    //     var inputs = document.querySelectorAll('input');
-    //     inputs[3].click();
-    // })
-    // await page.screenshot({ path: 'afterevaluate.png' })
-    // await page.click('button[type="submit"]');
-    // await page.click('button[type="button"].btnBuy');
-    // await page.waitForTimeout(5000);
-    // await page.click('span.btnBox');
-    // await page.waitForNavigation();
-    // await page.waitForNetworkIdle();
-    await page.goto(series_url);
-
-    await page.waitForNetworkIdle();
-
-    await page.screenshot({ path: './teste.png' });
-
-    await page.evaluate(() => {
-        const chapsnot = document.querySelectorAll<HTMLDivElement>("li[data-available='false']");
-        for (let chap of chapsnot) {
-            chap.remove();
-        }
-    })
-
-    var chapters_ids = await page.evaluate(() => {
-        let chapters = Array.from(document.querySelectorAll<Chapter>('li[data-available="true"]'));
-        let all: chapterItem[] = [];
-        chapters.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index.toString() }));
-        return all;
-    })
-
-    let chapters: string[] = [];
-
-    const downloadChapter = async (productid: string, number: number, starts_at: number, title: string) => {
-        try {
-            const new_page = await browser.newPage();
-            const url = 'https://page.kakao.com/viewer?productId=' + productid;
-            await new_page.setViewport({ width: 1080, height: 1080 });
-            await new_page.goto(url);
-            console.log('vou começar a esperar agora')
-            await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
-            await new_page.waitForTimeout(2000);
-            const need_ticket = await new_page.evaluate(() => {
-                const button = document.querySelector('span.btnBox > span:nth-child(2)');
-                if (button) return true;
-                else return false;
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        const page = await browser.newPage();
+        const pageTarget = page.target();
+        await page.setViewport({ width: 1080, height: 1080 });
+        await page.goto('https://page.kakao.com/main');
+        await page.click('div.css-vurnku:nth-child(3)');
+        const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
+        const newPage = await newTarget.page();
+        if (newPage) {
+            await newPage.waitForNetworkIdle();
+            await newPage.screenshot({
+                path: './kakaologin.png'
             })
-            if (need_ticket) {
-                console.log('começando a esperar pela que precisa de ticket')
-                await new_page.waitForNetworkIdle();
-                await new_page.evaluate(() => {
-                    const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
-                    if (button) button.click();
-                })
-                let imagefiles = await new_page.evaluate(() =>
-                    Array.from(
-                        document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
-                )
-                const real_number = number + starts_at;
-                console.log(imagefiles)
-                let chapterfile = await handleChapter(imagefiles, real_number.toString(), title);
-                if (chapterfile) chapters.push(chapterfile);
-                await new_page.close();
-            } else {
-                console.log('começando a esperar pela q nao precisa de ticket');
-                console.log(new_page.url());
-                await new_page.waitForNetworkIdle();
-                await new_page.waitForTimeout(2000);
-                await new_page.screenshot({
-                    path: `chapter${number}.png`
-                })
-                let imagefiles = await new_page.evaluate(() =>
-                    Array.from(
-                        document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
-                )
-                console.log(imagefiles)
-                const real_number = number + starts_at;
-                let chapterfile = await handleChapter(imagefiles, real_number.toString(), title);
-                if (chapterfile) chapters.push(chapterfile);
-                await new_page.close();
-            }
-        } catch (error) {
-            console.log(error)
+            console.log(newPage.url());
+            await newPage.setViewport({ width: 1080, height: 1080 });
+            await newPage.type('input[name="email"]', email);
+            await newPage.type('input[name="password"]', password);
+            await newPage.click('input#staySignedIn');
+            await newPage.click('button.btn_confirm');
+
+
+
+            await newPage.screenshot({
+                path: './afterlogin.png'
+            });
         }
-    }
 
-    let split_promises = [];
-    var size = 4;
-    for (var i = 0; i < chapters_ids.length; i += size) {
-        split_promises.push(chapters_ids.slice(i, i + size));
-    }
+        await page.waitForTimeout(15000);
 
-    // console.log(split_promises);
-    console.log(chapters_ids);
-    for (let i = 0; i <= split_promises.length - 1; i++) {
-        await Promise.all(split_promises[i].map(({ id, number }) => downloadChapter(id, parseInt(number), starts_at, series_title)));
+        await page.screenshot({
+            path: './afterlogintrue.png'
+        })
+
+        await page.goto(buy_url);
+        await page.waitForNetworkIdle();
+        await page.screenshot({
+            path: './buypage.png'
+        });
+
+        await page.evaluate(() => {
+            var inputs = document.querySelectorAll('input');
+            inputs[3].click();
+        })
+        await page.screenshot({ path: 'afterevaluate.png' })
+        await page.click('button[type="submit"]');
+        await page.click('button[type="button"].btnBuy');
+        await page.waitForTimeout(5000);
+        await page.click('span.btnBox');
+        await page.waitForNavigation();
+        await page.waitForNetworkIdle();
+        await page.goto(series_url);
+
+        await page.waitForNetworkIdle();
+
+        await page.screenshot({ path: './teste.png' });
+
+        await page.evaluate(() => {
+            const chapsnot = document.querySelectorAll<HTMLDivElement>("li[data-available='false']");
+            for (let chap of chapsnot) {
+                chap.remove();
+            }
+        })
+
+        var chapters_ids = await page.evaluate(() => {
+            let chapters = Array.from(document.querySelectorAll<Chapter>('li[data-available="true"]'));
+            let all: chapterItem[] = [];
+            chapters.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index.toString() }));
+            return all;
+        })
+
+        let chapters: string[] = [];
+
+        const downloadChapter = async (productid: string, number: number, starts_at: number, title: string) => {
+            try {
+                const new_page = await browser.newPage();
+                const url = 'https://page.kakao.com/viewer?productId=' + productid;
+                await new_page.setViewport({ width: 1080, height: 1080 });
+                await new_page.goto(url);
+                console.log('vou começar a esperar agora')
+                await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
+                await new_page.waitForTimeout(2000);
+                const need_ticket = await new_page.evaluate(() => {
+                    const button = document.querySelector('span.btnBox > span:nth-child(2)');
+                    if (button) return true;
+                    else return false;
+                })
+                if (need_ticket) {
+                    console.log('começando a esperar pela que precisa de ticket')
+                    await new_page.waitForNetworkIdle();
+                    await new_page.evaluate(() => {
+                        const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)')!;
+                        if (button) button.click();
+                    })
+                    let imagefiles = await new_page.evaluate(() =>
+                        Array.from(
+                            document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
+                    )
+                    const real_number = number + starts_at;
+                    console.log(imagefiles)
+                    let chapterfile = await handleChapter(imagefiles, real_number.toString(), title);
+                    if (chapterfile) chapters.push(chapterfile);
+                    await new_page.close();
+                } else {
+                    console.log('começando a esperar pela q nao precisa de ticket');
+                    console.log(new_page.url());
+                    await new_page.waitForNetworkIdle();
+                    await new_page.waitForTimeout(2000);
+                    await new_page.screenshot({
+                        path: `chapter${number}.png`
+                    })
+                    let imagefiles = await new_page.evaluate(() =>
+                        Array.from(
+                            document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
+                    )
+                    console.log(imagefiles)
+                    const real_number = number + starts_at;
+                    let chapterfile = await handleChapter(imagefiles, real_number.toString(), title);
+                    if (chapterfile) chapters.push(chapterfile);
+                    await new_page.close();
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        let split_promises = [];
+        var size = 4;
+        for (var i = 0; i < chapters_ids.length; i += size) {
+            split_promises.push(chapters_ids.slice(i, i + size));
+        }
+
+        // console.log(split_promises);
+        console.log(chapters_ids);
+        for (let i = 0; i <= split_promises.length - 1; i++) {
+            await Promise.all(split_promises[i].map(({ id, number }) => downloadChapter(id, parseInt(number), starts_at, series_title)));
+        }
+        console.log(chapters);
+        await browser.close();
+        return chapters;
+    } catch (error) {
+        return ['./afterlogin.png', './afterlogintrue.png']
     }
-    console.log(chapters);
-    await browser.close();
-    return chapters;
 }
 
 type SeriesItem = {

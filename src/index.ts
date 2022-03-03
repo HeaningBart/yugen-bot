@@ -35,25 +35,29 @@ type SeriesItem = {
 }
 
 const thursday_job = schedule.scheduleJob('1 22 * * 4', async function () {
-    const daily_series = await prisma.series.findMany({ where: { cron: 'thursday' } });
-    let ids: SeriesItem[] = [];
-    daily_series.forEach(series => ids.push({ id: series.kakaoId, title: series.slug }));
-    const files = await ripLatest(ids);
-    console.log(daily_series);
-    console.log(ids);
+    try {
+        const daily_series = await prisma.series.findMany({ where: { cron: 'thursday' } });
+        let ids: SeriesItem[] = [];
+        daily_series.forEach(series => ids.push({ id: series.kakaoId, title: series.slug }));
+        const files = await ripLatest(ids);
+        console.log(daily_series);
+        console.log(ids);
 
-    for (let i = 0; i <= files.length - 1; i++) {
-        try {
-            const channel = client.channels.cache.get(daily_series[i].channel);
-            if (channel?.isText()) {
-                const file = files.filter(file => file.includes(daily_series[i].slug))
-                await channel.send({ files: [file[0]], content: 'Weekly chapter' })
-                await channel.send(`<@&${daily_series[i].role}>, <@&>`)
-                await channel.send('Weekly RP done.')
+        for (let i = 0; i <= files.length - 1; i++) {
+            try {
+                const channel = client.channels.cache.get(daily_series[i].channel);
+                if (channel?.isText()) {
+                    const file = files.filter(file => file.includes(daily_series[i].slug))
+                    await channel.send({ files: [file[0]], content: 'Weekly chapter' })
+                    await channel.send(`<@&${daily_series[i].role}>, <@&>`)
+                    await channel.send('Weekly RP done.')
+                }
+            } catch (error) {
+                console.log(error);
             }
-        } catch (error) {
-            console.log(error);
         }
+    } catch (error) {
+        console.log(error);
     }
 })
 
@@ -126,6 +130,10 @@ client.on('interactionCreate', async (interaction) => {
                 } else await interaction.channel?.send('Series does not exist.')
                 await interaction.editReply('Done.');
                 return;
+            case 'remove':
+                const removed_id = interaction.options.getString('kakaoid')!;
+                await prisma.series.deleteMany({ where: { kakaoId: removed_id } });
+                await interaction.editReply('Series removed.');
             default:
                 await interaction.editReply('Done.');
                 return;
