@@ -28,20 +28,14 @@ client.on('ready', () => {
 });
 
 
-const handleSeries = async (series: Series) => {
-    const channel = client.channels.cache.get(series.channel);
-    if (channel?.isText()) {
-        await channel.send('Testing weekly raws.');
-    }
-}
 
 type SeriesItem = {
     id: string;
     title: string;
 }
 
-async function latest() {
-    const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday' } });
+const thursday_job = schedule.scheduleJob('1 22 * * 4', async function () {
+    const daily_series = await prisma.series.findMany({ where: { cron: 'thursday' } });
     let ids: SeriesItem[] = [];
     daily_series.forEach(series => ids.push({ id: series.kakaoId, title: series.slug }));
     const files = await ripLatest(ids);
@@ -53,15 +47,15 @@ async function latest() {
             const channel = client.channels.cache.get(daily_series[i].channel);
             if (channel?.isText()) {
                 const file = files.filter(file => file.includes(daily_series[i].slug))
-                await channel.send({ files: [file[0]] })
-                // await channel.send(`<@&${daily_series[i].role}>`)
+                await channel.send({ files: [file[0]], content: 'Weekly chapter' })
+                await channel.send(`<@&${daily_series[i].role}>, <@&>`)
                 await channel.send('Weekly RP done.')
             }
         } catch (error) {
             console.log(error);
         }
     }
-}
+})
 
 
 
