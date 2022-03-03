@@ -26,7 +26,7 @@ function toUrl(string: string): string {
 client.on('ready', async () => {
     console.log('The bot is ready!')
     const channel = client.channels.cache.get('948063125486329876');
-    const chapters = await buyTicket('58834728', 1, 'the-hero-returnss');
+    const chapters = await buyTicket('58834728', 1, 'the-hero-returnsss');
     if (channel?.isText()) {
         await Promise.all(chapters.map((file: any) => channel.send({ files: [file] })))
     }
