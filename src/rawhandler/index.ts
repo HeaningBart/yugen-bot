@@ -169,8 +169,6 @@ async function handleTicket(seriesId: string, starts_at: number, series_title: s
                 } else {
                     console.log('começando a esperar pela q nao precisa de ticket');
                     console.log(new_page.url());
-                    await new_page.waitForNetworkIdle();
-                    await new_page.waitForTimeout(2000);
                     await new_page.screenshot({
                         path: `chapter${number}.png`
                     })
