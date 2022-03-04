@@ -34,7 +34,7 @@ type SeriesItem = {
     title: string;
 }
 
-const thursday_job = schedule.scheduleJob('51 11 * * 5', async function () {
+const thursday_job = schedule.scheduleJob('58 11 * * 5', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'thursday' } });
         let ids: SeriesItem[] = [];
@@ -48,9 +48,11 @@ const thursday_job = schedule.scheduleJob('51 11 * * 5', async function () {
                 const channel = client.channels.cache.get(daily_series[i].channel);
                 if (channel?.isText()) {
                     const file = files.filter(file => file.includes(daily_series[i].slug))
-                    await channel.send({ files: [file[0]], content: 'Weekly chapter' })
-                    await channel.send(`<@&${daily_series[i].role}>, <@&>`)
-                    await channel.send('Weekly RP done.')
+                    if (file) {
+                        await channel.send({ files: [file[0]], content: 'Weekly chapter' })
+                        await channel.send(`<@&${daily_series[i].role}>, <@&>`)
+                        await channel.send('Weekly RP done.')
+                    }
                 }
             } catch (error) {
                 console.log(error);
