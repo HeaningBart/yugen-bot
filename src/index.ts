@@ -36,7 +36,7 @@ type SeriesItem = {
 
 const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
     try {
-        const daily_series = await prisma.series.findMany({ where: { cron: 'thursday' } });
+        const daily_series = await prisma.series.findMany({ where: { cron: 'thursday', weekly: true } });
         let ids: SeriesItem[] = [];
         daily_series.forEach(series => ids.push({ id: series.kakaoId, title: series.slug }));
         const files = await ripLatest(ids);
@@ -66,7 +66,7 @@ const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
 
 const friday_job = schedule.scheduleJob('01 22 * * 5', async function () {
     try {
-        const daily_series = await prisma.series.findMany({ where: { cron: 'friday' } });
+        const daily_series = await prisma.series.findMany({ where: { cron: 'friday', weekly: true } });
         let ids: SeriesItem[] = [];
         daily_series.forEach(series => ids.push({ id: series.kakaoId, title: series.slug }));
         const files = await ripLatest(ids);
