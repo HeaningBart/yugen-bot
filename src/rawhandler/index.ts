@@ -253,13 +253,13 @@ async function ripLatest(series_array: SeriesItem[]) {
         let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesID;
         const new_page = await browser.newPage();
         await new_page.setViewport({ width: 1080, height: 1080 });
-        await new_page.goto(buy_url);
-        await new_page.waitForNetworkIdle();
-        await new_page.click('button[type="submit"]');
-        await new_page.click('button[type="button"].btnBuy');
-        await new_page.waitForTimeout(2000);
-        await new_page.click('span.btnBox');
-        await new_page.waitForNetworkIdle();
+        // await new_page.goto(buy_url);
+        // await new_page.waitForNetworkIdle();
+        // await new_page.click('button[type="submit"]');
+        // await new_page.click('button[type="button"].btnBuy');
+        // await new_page.waitForTimeout(2000);
+        // await new_page.click('span.btnBox');
+        // await new_page.waitForNetworkIdle();
         await new_page.goto(series_url, { waitUntil: 'networkidle0' });
         await new_page.screenshot({ path: `./series-${seriesID}.png` })
         let chapter_id = await new_page.evaluate(() => {
@@ -291,6 +291,7 @@ async function ripLatest(series_array: SeriesItem[]) {
                     })
                     await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                     await new_page.waitForNetworkIdle({ timeout: 30 * 1000 });
+                    await new_page.waitForTimeout(10000);
                     await new_page.screenshot({ path: `after-networkidle-${productid}.jpeg` })
                     let real_number = await new_page.evaluate(() => {
                         const title = document.querySelector<HTMLDivElement>('div.titleWrap');
