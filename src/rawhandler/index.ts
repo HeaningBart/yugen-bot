@@ -280,6 +280,7 @@ async function ripLatest(series_array: SeriesItem[]) {
                 if (need_ticket) {
                     console.log('começando a esperar pela que precisa de ticket')
                     await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
+                    await new_page.waitForTimeout(10000);
                     await new_page.evaluate(() => {
                         const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)');
                         if (button) button.click();
@@ -306,6 +307,7 @@ async function ripLatest(series_array: SeriesItem[]) {
                     console.log('começando a esperar pela q nao precisa de ticket');
                     await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                     console.log(new_page.url());
+                    await new_page.waitForTimeout(10000);
                     let real_number = await new_page.evaluate(() => {
                         const title = document.querySelector<HTMLDivElement>('div.titleWrap');
                         if (title) {
