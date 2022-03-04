@@ -276,7 +276,12 @@ async function ripLatest(series_array: SeriesItem[]) {
                 const url = 'https://page.kakao.com/viewer?productId=' + productid;
                 await new_page.goto(url, { waitUntil: 'load' });
                 console.log('vou começar a esperar agora')
-                const need_ticket = await new_page.$('div.preventMobileBodyScroll')
+                await new_page.waitForTimeout(2000);
+                const need_ticket = await new_page.evaluate(() => {
+                    const button = document.querySelector('div.preventMobileBodyScroll');
+                    if (button) return true;
+                    else return false;
+                })
                 if (need_ticket) {
                     console.log('começando a esperar pela que precisa de ticket')
                     await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
