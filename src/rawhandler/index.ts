@@ -291,7 +291,7 @@ async function ripLatest(series_array: SeriesItem[]) {
                     })
                     await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
                     await new_page.waitForNetworkIdle({ timeout: 30 * 1000 });
-                    await new_page.screenshot({ path: `after-networkidle-${productid}` })
+                    await new_page.screenshot({ path: `after-networkidle-${productid}.jpeg` })
                     let real_number = await new_page.evaluate(() => {
                         const title = document.querySelector<HTMLDivElement>('div.titleWrap');
                         if (title) {

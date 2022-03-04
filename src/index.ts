@@ -34,7 +34,7 @@ type SeriesItem = {
     title: string;
 }
 
-const thursday_job = schedule.scheduleJob('58 11 * * 5', async function () {
+const thursday_job = schedule.scheduleJob('01 12 * * 5', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'thursday' } });
         let ids: SeriesItem[] = [];
