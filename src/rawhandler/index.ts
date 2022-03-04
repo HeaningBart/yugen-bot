@@ -32,14 +32,14 @@ async function handleChapter(images_array: string[], number: string, title: stri
         const waifu_directory = `waifu-${number}-${random}`;
         const chaptername = `chapter-${number}-${random}`;
 
-        await fs.mkdir(waifu_directory);
+        await fs.mkdir(waifu_directory, { recursive: true });
 
         await Promise.all(images_array.map((image, index) => download(image, `./${directory}`, {
             filename: `image-${index}.jpg`
         })));
         console.log('All images have been downloaded.')
 
-        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 10000 -cw 800 -w 2 -t ".jpg" -s 90`);
+        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpg" -s 90`);
         console.log('All images have been stitched.')
 
         await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg`, { cwd: waifu })
@@ -245,6 +245,7 @@ async function ripLatest(series_array: SeriesItem[]) {
     await page.screenshot({
         path: './afterlogintrue.png'
     })
+    await page.close();
     let chapters: string[] = [];
 
     const handleSeries = async (seriesID: string, browser: Browser, series_name: string) => {
@@ -256,18 +257,15 @@ async function ripLatest(series_array: SeriesItem[]) {
         await new_page.waitForNetworkIdle();
         await new_page.click('button[type="submit"]');
         await new_page.click('button[type="button"].btnBuy');
-        await new_page.waitForTimeout(5000);
+        await new_page.waitForTimeout(2000);
         await new_page.click('span.btnBox');
-        await new_page.waitForNavigation();
         await new_page.waitForNetworkIdle();
         await new_page.goto(series_url);
-        await new_page.waitForNetworkIdle();
         await new_page.screenshot({ path: `./series-${seriesID}.png` })
-        console.log(await new_page.cookies());
         let chapter_id = await new_page.evaluate(() => {
             let chapterss = Array.from(document.querySelectorAll<Chapter>('li[data-available="true"]'));
             let all: string[] = [];
-            chapterss.forEach((chapter, index) => all.push(chapter.attributes['data-productid'].value));
+            chapterss.forEach((chapter) => all.push(chapter.attributes['data-productid'].value));
             return all[0];
         })
 
@@ -276,14 +274,9 @@ async function ripLatest(series_array: SeriesItem[]) {
         const downloadChapter = async (productid: string, title: string) => {
             try {
                 const url = 'https://page.kakao.com/viewer?productId=' + productid;
-                await new_page.goto(url);
+                await new_page.goto(url, { waitUntil: 'load' });
                 console.log('vou começar a esperar agora')
-                await new_page.waitForNetworkIdle({ timeout: 120 * 1000 });
-                const need_ticket = await new_page.evaluate(() => {
-                    const button = document.querySelector<HTMLDivElement>('div.preventMobileBodyScroll');
-                    if (button) return true;
-                    else return false;
-                })
+                const need_ticket = await new_page.$('div.preventMobileBodyScroll')
                 if (need_ticket) {
                     console.log('começando a esperar pela que precisa de ticket')
                     await new_page.screenshot({ path: `chapter-${productid}.jpeg` })
@@ -291,7 +284,6 @@ async function ripLatest(series_array: SeriesItem[]) {
                         const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)');
                         if (button) button.click();
                     })
-
                     let real_number = await new_page.evaluate(() => {
                         const title = document.querySelector<HTMLDivElement>('div.titleWrap');
                         if (title) {
@@ -299,14 +291,16 @@ async function ripLatest(series_array: SeriesItem[]) {
                         }
                         else return 'latest';
                     })
-                    let imagefiles = await new_page.evaluate(() =>
-                        Array.from(
-                            document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
+                    let imagefiles = await new_page.evaluate(() => {
+                        const array = Array.from(document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
+                        return array;
+                    }
                     )
                     console.log(imagefiles)
-                    let chapterfile = await handleChapter(imagefiles, real_number, title);
-                    if (chapterfile) chapters.push(chapterfile);
-                    else chapters.push(`./chapter-${productid}.jpeg`);
+                    if (imagefiles) {
+                        let chapterfile = await handleChapter(imagefiles, real_number, title);
+                        if (chapterfile) chapters.push(chapterfile);
+                    } else chapters.push(`./chapter-${productid}.jpeg`);
                     await new_page.close();
                 } else {
                     console.log('começando a esperar pela q nao precisa de ticket');
@@ -322,13 +316,16 @@ async function ripLatest(series_array: SeriesItem[]) {
                     await new_page.screenshot({
                         path: `chapter${productid}.jpeg`
                     })
-                    let imagefiles = await new_page.evaluate(() =>
-                        Array.from(
-                            document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
+                    let imagefiles = await new_page.evaluate(() => {
+                        const array = Array.from(document.querySelectorAll<HTMLImageElement>('img.comic-viewer-content-img'), img => img.src)
+                        return array;
+                    }
                     )
                     console.log(imagefiles)
-                    let chapterfile = await handleChapter(imagefiles, real_number, title);
-                    if (chapterfile) chapters.push(chapterfile);
+                    if (imagefiles) {
+                        let chapterfile = await handleChapter(imagefiles, real_number, title);
+                        if (chapterfile) chapters.push(chapterfile);
+                    }
                     else chapters.push(`./chapter-${productid}.jpeg`);
                     await new_page.close();
                 }
@@ -344,7 +341,7 @@ async function ripLatest(series_array: SeriesItem[]) {
 
 
     let split_promises = [];
-    var size = 2;
+    var size = 1;
     for (var i = 0; i < series_array.length; i += size) {
         split_promises.push(series_array.slice(i, i + size));
     }
