@@ -260,7 +260,7 @@ async function ripLatest(series_array: SeriesItem[]) {
         // await new_page.waitForTimeout(2000);
         // await new_page.click('span.btnBox');
         // await new_page.waitForNetworkIdle();
-        await new_page.goto(series_url);
+        await new_page.goto(series_url, { waitUntil: 'networkidle0' });
         await new_page.screenshot({ path: `./series-${seriesID}.png` })
         let chapter_id = await new_page.evaluate(() => {
             let chapterss = Array.from(document.querySelectorAll<Chapter>('li[data-available="true"]'));
@@ -274,7 +274,7 @@ async function ripLatest(series_array: SeriesItem[]) {
         const downloadChapter = async (productid: string, title: string) => {
             try {
                 const url = 'https://page.kakao.com/viewer?productId=' + productid;
-                await new_page.goto(url, { waitUntil: 'load' });
+                await new_page.goto(url, { waitUntil: 'networkidle0' });
                 console.log('vou começar a esperar agora')
                 await new_page.waitForTimeout(2000);
                 const need_ticket = await new_page.evaluate(() => {
