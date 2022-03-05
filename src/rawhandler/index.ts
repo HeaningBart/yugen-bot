@@ -526,7 +526,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
 
             await new_page.goto(`https://page.kakao.com/viewer?productId=${chapter.id}`, { waitUntil: 'domcontentloaded' });
             try {
-                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
+                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', { timeout: 10 * 1000 });
                 const kakao_response = await response.json();
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
@@ -553,7 +553,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                 })
             }
             try {
-                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
+                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', { timeout: 10 * 1000 });
                 const kakao_response = await response.json();
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
@@ -577,7 +577,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                 })
             }
             try {
-                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
+                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', { timeout: 10 * 1000 });
                 const kakao_response = await response.json();
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
