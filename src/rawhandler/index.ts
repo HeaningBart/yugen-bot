@@ -435,6 +435,7 @@ export async function getChapter(chapter_number: number, series_id: string, seri
                 path: './afterlogin.png'
             });
         }
+        await page.waitForTimeout(15000);
         console.log('starting to get chapters list');
         const chapters = await getChaptersList(series_id, 'asc');
         console.log(chapters);
