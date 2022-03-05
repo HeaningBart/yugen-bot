@@ -443,8 +443,10 @@ export async function getChapter(chapter_number: number, series_id: string, seri
         console.log(chapter);
         if (chapter) {
             const chapter_file = await downloadChapter(chapter, series_title, browser);
+            await browser.close();
             return chapter_file;
         } else {
+            await browser.close();
             return './afterlogin.png';
         }
     } catch (error) {
