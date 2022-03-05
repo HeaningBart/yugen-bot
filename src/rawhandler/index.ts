@@ -501,6 +501,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                     if (button) button.click();
                 })
             }
+            await new_page.screenshot({ path: './beforerrp.png' })
             const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
             const kakao_response = await response.json();
             const kakao_files = kakao_response.downloadData.members.files;
