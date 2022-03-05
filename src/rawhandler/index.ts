@@ -539,7 +539,6 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                     if (button) button.click();
                 })
             }
-            await new_page.waitForTimeout(1000);
             try {
                 const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
                 const kakao_response = await response.json();
