@@ -92,6 +92,14 @@ const commands = [
         .addStringOption(string =>
             string.setName('kakaoid')
                 .setDescription('Type the kakaoID of the series.')
+                .setRequired(true)),
+
+    new SlashCommandBuilder()
+        .setName('listchapters')
+        .setDescription('List all the chapters of the specified series.')
+        .addStringOption(string =>
+            string.setName('kakaoid')
+                .setDescription('Type the kakaoID of the series.')
                 .setRequired(true))
 
 ]

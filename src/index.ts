@@ -1,6 +1,6 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
-import { handleTicket as buyTicket, ripLatest } from './rawhandler'
+import { handleTicket as buyTicket, ripLatest, getChapter } from './rawhandler'
 import initialize from './commands';
 import Handler from './handlers';
 import fs from 'fs/promises'
@@ -19,12 +19,29 @@ const client = new Client({
 });
 
 
+
+
 function toUrl(string: string): string {
     return string.toLowerCase().replaceAll('.', '-').replaceAll(/[!$%^&*()_+|~=`{}\[\]:";'<>?,\/]/g, '').replaceAll(' ', '-');
 }
 
+const chapter = {
+    id: 58566343,
+    chapter_number: 1,
+    series_id: '58509736',
+    free: true,
+    title: ''
+}
+
 client.on('ready', async () => {
     console.log('The bot is ready!')
+    await client.guilds.cache.get('794049571973890068')?.commands.create({
+        name: 'getchapter', description: 'Get the specified chapter.', type: 'CHAT_INPUT', options: [
+            { name: 'chapternumber', type: 'INTEGER', description: 'Number of the specified chapter', required: true },
+            { name: 'kakaoid', type: 'STRING', description: 'KakaoID of the series', required: true },
+            { name: 'seriestitle', type: 'STRING', description: 'Title of the series, in the format of a slug', required: true },
+        ]
+    })
 });
 
 
@@ -177,6 +194,7 @@ client.on('interactionCreate', async (interaction) => {
             const removed_id = interaction.options.getString('kakaoid')!;
             await prisma.series.deleteMany({ where: { kakaoId: removed_id } });
             await interaction.editReply('Series removed.');
+            return;
         default:
             await interaction.editReply('Done.');
             return;

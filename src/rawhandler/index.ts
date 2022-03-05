@@ -6,7 +6,8 @@ import fs from 'fs/promises'
 import path from 'path';
 import randomstring from 'randomstring';
 const { email, password } = require('../../config.json');
-
+import axios from 'axios'
+import FormData from 'form-data';
 // Relative paths
 const waifu = path.resolve(__dirname);
 
@@ -253,13 +254,13 @@ async function ripLatest(series_array: SeriesItem[]) {
         let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesID;
         const new_page = await browser.newPage();
         await new_page.setViewport({ width: 1080, height: 1080 });
-        // await new_page.goto(buy_url);
-        // await new_page.waitForNetworkIdle();
-        // await new_page.click('button[type="submit"]');
-        // await new_page.click('button[type="button"].btnBuy');
-        // await new_page.waitForTimeout(2000);
-        // await new_page.click('span.btnBox');
-        // await new_page.waitForNetworkIdle();
+        await new_page.goto(buy_url);
+        await new_page.waitForNetworkIdle();
+        await new_page.click('button[type="submit"]');
+        await new_page.click('button[type="button"].btnBuy');
+        await new_page.waitForTimeout(2000);
+        await new_page.click('span.btnBox');
+        await new_page.waitForNetworkIdle();
         await new_page.goto(series_url, { waitUntil: 'networkidle0' });
         await new_page.screenshot({ path: `./series-${seriesID}.png` })
         let chapter_id = await new_page.evaluate(() => {
@@ -363,6 +364,149 @@ async function ripLatest(series_array: SeriesItem[]) {
     console.log(chapters);
     await browser.close();
     return chapters;
+}
+
+
+type kakaoChapter = {
+    id: number;
+    title: string;
+    price: number;
+    video_grade: number;
+
+}
+
+type chapter = {
+    id: number;
+    title: string;
+    free: boolean;
+    chapter_number: number;
+    series_id: string;
+}
+
+
+export async function getChaptersList(seriesid: string, order: string): Promise<chapter[]> {
+    if (order == 'asc' || order == 'desc') {
+        const response = await axios.post('https://api2-page.kakao.com/api/v5/store/singles', `seriesid=${seriesid}&page=0&direction=${order}&page_size=2000&without_hidden=true`, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        if (response.data.singles) {
+            const kakao_chapters = response.data.singles;
+            const chapters = kakao_chapters.map((chapter: kakaoChapter) => {
+                if (chapter.video_grade < 0 && chapter.title.includes('화')) {
+                    let true_number: string | number | undefined = chapter.title.split(' ').find((element: string) => element.includes('화'))?.replaceAll(/\D/g, "");
+                    if (true_number) true_number = parseInt(true_number)
+                    return {
+                        id: chapter.id,
+                        title: chapter.title,
+                        free: chapter.price > 0 ? false : true,
+                        chapter_number: true_number ? true_number : chapter.title.replaceAll(/\D/g, ""),
+                        series_id: seriesid
+                    }
+                }
+            }).filter((element: any) => element !== undefined)
+            return chapters;
+        }
+    } else return [];
+    return [];
+}
+
+export async function getChapter(chapter_number: number, series_id: string, series_title: string) {
+    try {
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        const page = await browser.newPage();
+        const pageTarget = page.target();
+        await page.setViewport({ width: 1080, height: 1080 });
+        await page.goto('https://page.kakao.com/main');
+        await page.click('div.css-vurnku:nth-child(3)');
+        const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
+        const newPage = await newTarget.page();
+        if (newPage) {
+            await newPage.waitForNetworkIdle();
+            console.log(newPage.url());
+            await newPage.setViewport({ width: 1080, height: 1080 });
+            await newPage.screenshot({ path: './beforelogin.png' })
+            await newPage.type('input[name="email"]', email);
+            await newPage.type('input[name="password"]', password);
+            await newPage.click('input#staySignedIn');
+            await newPage.click('button.btn_confirm');
+            await newPage.screenshot({
+                path: './afterlogin.png'
+            });
+        }
+
+        const chapters = await getChaptersList(series_id, 'asc');
+        const chapter = chapters.find(chapter => chapter.chapter_number == chapter_number);
+        if (chapter) {
+            const chapter_file = await downloadChapter(chapter, series_title, browser);
+            return chapter_file;
+        } else {
+            return './afterlogin.png';
+        }
+    } catch (error) {
+        return './afterlogin.png'
+    }
+}
+
+
+export async function downloadChapter(chapter: chapter, series_title: string, browser: Browser) {
+    try {
+        if (chapter.free === true) {
+            const response = await axios.post('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', `productId=${chapter.id}`, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+            const kakao_files = response.data.downloadData.members.files;
+            const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+            const chapter_file = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+            if (chapter_file) return chapter_file;
+        } else {
+            let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + chapter.series_id;
+            const new_page = await browser.newPage();
+            await new_page.setViewport({ width: 1080, height: 1080 });
+            await new_page.goto(buy_url);
+            await new_page.waitForNetworkIdle();
+            await new_page.click('button[type="submit"]');
+            await new_page.click('button[type="button"].btnBuy');
+            await new_page.waitForTimeout(2000);
+            await new_page.click('span.btnBox');
+            await new_page.waitForNetworkIdle();
+
+            let chapter_file: any;
+
+            new_page.on('response', async (response) => {
+                if (response.url() === 'https://api2-page.kakao.com/api/v1/inven/get_download_data/web') {
+                    const kakao_response = await response.json();
+                    const kakao_files = kakao_response.downloadData.members.files;
+                    const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+                    const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                    if (file_to_be_returned) chapter_file = file_to_be_returned;
+                }
+            })
+
+            await new_page.goto(`https://page.kakao.com/viewer?productId=${chapter.id}`);
+            await new_page.waitForNetworkIdle();
+            const need_ticket = await new_page.evaluate(() => {
+                const button = document.querySelector('div.preventMobileBodyScroll');
+                if (button) return true;
+                else return false;
+            })
+            await new_page.screenshot({ path: './ticket.png' })
+            console.log(need_ticket)
+            if (need_ticket) {
+                await new_page.evaluate(() => {
+                    const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)');
+                    if (button) button.click();
+                })
+            }
+            return chapter_file;
+        }
+    } catch (error) {
+
+    }
+
 }
 
 
