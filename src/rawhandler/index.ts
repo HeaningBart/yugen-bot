@@ -421,11 +421,37 @@ export async function getChapter(chapter_number: number, series_id: string, seri
         const chapter = chapters.find(chapter => chapter.chapter_number == chapter_number);
         console.log(chapter);
         if (chapter) {
-            if (chapter.free == true) {
+            if (chapter.free == true && chapter.age_15 == false) {
                 const chapter_file = await downloadChapter(chapter, series_title, browser);
                 await browser.close();
                 return chapter_file;
-            } else {
+            } else if (chapter.free === true && chapter.age_15 == true) {
+                const page = await browser.newPage();
+                const pageTarget = page.target();
+                await page.setViewport({ width: 1080, height: 1080 });
+                await page.goto('https://page.kakao.com/main');
+                await page.click('div.css-vurnku:nth-child(3)');
+                const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
+                const newPage = await newTarget.page();
+                if (newPage) {
+                    await newPage.waitForNetworkIdle();
+                    console.log(newPage.url());
+                    await newPage.setViewport({ width: 1080, height: 1080 });
+                    await newPage.screenshot({ path: './beforelogin.png' })
+                    await newPage.type('input[name="email"]', email);
+                    await newPage.type('input[name="password"]', password);
+                    await newPage.click('input#staySignedIn');
+                    await newPage.click('button.btn_confirm');
+                    await newPage.screenshot({
+                        path: './afterlogin.png'
+                    });
+                }
+                await page.waitForTimeout(15000);
+                const chapter_file = await downloadChapter(chapter, series_title, browser);
+                await browser.close();
+                return chapter_file;
+            }
+            else {
                 const page = await browser.newPage();
                 const pageTarget = page.target();
                 await page.setViewport({ width: 1080, height: 1080 });
