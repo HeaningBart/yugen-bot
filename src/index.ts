@@ -196,6 +196,10 @@ client.on('interactionCreate', async (interaction) => {
             await interaction.editReply('Series removed.');
             return;
         case 'getchapter':
+            if (!allowedUsers.includes(user)) {
+                await interaction.editReply(`You're not allowed to use this command.`)
+                return;
+            }
             const kakao_series_id = interaction.options.getString('kakaoid')!;
             const chapter_number = interaction.options.getInteger('chapternumber')!;
             const kakao_title = interaction.options.getString('seriestitle')!;
