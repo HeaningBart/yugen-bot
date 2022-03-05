@@ -474,14 +474,14 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
         } else {
             let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + chapter.series_id;
             const new_page = await browser.newPage();
-            // await new_page.setViewport({ width: 1080, height: 1080 });
-            // await new_page.goto(buy_url);
-            // await new_page.waitForNetworkIdle();
-            // await new_page.click('button[type="submit"]');
-            // await new_page.click('button[type="button"].btnBuy');
-            // await new_page.waitForTimeout(2000);
-            // await new_page.click('span.btnBox');
-            // await new_page.waitForNetworkIdle();
+            await new_page.setViewport({ width: 1080, height: 1080 });
+            await new_page.goto(buy_url);
+            await new_page.waitForNetworkIdle();
+            await new_page.click('button[type="submit"]');
+            await new_page.click('button[type="button"].btnBuy');
+            await new_page.waitForTimeout(2000);
+            await new_page.click('span.btnBox');
+            await new_page.waitForNetworkIdle();
 
 
 
