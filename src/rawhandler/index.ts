@@ -502,6 +502,19 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                 })
             }
             await new_page.waitForTimeout(1000);
+            try {
+                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
+                const kakao_response = await response.json();
+                const kakao_files = kakao_response.downloadData.members.files;
+                console.log(kakao_files);
+                const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                await new_page.screenshot({ path: './afterrp.png' })
+                console.log(file_to_be_returned);
+                return file_to_be_returned;
+            } catch (error) {
+                console.log('first try didnt go well')
+            }
             const need_ticket_again = await new_page.evaluate(() => {
                 const button = document.querySelector('div.preventMobileBodyScroll');
                 if (button) return true;
@@ -513,15 +526,19 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                     if (button) button.click();
                 })
             }
-            const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
-            const kakao_response = await response.json();
-            const kakao_files = kakao_response.downloadData.members.files;
-            console.log(kakao_files);
-            const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
-            const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
-            await new_page.screenshot({ path: './afterrp.png' })
-            console.log(file_to_be_returned);
-            return file_to_be_returned;
+            try {
+                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
+                const kakao_response = await response.json();
+                const kakao_files = kakao_response.downloadData.members.files;
+                console.log(kakao_files);
+                const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                await new_page.screenshot({ path: './afterrp.png' })
+                console.log(file_to_be_returned);
+                return file_to_be_returned;
+            } catch (error) {
+                console.log('second try didnt go well')
+            }
         }
     } catch (error) {
         console.log(error);
