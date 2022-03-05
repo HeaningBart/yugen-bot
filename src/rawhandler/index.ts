@@ -479,18 +479,8 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
             await new_page.click('span.btnBox');
             await new_page.waitForNetworkIdle();
 
-            let chapter_file: any;
 
-            new_page.on('response', async (response) => {
-                if (response.url() === 'https://api2-page.kakao.com/api/v1/inven/get_download_data/web') {
-                    const kakao_response = await response.json();
-                    const kakao_files = kakao_response.downloadData.members.files;
-                    const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
-                    const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
-                    console.log(files_url);
-                    if (file_to_be_returned) chapter_file = file_to_be_returned;
-                }
-            })
+
 
             await new_page.goto(`https://page.kakao.com/viewer?productId=${chapter.id}`);
             await new_page.waitForNetworkIdle();
@@ -507,10 +497,14 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                     if (button) button.click();
                 })
             }
-            await new_page.waitForTimeout(30000);
+            const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
+            const kakao_response = await response.json();
+            const kakao_files = kakao_response.downloadData.members.files;
+            const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+            const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
             await new_page.screenshot({ path: './afterrp.png' })
-            console.log(chapter_file);
-            return chapter_file;
+            console.log(file_to_be_returned);
+            return file_to_be_returned;
         }
     } catch (error) {
 
