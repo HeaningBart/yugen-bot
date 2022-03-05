@@ -34,11 +34,11 @@ async function handleChapter(images_array: string[], number: string, title: stri
         await fs.mkdir(waifu_directory, { recursive: true });
 
         await Promise.all(images_array.map((image, index) => download(image, `./${directory}`, {
-            filename: `image-${index}.jpg`
+            filename: `image-${index}.jfif`
         })));
         console.log('All images have been downloaded.')
 
-        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpg" -s 90`);
+        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
         console.log('All images have been stitched.')
 
         await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg`, { cwd: waifu })
