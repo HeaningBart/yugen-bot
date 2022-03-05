@@ -370,7 +370,7 @@ type kakaoChapter = {
     title: string;
     price: number;
     video_grade: number;
-
+    age_15: string;
 }
 
 type chapter = {
@@ -379,6 +379,7 @@ type chapter = {
     free: boolean;
     chapter_number: number;
     series_id: string;
+    age_15: boolean;
 }
 
 
@@ -400,7 +401,8 @@ export async function getChaptersList(seriesid: string, order: string): Promise<
                         title: chapter.title,
                         free: chapter.price > 0 ? false : true,
                         chapter_number: true_number ? true_number : chapter.title.replaceAll(/\D/g, ""),
-                        series_id: seriesid
+                        series_id: seriesid,
+                        age_15: chapter.age_15 == '0' ? false : true
                     }
                 }
             }).filter((element: any) => element !== undefined)
@@ -461,7 +463,7 @@ export async function getChapter(chapter_number: number, series_id: string, seri
 
 export async function downloadChapter(chapter: chapter, series_title: string, browser: Browser) {
     try {
-        if (chapter.free === true) {
+        if (chapter.free === true && chapter.age_15 == false) {
             const response = await axios.post('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', `productId=${chapter.id}`, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -471,7 +473,17 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
             const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
             const chapter_file = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
             if (chapter_file) return chapter_file;
-        } else {
+        } else if (chapter.free === true && chapter.age_15 == true) {
+            const new_page = await browser.newPage();
+            await new_page.goto(`https://page.kakao.com/viewer?productId=${chapter.id}`, { waitUntil: 'domcontentloaded' });
+            const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
+            const kakao_response = await response.json();
+            const kakao_files = kakao_response.downloadData.members.files;
+            const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+            const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+            return file_to_be_returned;
+        }
+        else {
             let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + chapter.series_id;
             const new_page = await browser.newPage();
             await new_page.setViewport({ width: 1080, height: 1080 });
