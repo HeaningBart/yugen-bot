@@ -487,6 +487,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                     const kakao_files = kakao_response.downloadData.members.files;
                     const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
                     const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                    console.log(files_url);
                     if (file_to_be_returned) chapter_file = file_to_be_returned;
                 }
             })
@@ -506,6 +507,9 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                     if (button) button.click();
                 })
             }
+            await new_page.waitForTimeout(30000);
+            await new_page.screenshot({ path: './afterrp.png' })
+            console.log(chapter_file);
             return chapter_file;
         }
     } catch (error) {
