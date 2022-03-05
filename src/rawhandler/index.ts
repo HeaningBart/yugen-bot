@@ -513,7 +513,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
             return file_to_be_returned;
         }
     } catch (error) {
-
+        console.log(error);
     }
 
 }
