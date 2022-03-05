@@ -51,7 +51,7 @@ type SeriesItem = {
     title: string;
 }
 
-const thursday_job = schedule.scheduleJob('11 22 * * 4', async function () {
+const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'thursday', weekly: true } });
         let ids: SeriesItem[] = [];
@@ -81,7 +81,7 @@ const thursday_job = schedule.scheduleJob('11 22 * * 4', async function () {
     }
 })
 
-const friday_job = schedule.scheduleJob('13 22 * * 5', async function () {
+const friday_job = schedule.scheduleJob('01 22 * * 5', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'friday', weekly: true } });
         let ids: SeriesItem[] = [];
@@ -111,6 +111,35 @@ const friday_job = schedule.scheduleJob('13 22 * * 5', async function () {
     }
 })
 
+const saturday_job = schedule.scheduleJob('01 22 * * 6', async function () {
+    try {
+        const daily_series = await prisma.series.findMany({ where: { cron: 'saturday', weekly: true } });
+        let ids: SeriesItem[] = [];
+        daily_series.forEach(series => ids.push({ id: series.kakaoId, title: series.slug }));
+        const files = await ripLatest(ids);
+        console.log(daily_series);
+        console.log(ids);
+
+        async function handleSeries(series: Series) {
+            try {
+                const channel = client.channels.cache.get(series.channel);
+                if (channel?.isText()) {
+                    const file = files.filter(file => file.includes(series.slug))
+                    if (file) {
+                        await channel.send({ files: [file[0]], content: 'Weekly chapter' })
+                        await channel.send(`<@&${series.role}>, <@&946250134042329158>`)
+                        await channel.send('Weekly RP done.')
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        await Promise.all(daily_series.map((series) => handleSeries(series)));
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) {
