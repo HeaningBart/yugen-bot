@@ -501,7 +501,18 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                     if (button) button.click();
                 })
             }
-            await new_page.screenshot({ path: './beforerrp.png' })
+            await new_page.waitForTimeout(1000);
+            const need_ticket_again = await new_page.evaluate(() => {
+                const button = document.querySelector('div.preventMobileBodyScroll');
+                if (button) return true;
+                else return false;
+            })
+            if (need_ticket_again) {
+                await new_page.evaluate(() => {
+                    const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)');
+                    if (button) button.click();
+                })
+            }
             const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
             const kakao_response = await response.json();
             const kakao_files = kakao_response.downloadData.members.files;
