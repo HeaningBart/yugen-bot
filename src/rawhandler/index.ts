@@ -41,7 +41,7 @@ async function handleChapter(images_array: string[], number: string, title: stri
         await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
         console.log('All images have been stitched.')
 
-        await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu })
+        await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 3:3:3`, { cwd: waifu })
         console.log('All images have been through waifu-2x-caffe.')
 
         await exec(`7z a ${chaptername}.7z  ./${waifu_directory}/*`)
@@ -370,7 +370,7 @@ type kakaoChapter = {
     title: string;
     price: number;
     video_grade: number;
-    age_15: string;
+    age_grade: number;
 }
 
 type chapter = {
@@ -402,7 +402,7 @@ export async function getChaptersList(seriesid: string, order: string): Promise<
                         free: chapter.price > 0 ? false : true,
                         chapter_number: true_number ? true_number : chapter.title.replaceAll(/\D/g, ""),
                         series_id: seriesid,
-                        age_15: chapter.age_15 == '0' ? false : true
+                        age_15: chapter.age_grade == 0 ? false : true
                     }
                 }
             }).filter((element: any) => element !== undefined)
