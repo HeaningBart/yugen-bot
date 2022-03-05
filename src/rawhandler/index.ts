@@ -4,10 +4,8 @@ import util from 'util';
 const exec = util.promisify(require('child_process').exec);
 import fs from 'fs/promises'
 import path from 'path';
-import randomstring from 'randomstring';
 const { email, password } = require('../../config.json');
 import axios from 'axios'
-import FormData from 'form-data';
 // Relative paths
 const waifu = path.resolve(__dirname);
 

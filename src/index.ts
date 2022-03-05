@@ -21,8 +21,8 @@ const client = new Client({
 
 
 
-function toUrl(string: string): string {
-    return string.toLowerCase().replaceAll('.', '-').replaceAll(/[!$%^&*()_+|~=`{}\[\]:";'<>?,\/]/g, '').replaceAll(' ', '-');
+export function toUrl(string: string): string {
+    return string.toLowerCase().replaceAll('.', '-').replaceAll(`'`, '').replaceAll(/[!$%^&*()_+|~=`{}\[\]:";'<>?,\/]/g, '').replaceAll(' ', '-');
 }
 
 const chapter = {
@@ -203,7 +203,7 @@ client.on('interactionCreate', async (interaction) => {
             const kakao_series_id = interaction.options.getString('kakaoid')!;
             const chapter_number = interaction.options.getInteger('chapternumber')!;
             const kakao_title = interaction.options.getString('seriestitle')!;
-            const specified_file = await getChapter(chapter_number, kakao_series_id, kakao_title);
+            const specified_file = await getChapter(chapter_number, kakao_series_id, toUrl(kakao_title));
             if (specified_file) {
                 await interaction.channel?.send({ files: [specified_file] });
             }
