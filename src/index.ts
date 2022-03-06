@@ -141,7 +141,7 @@ const saturday_job = schedule.scheduleJob('01 22 * * 6', async function () {
     }
 })
 
-const sunday_job = schedule.scheduleJob('01 22 * * 6', async function () {
+const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
     try {
         const files = await tutorial('56443245', 'the-tutorial-is-too-hard');
 
