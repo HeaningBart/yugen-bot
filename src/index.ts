@@ -1,6 +1,6 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
-import { handleTicket as buyTicket, ripLatest, getChapter } from './rawhandler'
+import { handleTicket as buyTicket, ripLatest, getChapter, tutorial } from './rawhandler'
 import initialize from './commands';
 import Handler from './handlers';
 import fs from 'fs/promises'
@@ -136,6 +136,30 @@ const saturday_job = schedule.scheduleJob('01 22 * * 6', async function () {
             }
         }
         await Promise.all(daily_series.map((series) => handleSeries(series)));
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+const sunday_job = schedule.scheduleJob('01 22 * * 6', async function () {
+    try {
+        const files = await tutorial('56443245', 'the-tutorial-is-too-hard');
+
+        async function handleSeries() {
+            try {
+                const channel = client.channels.cache.get('811059603768475659');
+                if (channel?.isText()) {
+                    if (files) {
+                        await channel.send({ files: [files], content: 'Weekly chapter' })
+                        await channel.send(`<@&811059385094635532>, <@&946250134042329158>`)
+                        await channel.send('Weekly RP done.')
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        handleSeries();
     } catch (error) {
         console.log(error);
     }
