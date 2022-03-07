@@ -434,7 +434,7 @@ export async function getChapter(chapter_number: number, series_id: string, seri
     try {
         const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
         console.log('starting to get chapters list');
-        const chapters = await getChaptersList(series_id, 'asc');
+        const chapters = await getChaptersList(series_id, 'desc');
         console.log(chapters);
         const chapter = chapters.find(chapter => chapter.chapter_number == chapter_number);
         console.log(chapter);
