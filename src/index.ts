@@ -1,7 +1,7 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
 import { handleTicket as buyTicket, ripLatest, getChapter, getLatestChapter } from './rawhandler'
-import { logIn } from './rawhandler/kakao'
+import { start, logIn } from './rawhandler/kakao'
 import fs from 'fs/promises'
 import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
@@ -18,38 +18,16 @@ const client = new Client({
     ]
 });
 
-
-
-
 export function toUrl(string: string): string {
     return string.toLowerCase().replaceAll('.', '-').replaceAll(`'`, '').replaceAll(/[!$%^&*()_+|~=`{}\[\]:";'<>?,\/]/g, '').replaceAll(' ', '-');
 }
 
-const chapter = {
-    id: 58566343,
-    chapter_number: 1,
-    series_id: '58509736',
-    free: true,
-    title: ''
-}
+
 
 client.on('ready', async () => {
     console.log('The bot is ready!')
-    await client.guilds.cache.get('794049571973890068')?.commands.create({
-        name: 'getchapter', description: 'Get the specified chapter.', type: 'CHAT_INPUT', options: [
-            { name: 'chapternumber', type: 'INTEGER', description: 'Number of the specified chapter', required: true },
-            { name: 'kakaoid', type: 'STRING', description: 'KakaoID of the series', required: true },
-            { name: 'seriestitle', type: 'STRING', description: 'Title of the series, in the format of a slug', required: true },
-        ]
-    })
-
-    const test_series = [{ id: '58031028', title: 'ssn' }, { id: '56243215', title: 'sss' }, { id: '54884637', title: 'tgm' }];
-    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-    await logIn(browser);
-    for (let i = 0; i <= test_series.length - 1; i++) {
-        await getLatestChapter(test_series[i].id, test_series[i].title, browser);
-    }
-
+    const daily_series = await prisma.series.findMany({ where: { cron: 'monday', weekly: true } });
+    console.log(daily_series);
 });
 
 
@@ -58,6 +36,39 @@ type SeriesItem = {
     id: string;
     title: string;
 }
+
+const monday_job = schedule.scheduleJob('01 22 * * 1', async function () {
+    try {
+        const daily_series = await prisma.series.findMany({ where: { cron: 'monday', weekly: true } });
+        const browser = await start();
+        await logIn(browser);
+        for (let i = 0; i <= daily_series.length - 1; i++) {
+            try {
+                const series = daily_series[i];
+                const channel = client.channels.cache.get(series.channel);
+                const role = series.role;
+                if (channel?.isText()) {
+                    const file = await getLatestChapter(series.kakaoId, series.slug, browser);
+                    if (file) {
+                        await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` })
+                        await channel.send(`<@&${role}>, <@&946250134042329158>`);
+                        await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                        await channel.send('Weekly RP done.');
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+                const log_channel = client.channels.cache.get('948063125486329876');
+                if (log_channel?.isText()) {
+                    await log_channel.send('There was an error during the RP process of a series.');
+                    await log_channel.send(`Please, get the chapter through /getchapter`);
+                }
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
     try {

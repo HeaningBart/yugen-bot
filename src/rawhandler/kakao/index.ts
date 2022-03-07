@@ -1,5 +1,11 @@
-import { Browser } from "puppeteer";
+import puppeteer, { Browser } from "puppeteer";
 const { email, password } = require('../../../config.json');
+
+export async function start() {
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    return browser;
+}
+
 
 export async function logIn(browser: Browser) {
     const page = await browser.newPage();

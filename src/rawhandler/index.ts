@@ -389,19 +389,11 @@ type chapter = {
 export async function getLatestChapter(series_id: string, series_title: string, browser: Browser): Promise<string | undefined> {
     try {
         console.log(`Starting the weekly RP of the series of the series ${series_title} - ID: ${series_id}`);
-        const chapters = await getChaptersList(series_id, 'asc');
+        const chapters = await getChaptersList(series_id, 'desc');
         const chapter = chapters[0];
         if (chapter) {
-            if (chapter.free == true && chapter.age_15 == false) {
-                const chapter_file = await downloadChapter(chapter, series_title, browser);
-                return chapter_file;
-            } else if (chapter.free == true && chapter.age_15 == true) {
-                const chapter_file = await downloadChapter(chapter, series_title, browser);
-                return chapter_file;
-            } else {
-                const chapter_file = await downloadChapter(chapter, series_title, browser);
-                return chapter_file;
-            }
+            const chapter_file = await downloadChapter(chapter, series_title, browser);
+            return chapter_file;
         }
     } catch (error) {
         console.log('There was an error during the RP process.');
