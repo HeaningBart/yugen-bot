@@ -1,6 +1,6 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
-import { handleTicket as buyTicket, ripLatest, getChapter, tutorial } from './rawhandler'
+import { handleTicket as buyTicket, ripLatest, getChapter, getWeeklyChapters } from './rawhandler'
 import initialize from './commands';
 import Handler from './handlers';
 import fs from 'fs/promises'
@@ -42,6 +42,8 @@ client.on('ready', async () => {
             { name: 'seriestitle', type: 'STRING', description: 'Title of the series, in the format of a slug', required: true },
         ]
     })
+
+    await getWeeklyChapters([{ id: '57781183', title: 'archmage-streamer' }, { id: '58800646', title: 'is-this-hero-for-real' }, { id: '57451201', title: 'return-of-the-legendary-spear-knight' }]);
 });
 
 
@@ -141,29 +143,7 @@ const saturday_job = schedule.scheduleJob('01 22 * * 6', async function () {
     }
 })
 
-const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
-    try {
-        const files = await tutorial('56443245', 'the-tutorial-is-too-hard');
 
-        async function handleSeries() {
-            try {
-                const channel = client.channels.cache.get('811059603768475659');
-                if (channel?.isText()) {
-                    if (files) {
-                        await channel.send({ files: [files], content: 'Weekly chapter' })
-                        await channel.send(`<@&811059385094635532>, <@&946250134042329158>`)
-                        await channel.send('Weekly RP done.')
-                    }
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        handleSeries();
-    } catch (error) {
-        console.log(error);
-    }
-})
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) {

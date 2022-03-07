@@ -383,6 +383,45 @@ type chapter = {
     age_15: boolean;
 }
 
+export async function getWeeklyChapters(series_array: SeriesItem[]) {
+    try {
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        // await logIn(browser);
+        let files: any = [];
+        for (let i = 0; i <= series_array.length - 1; i++) {
+            const file = await getLatestChapter(series_array[i].id, series_array[i].title, browser);
+            if (file) files.push(file);
+        }
+
+    } catch (error) {
+        console.log(error);
+        return './afterrp.png';
+    }
+}
+
+
+export async function getLatestChapter(series_id: string, series_title: string, browser: Browser): Promise<string | undefined> {
+    try {
+        console.log(`Starting the weekly RP of the series of the series ${series_title} - ID: ${series_id}`);
+        const chapters = await getChaptersList(series_id, 'asc');
+        const chapter = chapters[0];
+        if (chapter) {
+            if (chapter.free == true && chapter.age_15 == false) {
+                const chapter_file = await downloadChapter(chapter, series_title, browser);
+                return chapter_file;
+            } else if (chapter.free == true && chapter.age_15 == true) {
+                const chapter_file = await downloadChapter(chapter, series_title, browser);
+                return chapter_file;
+            } else {
+                const chapter_file = await downloadChapter(chapter, series_title, browser);
+                return chapter_file;
+            }
+        }
+    } catch (error) {
+        console.log('There was an error during the RP process.');
+        return './afterrp.png';
+    }
+}
 
 export async function getChaptersList(seriesid: string, order: string): Promise<chapter[]> {
     if (order == 'asc' || order == 'desc') {
@@ -447,81 +486,6 @@ export async function getChapter(chapter_number: number, series_id: string, seri
     }
 }
 
-export async function tutorial(series_id: string, series_title: string) {
-    try {
-        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-        console.log('starting to get chapters list');
-        const chapters = await getChaptersList(series_id, 'desc');
-        console.log(chapters);
-        const chapter = chapters[0];
-        if (chapter) {
-            if (chapter.free == true && chapter.age_15 == false) {
-                const chapter_file = await downloadChapter(chapter, series_title, browser);
-                await browser.close();
-                return chapter_file;
-            } else if (chapter.free === true && chapter.age_15 == true) {
-                const page = await browser.newPage();
-                const pageTarget = page.target();
-                await page.setViewport({ width: 1080, height: 1080 });
-                await page.goto('https://page.kakao.com/main');
-                await page.click('div.css-vurnku:nth-child(3)');
-                const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
-                const newPage = await newTarget.page();
-                if (newPage) {
-                    await newPage.waitForNetworkIdle();
-                    console.log(newPage.url());
-                    await newPage.setViewport({ width: 1080, height: 1080 });
-                    await newPage.screenshot({ path: './beforelogin.png' })
-                    await newPage.type('input[name="email"]', email);
-                    await newPage.type('input[name="password"]', password);
-                    await newPage.click('input#staySignedIn');
-                    await newPage.click('button.btn_confirm');
-                    await newPage.screenshot({
-                        path: './afterlogin.png'
-                    });
-                }
-                await page.waitForTimeout(15000);
-                const chapter_file = await downloadChapter(chapter, series_title, browser);
-                await browser.close();
-                return chapter_file;
-            }
-            else {
-                const page = await browser.newPage();
-                const pageTarget = page.target();
-                await page.setViewport({ width: 1080, height: 1080 });
-                await page.goto('https://page.kakao.com/main');
-                await page.click('div.css-vurnku:nth-child(3)');
-                const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
-                const newPage = await newTarget.page();
-                if (newPage) {
-                    await newPage.waitForNetworkIdle();
-                    console.log(newPage.url());
-                    await newPage.setViewport({ width: 1080, height: 1080 });
-                    await newPage.screenshot({ path: './beforelogin.png' })
-                    await newPage.type('input[name="email"]', email);
-                    await newPage.type('input[name="password"]', password);
-                    await newPage.click('input#staySignedIn');
-                    await newPage.click('button.btn_confirm');
-                    await newPage.screenshot({
-                        path: './afterlogin.png'
-                    });
-                }
-                await page.waitForTimeout(15000);
-                const chapter_file = await downloadChapter(chapter, series_title, browser);
-                await browser.close();
-                return chapter_file;
-            }
-        } else {
-            await browser.close();
-            return './afterlogin.png';
-        }
-    } catch (error) {
-        return './afterlogin.png'
-    }
-}
-
-
-
 export async function downloadChapter(chapter: chapter, series_title: string, browser: Browser) {
     try {
         if (chapter.free === true && chapter.age_15 == false) {
@@ -542,6 +506,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
             const kakao_files = kakao_response.downloadData.members.files;
             const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
             const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+            await new_page.close();
             return file_to_be_returned;
         }
         else {
@@ -584,6 +549,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                 const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
                 await new_page.screenshot({ path: './afterrp.png' })
                 console.log(file_to_be_returned);
+                await new_page.close();
                 return file_to_be_returned;
             } catch (error) {
                 console.log('second try didnt go well')
@@ -608,6 +574,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                 const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
                 await new_page.screenshot({ path: './afterrp.png' })
                 console.log(file_to_be_returned);
+                await new_page.close();
                 return file_to_be_returned;
             } catch (error) {
                 console.log('third try didnt go well')
