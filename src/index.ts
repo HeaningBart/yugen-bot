@@ -26,8 +26,6 @@ export function toUrl(string: string): string {
 
 client.on('ready', async () => {
     console.log('The bot is ready!')
-    const daily_series = await prisma.series.findMany({ where: { cron: 'monday', weekly: true } });
-    console.log(daily_series);
 });
 
 
