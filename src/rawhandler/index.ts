@@ -8,6 +8,7 @@ const { email, password } = require('../../config.json');
 import axios from 'axios'
 // Relative paths
 const waifu = path.resolve(__dirname);
+import { logIn, buyTicket } from './kakao';
 
 type chapterItem = {
     id: string;
@@ -426,53 +427,13 @@ export async function getChapter(chapter_number: number, series_id: string, seri
                 await browser.close();
                 return chapter_file;
             } else if (chapter.free === true && chapter.age_15 == true) {
-                const page = await browser.newPage();
-                const pageTarget = page.target();
-                await page.setViewport({ width: 1080, height: 1080 });
-                await page.goto('https://page.kakao.com/main');
-                await page.click('div.css-vurnku:nth-child(3)');
-                const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
-                const newPage = await newTarget.page();
-                if (newPage) {
-                    await newPage.waitForNetworkIdle();
-                    console.log(newPage.url());
-                    await newPage.setViewport({ width: 1080, height: 1080 });
-                    await newPage.screenshot({ path: './beforelogin.png' })
-                    await newPage.type('input[name="email"]', email);
-                    await newPage.type('input[name="password"]', password);
-                    await newPage.click('input#staySignedIn');
-                    await newPage.click('button.btn_confirm');
-                    await newPage.screenshot({
-                        path: './afterlogin.png'
-                    });
-                }
-                await page.waitForTimeout(15000);
+                await logIn(browser);
                 const chapter_file = await downloadChapter(chapter, series_title, browser);
                 await browser.close();
                 return chapter_file;
             }
             else {
-                const page = await browser.newPage();
-                const pageTarget = page.target();
-                await page.setViewport({ width: 1080, height: 1080 });
-                await page.goto('https://page.kakao.com/main');
-                await page.click('div.css-vurnku:nth-child(3)');
-                const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
-                const newPage = await newTarget.page();
-                if (newPage) {
-                    await newPage.waitForNetworkIdle();
-                    console.log(newPage.url());
-                    await newPage.setViewport({ width: 1080, height: 1080 });
-                    await newPage.screenshot({ path: './beforelogin.png' })
-                    await newPage.type('input[name="email"]', email);
-                    await newPage.type('input[name="password"]', password);
-                    await newPage.click('input#staySignedIn');
-                    await newPage.click('button.btn_confirm');
-                    await newPage.screenshot({
-                        path: './afterlogin.png'
-                    });
-                }
-                await page.waitForTimeout(15000);
+                await logIn(browser);
                 const chapter_file = await downloadChapter(chapter, series_title, browser);
                 await browser.close();
                 return chapter_file;
@@ -584,20 +545,8 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
             return file_to_be_returned;
         }
         else {
-            let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + chapter.series_id;
+            await buyTicket(browser, chapter.series_id);
             const new_page = await browser.newPage();
-            await new_page.setViewport({ width: 1080, height: 1080 });
-            await new_page.goto(buy_url);
-            await new_page.waitForNetworkIdle();
-            await new_page.click('button[type="submit"]');
-            await new_page.click('button[type="button"].btnBuy');
-            await new_page.waitForTimeout(2000);
-            await new_page.click('span.btnBox');
-            await new_page.waitForNetworkIdle();
-
-
-
-
             await new_page.goto(`https://page.kakao.com/viewer?productId=${chapter.id}`, { waitUntil: 'domcontentloaded' });
             try {
                 const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', { timeout: 10 * 1000 });
@@ -672,81 +621,6 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
 
 
 export { handleChapter, handleTicket, ripLatest };
-
-// const handleWeeklySeries = async (series_array) => {
-//     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-//     const page = await browser.newPage();
-//     const pageTarget = page.target();
-//     await page.setViewport({ width: 1080, height: 1080 });
-//     await page.goto('https://page.kakao.com/main');
-//     await page.click('div.css-vurnku:nth-child(3)');
-//     const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
-//     const newPage = await newTarget.page();
-//     await newPage.waitForNetworkIdle();
-//     await newPage.screenshot({
-//         path: './kakaologin.png'
-//     })
-//     console.log(newPage.url());
-//     await newPage.setViewport({ width: 1080, height: 1080 });
-//     await newPage.type('input[name="email"]', email);
-//     await newPage.type('input[name="password"]', password);
-//     await newPage.click('input#staySignedIn');
-//     await newPage.click('button.btn_confirm');
-
-
-
-//     await newPage.screenshot({
-//         path: './afterlogin.png'
-//     });
-
-//     await page.waitForTimeout(15000);
-
-//     await page.screenshot({
-//         path: './afterlogintrue.png'
-//     })
-
-
-//     const buyLatest = async (seriesId) => {
-//         let series_url = 'https://page.kakao.com/home?seriesId=' + seriesId + '&orderby=desc';
-//         let buy_url = 'https://page.kakao.com/buy/ticket?seriesId=' + seriesId;
-
-//         const new_page = await browser.newPage()
-//         await new_page.goto(buy_url);
-//         await new_page.waitForNetworkIdle();
-//         await new_page.screenshot({
-//             path: './buypage.png'
-//         });
-
-
-//         await new_page.evaluate(() => {
-//             var inputs = document.querySelectorAll('input');
-//             inputs[1].click();
-//         })
-//         await new_page.screenshot({ path: 'afterevaluate.png' })
-//         await new_page.click('button[type="submit"]');
-//         await new_page.click('button[type="button"].btnBuy');
-//         await new_page.waitForTimeout(5000);
-//         await new_page.click('span.btnBox');
-//         await new_page.waitForNavigation();
-//         await new_page.waitForNetworkIdle();
-//         await new_page.goto(series_url);
-//         chosen.innerText.replaceAll(/\D/g, "")
-
-//         var chapters_id = await page.evaluate(() => {
-//             let chapterss = Array.from(document.querySelectorAll('li[data-available="true"]'));
-//             let all = [];
-//             chapterss = chapterss.forEach((chapter, index) => all.push({ id: chapter.attributes['data-productid'].value, number: index }));
-//             return all[0];
-//         })
-
-
-
-
-
-//     }
-
-
-// }
 
 
 
