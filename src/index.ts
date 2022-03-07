@@ -1,12 +1,11 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
-import { handleTicket as buyTicket, ripLatest, getChapter, getWeeklyChapters } from './rawhandler'
-import initialize from './commands';
-import Handler from './handlers';
+import { handleTicket as buyTicket, ripLatest, getChapter, getLatestChapter } from './rawhandler'
 import fs from 'fs/promises'
 import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
 const allowedUsers = ['397857749938995201', '345938621137944577', '422790603064213528']
+import puppeteer from 'puppeteer';
 
 const prisma = new PrismaClient();
 
@@ -43,7 +42,12 @@ client.on('ready', async () => {
         ]
     })
 
-    await getWeeklyChapters([{ id: '57781183', title: 'archmage-streamer' }, { id: '58800646', title: 'is-this-hero-for-real' }, { id: '57451201', title: 'return-of-the-legendary-spear-knight' }]);
+    const test_series = [{ id: '57781183', title: 'archmage-streamer' }, { id: '58800646', title: 'is-this-hero-for-real' }, { id: '57451201', title: 'return-of-the-legendary-spear-knight' }];
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    for (let i = 0; i <= test_series.length - 1; i++) {
+        await getLatestChapter(test_series[i].id, test_series[i].title, browser);
+    }
+
 });
 
 
@@ -252,4 +256,4 @@ client.on('interactionCreate', async (interaction) => {
 
 
 client.login(token);
-initialize();
+

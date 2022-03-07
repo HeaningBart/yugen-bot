@@ -383,21 +383,7 @@ type chapter = {
     age_15: boolean;
 }
 
-export async function getWeeklyChapters(series_array: SeriesItem[]) {
-    try {
-        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-        // await logIn(browser);
-        let files: any = [];
-        for (let i = 0; i <= series_array.length - 1; i++) {
-            const file = await getLatestChapter(series_array[i].id, series_array[i].title, browser);
-            if (file) files.push(file);
-        }
 
-    } catch (error) {
-        console.log(error);
-        return './afterrp.png';
-    }
-}
 
 
 export async function getLatestChapter(series_id: string, series_title: string, browser: Browser): Promise<string | undefined> {
