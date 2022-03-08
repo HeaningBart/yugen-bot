@@ -68,6 +68,39 @@ const monday_job = schedule.scheduleJob('01 22 * * 1', async function () {
     }
 })
 
+const tuesday_job = schedule.scheduleJob('01 22 * * 2', async function () {
+    try {
+        const daily_series = await prisma.series.findMany({ where: { cron: 'tuesday', weekly: true } });
+        const browser = await start();
+        await logIn(browser);
+        for (let i = 0; i <= daily_series.length - 1; i++) {
+            try {
+                const series = daily_series[i];
+                const channel = client.channels.cache.get(series.channel);
+                const role = series.role;
+                if (channel?.isText()) {
+                    const file = await getLatestChapter(series.kakaoId, series.slug, browser);
+                    if (file) {
+                        await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` })
+                        await channel.send(`<@&${role}>, <@&946250134042329158>`);
+                        await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                        await channel.send('Weekly RP done.');
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+                const log_channel = client.channels.cache.get('948063125486329876');
+                if (log_channel?.isText()) {
+                    await log_channel.send(`There was an error during the RP process of a series(${daily_series[i].title}).`);
+                    await log_channel.send(`Please, get the chapter through /getchapter or access the server via FTP and get the .7z file.`);
+                }
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+})
+
 const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'thursday', weekly: true } });
