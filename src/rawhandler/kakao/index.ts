@@ -28,7 +28,7 @@ export async function logIn(browser: Browser) {
             path: './afterlogin.png'
         });
     }
-    await page.waitForTimeout(15000);
+    await page.waitForTimeout(7000);
     await page.close();
 }
 
