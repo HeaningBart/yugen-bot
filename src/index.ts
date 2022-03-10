@@ -143,6 +143,7 @@ const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
             try {
                 const series = daily_series[i];
                 const channel = client.channels.cache.get(series.channel);
+                const raws_channel = client.channels.cache.get('948666335691436102');
                 const role = series.role;
                 if (channel?.isText()) {
                     const file = await getLatestChapter(series.kakaoId, series.slug, browser);
@@ -151,6 +152,13 @@ const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
                         await channel.send(`<@&${role}>, <@&946250134042329158>`);
                         await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                         await channel.send('Weekly RP done.');
+                        try {
+                            if (raws_channel?.isText()) {
+                                await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` });
+                            }
+                        } catch (e) {
+
+                        }
                     }
                 }
             } catch (error) {
