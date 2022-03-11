@@ -1,4 +1,5 @@
-import puppeteer, { Browser } from 'puppeteer';
+import { Browser } from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
 import download from 'download';
 import util from 'util';
 const exec = util.promisify(require('child_process').exec);
@@ -7,8 +8,9 @@ import path from 'path';
 const { email, password } = require('../../config.json');
 import axios from 'axios'
 // Relative paths
-const waifu = path.resolve(__dirname);
+const waifu = path.resolve(__dirname, '..', '..');
 import { logIn, buyTicket } from './kakao';
+import randomstring from 'randomstring'
 
 type chapterItem = {
     id: string;
@@ -563,6 +565,8 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
     }
 
 }
+
+
 
 
 export { handleChapter, handleTicket, ripLatest };
