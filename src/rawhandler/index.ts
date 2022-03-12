@@ -8,7 +8,7 @@ import path from 'path';
 const { email, password } = require('../../config.json');
 import axios from 'axios'
 // Relative paths
-const waifu = path.resolve(__dirname, '..', '..');
+const waifu = path.resolve(__dirname);
 import { logIn, buyTicket } from './kakao';
 import randomstring from 'randomstring'
 
