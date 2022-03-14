@@ -12,8 +12,9 @@ export async function logIn(browser: Browser) {
     const pageTarget = page.target();
     await page.setViewport({ width: 1080, height: 1080 });
     console.log('eu estou aqui');
-    await page.goto('https://page.kakao.com/main');
+    await page.goto('https://page.kakao.com');
     await page.click('div.css-vurnku:nth-child(3)');
+    console.log(await browser.pages())
     const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
     const newPage = await newTarget.page();
     if (newPage) {
