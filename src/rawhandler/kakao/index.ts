@@ -17,6 +17,7 @@ export async function logIn(browser: Browser) {
     const newPage = await newTarget.page();
     if (newPage) {
         await newPage.waitForNetworkIdle();
+        console.log('estou aqui');
         console.log(newPage.url());
         await newPage.setViewport({ width: 1080, height: 1080 });
         await newPage.screenshot({ path: './beforelogin.png' })

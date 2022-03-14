@@ -453,6 +453,7 @@ export async function getChapter(chapter_number: number, series_id: string, seri
             }
             else {
                 await logIn(browser);
+                console.log('cheguei aqui');
                 const chapter_file = await downloadChapter(chapter, series_title, browser);
                 await browser.close();
                 return chapter_file;
