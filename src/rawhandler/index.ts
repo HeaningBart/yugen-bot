@@ -463,6 +463,7 @@ export async function getChapter(chapter_number: number, series_id: string, seri
             return './afterlogin.png';
         }
     } catch (error) {
+        console.log(error);
         return './afterlogin.png'
     }
 }
