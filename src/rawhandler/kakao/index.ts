@@ -6,6 +6,9 @@ const { email, password } = require('../../../config.json');
 
 export async function start() {
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const page = await browser.newPage();
+    await page.goto('https://page.kakao.com/home?seriesId=56611441');
+    await page.screenshot({ path: 'testnew.png' })
     return browser;
 }
 
