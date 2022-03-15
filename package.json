@@ -30,7 +30,8 @@
     "puppeteer-extra-plugin-recaptcha": "^3.5.0",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
     "puppeteer-extra-plugin-user-preferences": "^2.3.1",
-    "randomstring": "^1.2.2"
+    "randomstring": "^1.2.2",
+    "tsc": "^2.0.4"
   },
   "devDependencies": {
     "@types/latinize": "^0.2.15",
@@ -39,6 +40,6 @@
     "latinize": "^0.5.0",
     "nodemon": "^2.0.15",
     "prisma": "^3.9.2",
-    "ts-node": "^10.5.0"
+    "ts-node": "^10.7.0"
   }
 }

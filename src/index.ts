@@ -70,7 +70,7 @@ const monday_job = schedule.scheduleJob('01 22 * * 1', async function () {
 
 const tuesday_job = schedule.scheduleJob('01 22 * * 2', async function () {
     try {
-        const daily_series = await prisma.series.findMany({ where: { cron: 'tuesday', weekly: true } });
+        const daily_series = await prisma.series.findMany({ where: { cron: 'tuesday', weekly: true }, orderBy: { id: 'asc' } });
         const browser = await start();
         await logIn(browser);
         for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -342,7 +342,7 @@ client.on('interactionCreate', async (interaction) => {
             return;
         case 'getseries':
             const release_day = interaction.options.getString('releaseday')!;
-            const all_series = await prisma.series.findMany({ where: { cron: release_day } });
+            const all_series = await prisma.series.findMany({ where: { cron: release_day }, orderBy: { id: 'asc' } });
             let embeds: any = [];
             all_series.map((series) => {
                 let embed = new MessageEmbed()
