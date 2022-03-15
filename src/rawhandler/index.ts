@@ -41,7 +41,7 @@ async function handleChapter(images_array: string[], number: string, title: stri
         })));
         console.log('All images have been downloaded.')
 
-        await exec(`py src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
         console.log('All images have been stitched.')
 
         await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 3:3:3`, { cwd: waifu })
