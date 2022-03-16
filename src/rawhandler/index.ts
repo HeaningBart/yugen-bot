@@ -625,15 +625,17 @@ export async function processNaver(url: string) {
             return `./${name}.7z`;
         }
     } else if (url.includes('mediafire')) {
+        console.log('initializing mediafire');
         const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
         const mediafire_page = await browser.newPage();
         await mediafire_page.goto(url);
         const download_link = await mediafire_page.evaluate(() => {
-            const url = document.querySelector<HTMLAnchorElement>('a.downloadButton');
+            const url = document.querySelector<HTMLAnchorElement>('a#downloadButton');
             if (url) {
                 return url.href;
             } else return null;
         })
+        console.log(download_link);
         if (download_link) {
             await download(download_link, `./${directory}`);
             const files = await fs.readdir(`./${directory}`);
