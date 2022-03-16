@@ -568,6 +568,103 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
 
 }
 
+export async function processNaver(url: string) {
+    const directory = randomstring.generate();
+    if (url.includes('discord')) {
+        await download(url, `./${directory}`);
+        const files = await fs.readdir(`./${directory}`);
+        const name = files[0].split('.')[0];
+        const ext = files[0].split('.')[1];
+        if (ext == 'rar') {
+            await exec(`unrar e ./${directory}/${files[0]}`, { cwd: `./${directory}` });
+            await fs.unlink(`./${directory}/${files[0]}`);
+            await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+            await fs.mkdir(`./${directory}/${name}`, { recursive: true });
+            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu });
+            await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
+            console.log('Chapter processment done.');
+            await fs.rm(`./${directory}`, { recursive: true });
+            return `./${name}.7z`;
+        } else {
+            await exec(`7z x ./${directory}/${files[0]}`, { cwd: `./${directory}` });
+            await fs.unlink(`./${directory}/${files[0]}`);
+            await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+            await fs.mkdir(`./${directory}/${name}`, { recursive: true });
+            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu });
+            await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
+            console.log('Chapter processment done.');
+            await fs.rm(`./${directory}`, { recursive: true });
+            return `./${name}.7z`;
+        }
+    } else if (url.includes('drive.google')) {
+        const file_id = url.replaceAll('https://drive.google.com/file/d/', '').replaceAll('/view?usp=sharing', '').replaceAll('/view', '');
+        const file_url = `https://drive.google.com/uc?export=download&id=${file_id}`;
+        await download(file_url, `./${directory}`);
+        const files = await fs.readdir(`./${directory}`);
+        const name = files[0].split('.')[0];
+        const ext = files[0].split('.')[1];
+        if (ext == 'rar') {
+            await exec(`unrar e ./${directory}/${files[0]}`, { cwd: `./${directory}` });
+            await fs.unlink(`./${directory}/${files[0]}`);
+            await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+            await fs.mkdir(`./${directory}/${name}`, { recursive: true });
+            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu });
+            await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
+            console.log('Chapter processment done.');
+            await fs.rm(`./${directory}`, { recursive: true });
+            return `./${name}.7z`;
+        } else {
+            await exec(`7z x ./${directory}/${files[0]}`, { cwd: `./${directory}` });
+            await fs.unlink(`./${directory}/${files[0]}`);
+            await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+            await fs.mkdir(`./${directory}/${name}`, { recursive: true });
+            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu });
+            await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
+            console.log('Chapter processment done.');
+            await fs.rm(`./${directory}`, { recursive: true });
+            return `./${name}.7z`;
+        }
+    } else if (url.includes('mediafire')) {
+        const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        const mediafire_page = await browser.newPage();
+        await mediafire_page.goto(url);
+        const download_link = await mediafire_page.evaluate(() => {
+            const url = document.querySelector<HTMLAnchorElement>('a.downloadButton');
+            if (url) {
+                return url.href;
+            } else return null;
+        })
+        if (download_link) {
+            await download(download_link, `./${directory}`);
+            const files = await fs.readdir(`./${directory}`);
+            const name = files[0].split('.')[0];
+            const ext = files[0].split('.')[1];
+            if (ext == 'rar') {
+                await exec(`unrar e ./${directory}/${files[0]}`, { cwd: `./${directory}` });
+                await fs.unlink(`./${directory}/${files[0]}`);
+                await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+                await fs.mkdir(`./${directory}/${name}`, { recursive: true });
+                await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu });
+                await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
+                console.log('Chapter processment done.');
+                await fs.rm(`./${directory}`, { recursive: true });
+                return `./${name}.7z`;
+            } else {
+                await exec(`7z x ./${directory}/${files[0]}`, { cwd: `./${directory}` });
+                await fs.unlink(`./${directory}/${files[0]}`);
+                await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+                await fs.mkdir(`./${directory}/${name}`, { recursive: true });
+                await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu });
+                await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
+                console.log('Chapter processment done.');
+                await fs.rm(`./${directory}`, { recursive: true });
+                return `./${name}.7z`;
+            }
+        } else return null;
+    } else {
+        return null;
+    }
+}
 
 
 

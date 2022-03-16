@@ -1,6 +1,6 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
-import { handleTicket as buyTicket, ripLatest, getChapter, getLatestChapter } from './rawhandler'
+import { handleTicket as buyTicket, ripLatest, getChapter, getLatestChapter, processNaver } from './rawhandler'
 import { start, logIn } from './rawhandler/kakao'
 import fs from 'fs/promises'
 import schedule from 'node-schedule'
@@ -26,6 +26,56 @@ export function toUrl(string: string): string {
 
 client.on('ready', async () => {
     console.log('The bot is ready!')
+    await client.guilds.cache.get('794049571973890068')?.commands.create({
+        name: 'process',
+        description: 'process a chapter from naver',
+        type: 'CHAT_INPUT',
+        options: [
+            {
+                name: 'url',
+                description: 'url from the chapter, only gdrive/discord/mediafire links',
+                type: 'STRING',
+                required: true
+            },
+            {
+                name: 'channel',
+                description: 'channel for the processed chapter to be sent',
+                type: 'CHANNEL',
+                required: true
+            },
+            {
+                name: 'role',
+                description: 'role to be pinged when the chapter is sent',
+                type: 'ROLE',
+                required: true
+            }
+        ]
+    })
+    await client.guilds.cache.get('860293685127544903')?.commands.create({
+        name: 'process',
+        description: 'process a chapter from naver',
+        type: 'CHAT_INPUT',
+        options: [
+            {
+                name: 'url',
+                description: 'url from the chapter, only gdrive/discord/mediafire links',
+                type: 'STRING',
+                required: true
+            },
+            {
+                name: 'channel',
+                description: 'channel for the processed chapter to be sent',
+                type: 'CHANNEL',
+                required: true
+            },
+            {
+                name: 'role',
+                description: 'role to be pinged when the chapter is sent',
+                type: 'ROLE',
+                required: true
+            }
+        ]
+    })
 });
 
 
@@ -397,6 +447,23 @@ client.on('interactionCreate', async (interaction) => {
             }
             await interaction.editReply('RP done.');
             return;
+        case 'process':
+            if (!allowedUsers.includes(user)) {
+                await interaction.editReply(`You're not allowed to use this command.`)
+                return;
+            }
+            const download_url = interaction.options.getString('url')!;
+            const channel_id = interaction.options.getChannel('channel')!.id;
+            const role_id = interaction.options.getRole('role')!.id;
+            const processed_file = await processNaver(download_url);
+            if (processed_file) {
+                const target_channel = client.channels.cache.get(channel_id);
+                if (target_channel?.isText()) {
+                    await target_channel.send({ files: [processed_file] })
+                    await target_channel.send(`<@&${role_id}>, <@&946250134042329158>`);
+                    await target_channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                }
+            }
         default:
             await interaction.editReply('Done.');
             return;
