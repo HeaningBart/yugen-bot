@@ -5,7 +5,7 @@ import { start, logIn } from './rawhandler/kakao'
 import fs from 'fs/promises'
 import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
-const allowedUsers = ['397857749938995201', '345938621137944577', '422790603064213528']
+const allowedUsers = ['397857749938995201', '345938621137944577', '422790603064213528', '121671582044258306']
 import puppeteer from 'puppeteer';
 
 const prisma = new PrismaClient();
