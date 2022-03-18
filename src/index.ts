@@ -194,7 +194,7 @@ const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
     }
 })
 
-const friday_job = schedule.scheduleJob('01 22 * * 5', async function () {
+const friday_job = schedule.scheduleJob('40 22 * * 5', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'friday', weekly: true } });
         const browser = await start();
@@ -447,7 +447,7 @@ client.on('interactionCreate', async (interaction) => {
             const paid_chapters = chapters.filter(chapter => chapter.free === false);
 
             const browser = await start();
-            // await logIn(browser);
+            await logIn(browser);
 
             await interaction.editReply('Starting RP of free chapters');
 
@@ -458,18 +458,33 @@ client.on('interactionCreate', async (interaction) => {
                 }
             }));
 
-            // await interaction.editReply('Starting purchase of tickets.');
+            await interaction.editReply('Starting purchase of tickets.');
 
 
-            // for (let i = 0; i <= paid_chapters.length - 1; i++) {
-            //     try {
-            //         const length = paid_chapters.length - 1;
-            //         buyTicket(browser, series_kakao_id);
-            //         await interaction.editReply(`Buying tickets... (${i + 1}/${length})`);
-            //     } catch (error) {
-            //         console.log(error);
-            //     }
-            // }
+            for (let i = 0; i <= paid_chapters.length - 1; i++) {
+                try {
+                    const length = paid_chapters.length - 1;
+                    buyTicket(browser, series_kakao_id);
+                    await interaction.editReply(`Buying tickets... (${i + 1}/${length})`);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+            for (let i = 0; i <= paid_chapters.length - 1; i++) {
+                try {
+                    const length = paid_chapters.length - 1;
+                    await interaction.editReply(`RPing chapters... (${i + 1}/${length})`);
+                    const chapter = await downloadSRChapter(paid_chapters[i], series_kakao_title, browser);
+                    if (chapter) {
+                        await interaction.channel?.send({ files: [chapter] })
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+
 
 
 
