@@ -449,27 +449,27 @@ client.on('interactionCreate', async (interaction) => {
             const browser = await start();
             await logIn(browser);
 
-            await interaction.editReply('Starting RP of free chapters');
+            // await interaction.editReply('Starting RP of free chapters');
 
-            const free_files = await Promise.all(free_chapters.map(chapter => downloadSRChapter(chapter, series_kakao_title, browser)));
-            if (free_files) await Promise.all(free_files.map((chapter) => {
-                if (chapter) {
-                    interaction.channel?.send({ files: [chapter] })
-                }
-            }));
+            // const free_files = await Promise.all(free_chapters.map(chapter => downloadSRChapter(chapter, series_kakao_title, browser)));
+            // if (free_files) await Promise.all(free_files.map((chapter) => {
+            //     if (chapter) {
+            //         interaction.channel?.send({ files: [chapter] })
+            //     }
+            // }));
 
-            await interaction.editReply('Starting purchase of tickets.');
+            // await interaction.editReply('Starting purchase of tickets.');
 
 
-            for (let i = 0; i <= paid_chapters.length - 1; i++) {
-                try {
-                    const length = paid_chapters.length - 1;
-                    buyTicket(browser, series_kakao_id);
-                    await interaction.editReply(`Buying tickets... (${i + 1}/${length})`);
-                } catch (error) {
-                    console.log(error);
-                }
-            }
+            // for (let i = 0; i <= paid_chapters.length - 1; i++) {
+            //     try {
+            //         const length = paid_chapters.length - 1;
+            //         buyTicket(browser, series_kakao_id);
+            //         await interaction.editReply(`Buying tickets... (${i + 1}/${length})`);
+            //     } catch (error) {
+            //         console.log(error);
+            //     }
+            // }
 
             for (let i = 0; i <= paid_chapters.length - 1; i++) {
                 try {
