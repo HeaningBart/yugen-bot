@@ -580,7 +580,7 @@ export async function processNaver(url: string) {
             await fs.unlink(`./${directory}/${files[0]}`);
             await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
             await fs.mkdir(`./${directory}/${name}`, { recursive: true });
-            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg`, { cwd: waifu });
+            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
             await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
             console.log('Chapter processment done.');
             await fs.rm(`./${directory}`, { recursive: true });
@@ -590,7 +590,7 @@ export async function processNaver(url: string) {
             await fs.unlink(`./${directory}/${files[0]}`);
             await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
             await fs.mkdir(`./${directory}/${name}`, { recursive: true });
-            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg`, { cwd: waifu });
+            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
             await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
             console.log('Chapter processment done.');
             await fs.rm(`./${directory}`, { recursive: true });
@@ -608,7 +608,7 @@ export async function processNaver(url: string) {
             await fs.unlink(`./${directory}/${files[0]}`);
             await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
             await fs.mkdir(`./${directory}/${name}`, { recursive: true });
-            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg`, { cwd: waifu });
+            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
             await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
             console.log('Chapter processment done.');
             await fs.rm(`./${directory}`, { recursive: true });
@@ -618,7 +618,7 @@ export async function processNaver(url: string) {
             await fs.unlink(`./${directory}/${files[0]}`);
             await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
             await fs.mkdir(`./${directory}/${name}`, { recursive: true });
-            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg`, { cwd: waifu });
+            await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
             await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
             console.log('Chapter processment done.');
             await fs.rm(`./${directory}`, { recursive: true });
@@ -646,7 +646,7 @@ export async function processNaver(url: string) {
                 await fs.unlink(`./${directory}/${files[0]}`);
                 await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
-                await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg`, { cwd: waifu });
+                await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
                 await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
                 console.log('Chapter processment done.');
                 await fs.rm(`./${directory}`, { recursive: true });
@@ -656,7 +656,7 @@ export async function processNaver(url: string) {
                 await fs.unlink(`./${directory}/${files[0]}`);
                 await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
-                await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${directory}/${name} -i ../../${directory}/Stitched -f jpg`, { cwd: waifu });
+                await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
                 await exec(`7z a ${name}.7z  ./${directory}/${name}/*`);
                 console.log('Chapter processment done.');
                 await fs.rm(`./${directory}`, { recursive: true });
