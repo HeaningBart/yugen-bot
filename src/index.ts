@@ -440,7 +440,7 @@ client.on('interactionCreate', async (interaction) => {
                 await interaction.editReply(`You're not allowed to use this command.`)
                 return;
             }
-            const series_kakao_id = interaction.options.getString('series')!;
+            const series_kakao_id = interaction.options.getString('seriesid')!;
             const series_kakao_title = interaction.options.getString('title')!;
             const chapters = await getChaptersList(series_kakao_id, 'asc');
             const free_chapters = chapters.filter(chapter => chapter.free === true);
