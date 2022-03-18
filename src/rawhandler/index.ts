@@ -576,7 +576,7 @@ export async function processNaver(url: string) {
         const name = files[0].split('.')[0];
         const ext = files[0].split('.')[1];
         if (ext == 'rar') {
-            await exec(`unrar e ./${files[0]}`, { cwd: `./${directory}` });
+            await exec(`unrar e "./${files[0]}"`, { cwd: `./${directory}` });
             await fs.unlink(`./${directory}/${files[0]}`);
             await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
             await fs.mkdir(`./${directory}/${name}`, { recursive: true });
@@ -586,7 +586,7 @@ export async function processNaver(url: string) {
             await fs.rm(`./${directory}`, { recursive: true });
             return `./${name}.7z`;
         } else {
-            await exec(`7z x ./${files[0]}`, { cwd: `./${directory}` });
+            await exec(`7z x "./${files[0]}"`, { cwd: `./${directory}` });
             await fs.unlink(`./${directory}/${files[0]}`);
             await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
             await fs.mkdir(`./${directory}/${name}`, { recursive: true });
@@ -604,7 +604,7 @@ export async function processNaver(url: string) {
         const name = files[0].split('.')[0];
         const ext = files[0].split('.')[1];
         if (ext == 'rar') {
-            await exec(`unrar e ./${files[0]}`, { cwd: `./${directory}` });
+            await exec(`unrar e "./${files[0]}"`, { cwd: `./${directory}` });
             await fs.unlink(`./${directory}/${files[0]}`);
             await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
             await fs.mkdir(`./${directory}/${name}`, { recursive: true });
@@ -614,7 +614,7 @@ export async function processNaver(url: string) {
             await fs.rm(`./${directory}`, { recursive: true });
             return `./${name}.7z`;
         } else {
-            await exec(`7z x ./${files[0]}`, { cwd: `./${directory}` });
+            await exec(`7z x "./${files[0]}"`, { cwd: `./${directory}` });
             await fs.unlink(`./${directory}/${files[0]}`);
             await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
             await fs.mkdir(`./${directory}/${name}`, { recursive: true });
@@ -642,7 +642,7 @@ export async function processNaver(url: string) {
             const name = files[0].split('.')[0];
             const ext = files[0].split('.')[1];
             if (ext == 'rar') {
-                await exec(`unrar e ./${files[0]}`, { cwd: `./${directory}` });
+                await exec(`unrar e "./${files[0]}"`, { cwd: `./${directory}` });
                 await fs.unlink(`./${directory}/${files[0]}`);
                 await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
@@ -652,7 +652,7 @@ export async function processNaver(url: string) {
                 await fs.rm(`./${directory}`, { recursive: true });
                 return `./${name}.7z`;
             } else {
-                await exec(`7z x ./${files[0]}`, { cwd: `./${directory}` });
+                await exec(`7z x "./${files[0]}"`, { cwd: `./${directory}` });
                 await fs.unlink(`./${directory}/${files[0]}`);
                 await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
