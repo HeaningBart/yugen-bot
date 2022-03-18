@@ -568,6 +568,114 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
 
 }
 
+
+export async function downloadSRChapter(chapter: chapter, series_title: string, browser: Browser) {
+    try {
+        if (chapter.free === true && chapter.age_15 == false) {
+            const response = await axios.post('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', `productId=${chapter.id}`, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+            const kakao_files = response.data.downloadData.members.files;
+            const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+            const chapter_file = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+            if (chapter_file) return chapter_file;
+        } else if (chapter.free === true && chapter.age_15 == true) {
+            const new_page = await browser.newPage();
+            await new_page.goto(`https://page.kakao.com/viewer?productId=${chapter.id}`, { waitUntil: 'domcontentloaded' });
+            const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web');
+            const kakao_response = await response.json();
+            const kakao_files = kakao_response.downloadData.members.files;
+            const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+            const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+            await new_page.close();
+            return file_to_be_returned;
+        }
+        else {
+            const new_page = await browser.newPage();
+            await new_page.goto(`https://page.kakao.com/viewer?productId=${chapter.id}`, { waitUntil: 'domcontentloaded' });
+            try {
+                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', { timeout: 5 * 1000 });
+                const kakao_response = await response.json();
+                const kakao_files = kakao_response.downloadData.members.files;
+                console.log(kakao_files);
+                const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                await new_page.screenshot({ path: './afterrp.png' })
+                console.log(file_to_be_returned);
+                return file_to_be_returned;
+            } catch (error) {
+                console.log('first try didnt go well')
+            }
+            await new_page.waitForNetworkIdle();
+            const need_ticket = await new_page.evaluate(() => {
+                const button = document.querySelector('div.preventMobileBodyScroll');
+                if (button) return true;
+                else return false;
+            })
+            await new_page.screenshot({ path: './ticket.png' })
+            console.log(need_ticket)
+            if (need_ticket) {
+                await new_page.evaluate(() => {
+                    const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)');
+                    if (button) button.click();
+                })
+            }
+            try {
+                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', { timeout: 10 * 1000 });
+                const kakao_response = await response.json();
+                const kakao_files = kakao_response.downloadData.members.files;
+                console.log(kakao_files);
+                const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                await new_page.screenshot({ path: './afterrp.png' })
+                console.log(file_to_be_returned);
+                await new_page.close();
+                return file_to_be_returned;
+            } catch (error) {
+                console.log('second try didnt go well')
+            }
+            const need_ticket_again = await new_page.evaluate(() => {
+                const button = document.querySelector('div.preventMobileBodyScroll');
+                if (button) return true;
+                else return false;
+            })
+            if (need_ticket_again) {
+                await new_page.evaluate(() => {
+                    const button = document.querySelector<HTMLButtonElement>('span.btnBox > span:nth-child(2)');
+                    if (button) button.click();
+                })
+            }
+            try {
+                const response = await new_page.waitForResponse('https://api2-page.kakao.com/api/v1/inven/get_download_data/web', { timeout: 10 * 1000 });
+                const kakao_response = await response.json();
+                const kakao_files = kakao_response.downloadData.members.files;
+                console.log(kakao_files);
+                const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                await new_page.screenshot({ path: './afterrp.png' })
+                console.log(file_to_be_returned);
+                await new_page.close();
+                return file_to_be_returned;
+            } catch (error) {
+                console.log('third try didnt go well')
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
+(async function () {
+    const chapters = await getChaptersList('58870225', 'asc');
+    const free_chapters = chapters.filter(chapter => chapter.free === true);
+    const paid_chapters = chapters.filter(chapter => chapter.free === false);
+    console.log(paid_chapters);
+})()
+
+
 export async function processNaver(url: string) {
     try {
         const directory = randomstring.generate();

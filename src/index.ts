@@ -1,7 +1,7 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
-import { handleTicket as buyTicket, ripLatest, getChapter, getLatestChapter, processNaver } from './rawhandler'
-import { start, logIn } from './rawhandler/kakao'
+import { getChapter, getLatestChapter, processNaver, getChaptersList, downloadSRChapter } from './rawhandler'
+import { start, logIn, buyTicket } from './rawhandler/kakao'
 import fs from 'fs/promises'
 import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
@@ -27,53 +27,22 @@ export function toUrl(string: string): string {
 client.on('ready', async () => {
     console.log('The bot is ready!')
     await client.guilds.cache.get('794049571973890068')?.commands.create({
-        name: 'process',
-        description: 'process a chapter from naver',
+        name: 'sr',
+        description: 'mass rp a series',
         type: 'CHAT_INPUT',
         options: [
             {
-                name: 'url',
-                description: 'url from the chapter, only gdrive/discord/mediafire links',
+                name: 'seriesid',
+                description: 'seriesid from the raws',
                 type: 'STRING',
                 required: true
             },
             {
-                name: 'channel',
-                description: 'channel for the processed chapter to be sent',
-                type: 'CHANNEL',
-                required: true
-            },
-            {
-                name: 'role',
-                description: 'role to be pinged when the chapter is sent',
-                type: 'ROLE',
-                required: true
-            }
-        ]
-    })
-    await client.guilds.cache.get('860293685127544903')?.commands.create({
-        name: 'process',
-        description: 'process a chapter from naver',
-        type: 'CHAT_INPUT',
-        options: [
-            {
-                name: 'url',
-                description: 'url from the chapter, only gdrive/discord/mediafire links',
+                name: 'title',
+                description: 'series title',
                 type: 'STRING',
                 required: true
             },
-            {
-                name: 'channel',
-                description: 'channel for the processed chapter to be sent',
-                type: 'CHANNEL',
-                required: true
-            },
-            {
-                name: 'role',
-                description: 'role to be pinged when the chapter is sent',
-                type: 'ROLE',
-                required: true
-            }
         ]
     })
 });
@@ -359,19 +328,19 @@ client.on('interactionCreate', async (interaction) => {
     const user = interaction.member?.user.id!;
     switch (type) {
         case 'mass':
-            if (!allowedUsers.includes(user)) {
-                await interaction.editReply(`You're not allowed to use this command.`)
-                return;
-            }
-            const id = interaction.options.getString('kakaoid')!;
-            const starts_at = interaction.options.getNumber('startsat')!;
-            const series_title = interaction.options.getString('title')!;
-            const chapters = await buyTicket(id, starts_at, series_title);
-            await interaction.editReply('Done.');
-            await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
-            await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
-            await interaction.channel?.send('RP done.')
-            await interaction.editReply('Done.');
+            // if (!allowedUsers.includes(user)) {
+            //     await interaction.editReply(`You're not allowed to use this command.`)
+            //     return;
+            // }
+            // const id = interaction.options.getString('kakaoid')!;
+            // const starts_at = interaction.options.getNumber('startsat')!;
+            // const series_title = interaction.options.getString('title')!;
+            // const chapters = await buyTicket(id, starts_at, series_title);
+            // await interaction.editReply('Done.');
+            // await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
+            // await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
+            // await interaction.channel?.send('RP done.')
+            // await interaction.editReply('Done.');
             return;
         // return;
         case 'add':
@@ -464,6 +433,56 @@ client.on('interactionCreate', async (interaction) => {
                     await target_channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                 }
             }
+            await interaction.editReply('Done.');
+            return;
+        case 'sr':
+            if (!allowedUsers.includes(user)) {
+                await interaction.editReply(`You're not allowed to use this command.`)
+                return;
+            }
+            const series_kakao_id = interaction.options.getString('series')!;
+            const series_kakao_title = interaction.options.getString('title')!;
+            const chapters = await getChaptersList(series_kakao_id, 'asc');
+            const free_chapters = chapters.filter(chapter => chapter.free === true);
+            const paid_chapters = chapters.filter(chapter => chapter.free === false);
+
+            const browser = await start();
+            // await logIn(browser);
+
+            await interaction.editReply('Starting RP of free chapters');
+
+            const free_files = await Promise.all(free_chapters.map(chapter => downloadSRChapter(chapter, series_kakao_title, browser)));
+            if (free_files) await Promise.all(free_files.map((chapter) => {
+                if (chapter) {
+                    interaction.channel?.send({ files: [chapter] })
+                }
+            }));
+
+            // await interaction.editReply('Starting purchase of tickets.');
+
+
+            // for (let i = 0; i <= paid_chapters.length - 1; i++) {
+            //     try {
+            //         const length = paid_chapters.length - 1;
+            //         buyTicket(browser, series_kakao_id);
+            //         await interaction.editReply(`Buying tickets... (${i + 1}/${length})`);
+            //     } catch (error) {
+            //         console.log(error);
+            //     }
+            // }
+
+
+
+
+            // const chapters = await buyTicket(id, starts_at, series_title);
+
+
+            // await interaction.editReply('Done.');
+            // await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
+            // await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
+            // await interaction.channel?.send('RP done.')
+            await interaction.editReply('Done.');
+            return;
         default:
             await interaction.editReply('Done.');
             return;
