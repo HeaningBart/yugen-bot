@@ -45,6 +45,7 @@ client.on('ready', async () => {
             },
         ]
     })
+    client.user?.setPresence({ status: 'dnd', activities: [{ name: 'Being enslaved by Ryuwuu', type: 'WATCHING', url: 'https://reaperscans.com' }] })
 });
 
 
