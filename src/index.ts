@@ -27,8 +27,8 @@ export function toUrl(string: string): string {
 client.on('ready', async () => {
     console.log('The bot is ready!')
     await client.guilds.cache.get('794049571973890068')?.commands.create({
-        name: 'sr',
-        description: 'mass rp a series',
+        name: 'range',
+        description: 'rp chapters within a certain range',
         type: 'CHAT_INPUT',
         options: [
             {
@@ -38,11 +38,17 @@ client.on('ready', async () => {
                 required: true
             },
             {
-                name: 'title',
-                description: 'series title',
-                type: 'STRING',
+                name: 'start',
+                description: 'what chapter the bot should start the rp process',
+                type: 'NUMBER',
                 required: true
             },
+            {
+                name: 'end',
+                description: 'what chapter the bot should stop',
+                type: 'NUMBER',
+                required: true
+            }
         ]
     })
     client.user?.setPresence({ status: 'dnd', activities: [{ name: 'Being enslaved by Ryuwuu', type: 'WATCHING', url: 'https://reaperscans.com' }] })
@@ -450,27 +456,14 @@ client.on('interactionCreate', async (interaction) => {
             const browser = await start();
             await logIn(browser);
 
-            // await interaction.editReply('Starting RP of free chapters');
+            await interaction.editReply('Starting RP of free chapters');
 
-            // const free_files = await Promise.all(free_chapters.map(chapter => downloadSRChapter(chapter, series_kakao_title, browser)));
-            // if (free_files) await Promise.all(free_files.map((chapter) => {
-            //     if (chapter) {
-            //         interaction.channel?.send({ files: [chapter] })
-            //     }
-            // }));
-
-            // await interaction.editReply('Starting purchase of tickets.');
-
-
-            // for (let i = 0; i <= paid_chapters.length - 1; i++) {
-            //     try {
-            //         const length = paid_chapters.length - 1;
-            //         buyTicket(browser, series_kakao_id);
-            //         await interaction.editReply(`Buying tickets... (${i + 1}/${length})`);
-            //     } catch (error) {
-            //         console.log(error);
-            //     }
-            // }
+            const free_files = await Promise.all(free_chapters.map(chapter => downloadSRChapter(chapter, series_kakao_title, browser)));
+            if (free_files) await Promise.all(free_files.map((chapter) => {
+                if (chapter) {
+                    interaction.channel?.send({ files: [chapter] })
+                }
+            }));
 
             for (let i = 0; i <= paid_chapters.length - 1; i++) {
                 try {
@@ -484,19 +477,30 @@ client.on('interactionCreate', async (interaction) => {
                     console.log(error);
                 }
             }
+            await interaction.editReply('Done.');
+            return;
+        case 'range':
+            const range_browser = await start();
+            await logIn(range_browser);
+            const range_seriesid = interaction.options.getString('seriesid')!;
+            const range_start = interaction.options.getNumber('start')!;
+            const range_end = interaction.options.getNumber('end')!;
+            const new_chapters = await getChaptersList(range_seriesid, 'asc');
 
+            const chapters_to_rp = new_chapters.filter((chapter) => chapter.chapter_number >= range_start || chapter.chapter_number <= range_end);
 
-
-
-
-
-            // const chapters = await buyTicket(id, starts_at, series_title);
-
-
-            // await interaction.editReply('Done.');
-            // await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
-            // await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
-            // await interaction.channel?.send('RP done.')
+            for (let i = 0; i <= chapters_to_rp.length - 1; i++) {
+                try {
+                    const length = chapters_to_rp.length - 1;
+                    await interaction.editReply(`RPing chapters... (${i + 1}/${length})`);
+                    const chapter = await downloadSRChapter(chapters_to_rp[i], range_seriesid, range_browser);
+                    if (chapter) {
+                        await interaction.channel?.send({ files: [chapter] })
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
             await interaction.editReply('Done.');
             return;
         default:
