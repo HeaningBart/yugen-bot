@@ -668,12 +668,6 @@ export async function downloadSRChapter(chapter: chapter, series_title: string, 
 
 }
 
-(async function () {
-    const chapters = await getChaptersList('58870225', 'asc');
-    const free_chapters = chapters.filter(chapter => chapter.free === true);
-    const paid_chapters = chapters.filter(chapter => chapter.free === false);
-    console.log(paid_chapters);
-})()
 
 
 export async function processNaver(url: string) {
