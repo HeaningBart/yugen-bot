@@ -405,7 +405,7 @@ export async function getLatestChapter(series_id: string, series_title: string, 
 
 export async function getChaptersList(seriesid: string, order: string): Promise<chapter[]> {
     if (order == 'asc' || order == 'desc') {
-        const response = await axios.post('https://api2-page.kakao.com/api/v5/store/singles', `seriesid=${seriesid}&page=0&direction=${order}&page_size=2000&without_hidden=true`, {
+        const response = await axios.post('https://api2-page.kakao.com/api/v5/store/singles', `seriesid=${seriesid}&page=0&direction=${order}&page_size=2000&without_hidden=false`, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
