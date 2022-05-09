@@ -61,7 +61,7 @@ type SeriesItem = {
     title: string;
 }
 
-const monday_job = schedule.scheduleJob('00wa 22 * * 1', async function () {
+const monday_job = schedule.scheduleJob('00 22 * * 1', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'monday', weekly: true } });
         const browser = await start();
