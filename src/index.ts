@@ -487,7 +487,7 @@ client.on('interactionCreate', async (interaction) => {
             const range_end = interaction.options.getNumber('end')!;
             const new_chapters = await getChaptersList(range_seriesid, 'asc');
 
-            const chapters_to_rp = new_chapters.filter((chapter) => chapter.chapter_number >= range_start || chapter.chapter_number <= range_end);
+            const chapters_to_rp = new_chapters.filter((chapter) => chapter.chapter_number >= range_start && chapter.chapter_number <= range_end);
 
             for (let i = 0; i <= chapters_to_rp.length - 1; i++) {
                 try {
