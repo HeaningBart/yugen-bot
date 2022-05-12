@@ -493,6 +493,7 @@ client.on('interactionCreate', async (interaction) => {
                 try {
                     const length = chapters_to_rp.length - 1;
                     await interaction.editReply(`RPing chapters... (${i + 1}/${length})`);
+                    await buyTicket(range_browser, chapters_to_rp[i].series_id);
                     const chapter = await downloadSRChapter(chapters_to_rp[i], range_seriesid, range_browser);
                     if (chapter) {
                         await interaction.channel?.send({ files: [chapter] })
