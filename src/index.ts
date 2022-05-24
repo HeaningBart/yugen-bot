@@ -127,6 +127,36 @@ const tuesday_job = schedule.scheduleJob('01 22 * * 2', async function () {
     }
 })
 
+
+
+const rr_job = schedule.scheduleJob('31 00 * * 3', async function () {
+    try {
+        const browser = await start();
+        await logIn(browser);
+        try {
+            const channel = client.channels.cache.get('871239733286674503');
+            if (channel?.isText()) {
+                const file = await getLatestChapter('57552517', 'rankers-return', browser);
+                if (file) {
+                    await channel.send({ files: [file], content: `Weekly chapter of ${`Ranker's Return`}` })
+                    await channel.send(`<@&${871239863792435221}>, <@&946250134042329158>`);
+                    await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                    await channel.send('Weekly RP done.');
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            const log_channel = client.channels.cache.get('948063125486329876');
+            if (log_channel?.isText()) {
+                await log_channel.send(`There was an error during the RP process of a series - Ranker's Return.`);
+                await log_channel.send(`Please, get the chapter through /getchapter or access the server via FTP and get the .7z file.`);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+})
+
 const wednesday_job = schedule.scheduleJob('00 22 * * 3', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday', weekly: true } });
