@@ -31,26 +31,26 @@ async function handleChapter(images_array: string[], number: string, title: stri
     try {
         const random = title;
         const directory = `dist-${number}-${random}`;
-        const waifu_directory = `public/waifu-${number}-${random}`;
+        const waifu_directory = `waifu-${number}-${random}`;
         const chaptername = `chapter-${number}-${random}`;
 
         await fs.mkdir(waifu_directory, { recursive: true });
 
-        await Promise.all(images_array.map((image, index) => download(image, `./public/${directory}`, {
+        await Promise.all(images_array.map((image, index) => download(image, `./${directory}`, {
             filename: `image-${index}.jfif`
         })));
         console.log('All images have been downloaded.')
 
-        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "public/${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
         console.log('All images have been stitched.')
 
-        await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../public/${waifu_directory}/ -i ../../public/${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu })
+        await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu })
         console.log('All images have been through waifu-2x-caffe.')
 
-        await exec(`7z a public/${chaptername}.7z  ./public/${waifu_directory}/*`)
+        await exec(`7z a public/${chaptername}.7z  ./${waifu_directory}/*`)
 
-        fs.rm(`./public/${directory}`, { recursive: true })
-        fs.rm(`./public/${waifu_directory}`, { recursive: true })
+        fs.rm(`./${directory}`, { recursive: true })
+        fs.rm(`./${waifu_directory}`, { recursive: true })
 
         console.log('Temp directories are being removed.')
 
