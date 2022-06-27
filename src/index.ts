@@ -468,7 +468,7 @@ client.on('interactionCreate', async (interaction) => {
                     toUrl(kakao_title)
                 );
                 if (specified_file) {
-                    await interaction.channel?.send({ files: [specified_file] });
+                    await interaction.channel?.send({ content: `https://raws.reaperscans.com/${specified_file}` });
                 }
             } catch (error) { }
             await interaction.editReply('RP done.');
@@ -519,7 +519,7 @@ client.on('interactionCreate', async (interaction) => {
             const free_files = await Promise.all(free_chapters.map(chapter => downloadSRChapter(chapter, series_kakao_title, browser)));
             if (free_files) await Promise.all(free_files.map((chapter) => {
                 if (chapter) {
-                    interaction.channel?.send({ files: [chapter] })
+                    interaction.channel?.send({ content: `https://raws.reaperscans.com/${chapter}` })
                 }
             }));
 
