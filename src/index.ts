@@ -6,7 +6,21 @@ import fs from 'fs/promises'
 import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
 const allowedUsers = ['397857749938995201', '345938621137944577', '422790603064213528', '121671582044258306', '233286444083314699']
-import puppeteer from 'puppeteer';
+import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
+
+const app:Express = express();
+const port = process.env.PORT || 3000;
+
+  
+app.listen(port, () => {
+    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+});
+
+app.use(express.static('public'));
+
+
+
 
 const prisma = new PrismaClient();
 
@@ -63,7 +77,7 @@ type SeriesItem = {
 
 const monday_job = schedule.scheduleJob('00 22 * * 1', async function () {
     try {
-        const daily_series = await prisma.series.findMany({ where: { cron: 'monday', weekly: true } });
+        const daily_series = await prisma.series.findMany({ where: { cron: 'monday', weekly: true }, orderBy: { id: 'asc' } });
         const browser = await start();
         await logIn(browser);
         for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -74,7 +88,7 @@ const monday_job = schedule.scheduleJob('00 22 * * 1', async function () {
                 if (channel?.isText()) {
                     const file = await getLatestChapter(series.kakaoId, series.slug, browser);
                     if (file) {
-                        await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` })
+                        await channel.send({ content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}` })
                         await channel.send(`<@&${role}>, <@&946250134042329158>`);
                         await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                         await channel.send('Weekly RP done.');
@@ -107,7 +121,7 @@ const tuesday_job = schedule.scheduleJob('01 22 * * 2', async function () {
                 if (channel?.isText()) {
                     const file = await getLatestChapter(series.kakaoId, series.slug, browser);
                     if (file) {
-                        await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` })
+                        await channel.send({ content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}` })
                         await channel.send(`<@&${role}>, <@&946250134042329158>`);
                         await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                         await channel.send('Weekly RP done.');
@@ -138,8 +152,8 @@ const rr_job = schedule.scheduleJob('31 00 * * 3', async function () {
             if (channel?.isText()) {
                 const file = await getLatestChapter('57552517', 'rankers-return', browser);
                 if (file) {
-                    await channel.send({ files: [file], content: `Weekly chapter of ${`Ranker's Return`}` })
-                    await channel.send(`<@&${871239863792435221}>, <@&946250134042329158>`);
+                    await channel.send({ content: `Weekly chapter of ${`Ranker's Return`}: https://raws.reaperscans.com/${file}` })
+                    await channel.send(`<@&871239863792435221>, <@&946250134042329158>`);
                     await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                     await channel.send('Weekly RP done.');
                 }
@@ -159,7 +173,7 @@ const rr_job = schedule.scheduleJob('31 00 * * 3', async function () {
 
 const wednesday_job = schedule.scheduleJob('00 22 * * 3', async function () {
     try {
-        const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday', weekly: true } });
+        const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday', weekly: true }, orderBy: { id: 'asc' } });
         const browser = await start();
         await logIn(browser);
         for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -170,7 +184,7 @@ const wednesday_job = schedule.scheduleJob('00 22 * * 3', async function () {
                 if (channel?.isText()) {
                     const file = await getLatestChapter(series.kakaoId, series.slug, browser);
                     if (file) {
-                        await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` })
+                        await channel.send({ content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}` })
                         await channel.send(`<@&${role}>, <@&946250134042329158>`);
                         await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                         await channel.send('Weekly RP done.');
@@ -192,7 +206,7 @@ const wednesday_job = schedule.scheduleJob('00 22 * * 3', async function () {
 
 const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
     try {
-        const daily_series = await prisma.series.findMany({ where: { cron: 'thursday', weekly: true } });
+        const daily_series = await prisma.series.findMany({ where: { cron: 'thursday', weekly: true }, orderBy: { id: 'asc' } });
         const browser = await start();
         await logIn(browser);
         for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -204,7 +218,7 @@ const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
                 if (channel?.isText()) {
                     const file = await getLatestChapter(series.kakaoId, series.slug, browser);
                     if (file) {
-                        await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` })
+                        await channel.send({ content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}` })
                         await channel.send(`<@&${role}>, <@&946250134042329158>`);
                         await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                         await channel.send('Weekly RP done.');
@@ -233,7 +247,7 @@ const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
 
 const friday_job = schedule.scheduleJob('01 22 * * 5', async function () {
     try {
-        const daily_series = await prisma.series.findMany({ where: { cron: 'friday', weekly: true } });
+        const daily_series = await prisma.series.findMany({ where: { cron: 'friday', weekly: true }, orderBy: { id: 'asc' } });
         const browser = await start();
         await logIn(browser);
         for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -245,7 +259,7 @@ const friday_job = schedule.scheduleJob('01 22 * * 5', async function () {
                 if (channel?.isText()) {
                     const file = await getLatestChapter(series.kakaoId, series.slug, browser);
                     if (file) {
-                        await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` })
+                        await channel.send({ content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}` })
                         await channel.send(`<@&${role}>, <@&946250134042329158>`);
                         await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                         await channel.send('Weekly RP done.');
@@ -274,7 +288,7 @@ const friday_job = schedule.scheduleJob('01 22 * * 5', async function () {
 
 const saturday_job = schedule.scheduleJob('00 22 * * 6', async function () {
     try {
-        const daily_series = await prisma.series.findMany({ where: { cron: 'saturday', weekly: true } });
+        const daily_series = await prisma.series.findMany({ where: { cron: 'saturday', weekly: true }, orderBy: { id: 'asc' } });
         const browser = await start();
         await logIn(browser);
         for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -286,7 +300,7 @@ const saturday_job = schedule.scheduleJob('00 22 * * 6', async function () {
                 if (channel?.isText()) {
                     const file = await getLatestChapter(series.kakaoId, series.slug, browser);
                     if (file) {
-                        await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` })
+                        await channel.send({ content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}` })
                         await channel.send(`<@&${role}>, <@&946250134042329158>`);
                         await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                         await channel.send('Weekly RP done.');
@@ -315,7 +329,7 @@ const saturday_job = schedule.scheduleJob('00 22 * * 6', async function () {
 
 const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
     try {
-        const daily_series = await prisma.series.findMany({ where: { cron: 'sunday', weekly: true } });
+        const daily_series = await prisma.series.findMany({ where: { cron: 'sunday', weekly: true }, orderBy: { id: 'asc' } });
         const browser = await start();
         await logIn(browser);
         for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -327,7 +341,7 @@ const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
                 if (channel?.isText()) {
                     const file = await getLatestChapter(series.kakaoId, series.slug, browser);
                     if (file) {
-                        await channel.send({ files: [file], content: `Weekly chapter of ${series.title}` })
+                        await channel.send({ content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}` })
                         await channel.send(`<@&${role}>, <@&946250134042329158>`);
                         await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                         await channel.send('Weekly RP done.');
@@ -447,10 +461,16 @@ client.on('interactionCreate', async (interaction) => {
             const kakao_series_id = interaction.options.getString('kakaoid')!;
             const chapter_number = interaction.options.getInteger('chapternumber')!;
             const kakao_title = interaction.options.getString('seriestitle')!;
-            const specified_file = await getChapter(chapter_number, kakao_series_id, toUrl(kakao_title));
-            if (specified_file) {
-                await interaction.channel?.send({ files: [specified_file] });
-            }
+            try {
+                const specified_file = await getChapter(
+                    chapter_number,
+                    kakao_series_id,
+                    toUrl(kakao_title)
+                );
+                if (specified_file) {
+                    await interaction.channel?.send({ files: [specified_file] });
+                }
+            } catch (error) { }
             await interaction.editReply('RP done.');
             return;
         case 'process':
@@ -460,14 +480,22 @@ client.on('interactionCreate', async (interaction) => {
             }
             const download_url = interaction.options.getString('url')!;
             const channel_id = interaction.options.getChannel('channel')!.id;
+            const channel_name = interaction.options.getChannel('channel')!.name;
             const role_id = interaction.options.getRole('role')!.id;
-            const processed_file = await processNaver(download_url);
-            if (processed_file) {
+            try {
+                const processed_file = await processNaver(download_url, channel_name);
+                if (processed_file) {
+                    const target_channel = client.channels.cache.get(channel_id);
+                    if (target_channel?.isText()) {
+                        await target_channel.send({ content: `https://raws.reaperscans.com/${processed_file}` })
+                        await target_channel.send(`<@&${role_id}>, <@&946250134042329158>`);
+                        await target_channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                    }
+                }
+            } catch (error) {
                 const target_channel = client.channels.cache.get(channel_id);
                 if (target_channel?.isText()) {
-                    await target_channel.send({ files: [processed_file] })
-                    await target_channel.send(`<@&${role_id}>, <@&946250134042329158>`);
-                    await target_channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                    await target_channel.send(`There was an error during the file upload to Discord.`);
                 }
             }
             await interaction.editReply('Done.');
