@@ -687,7 +687,7 @@ export async function processNaver(url: string, channel_name: string) {
                 await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
                 console.log('Chapter processment done.');
                 await fs.rm(`./${directory}`, { recursive: true });
-                return `./${name}.7z`;
+                return `${name}.7z`;
             } else {
                 await exec(`7z x "./${files[0]}"`, { cwd: `./${directory}` });
                 await fs.unlink(`./${directory}/${files[0]}`);
@@ -697,7 +697,7 @@ export async function processNaver(url: string, channel_name: string) {
                 await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
                 console.log('Chapter processment done.');
                 await fs.rm(`./${directory}`, { recursive: true });
-                return `./${name}.7z`;
+                return `${name}.7z`;
             }
         } else if (url.includes('drive.google')) {
             const file_id = url.replaceAll('https://drive.google.com/file/d/', '').replaceAll('/view?usp=sharing', '').replaceAll('/view', '');
