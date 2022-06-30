@@ -529,7 +529,7 @@ client.on('interactionCreate', async (interaction) => {
                     await interaction.editReply(`RPing chapters... (${i + 1}/${length})`);
                     const chapter = await downloadSRChapter(paid_chapters[i], series_kakao_title, browser);
                     if (chapter) {
-                        await interaction.channel?.send({ files: [chapter] })
+                        await interaction.channel?.send({ content: `https://raws.reaperscans.com/${chapter}` })
                     }
                 } catch (error) {
                     console.log(error);
