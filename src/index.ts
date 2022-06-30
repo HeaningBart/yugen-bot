@@ -204,7 +204,7 @@ const wednesday_job = schedule.scheduleJob('00 22 * * 3', async function () {
     }
 })
 
-const thursday_job = schedule.scheduleJob('01 22 * * 4', async function () {
+const thursday_job = schedule.scheduleJob('30 22 * * 4', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'thursday', weekly: true }, orderBy: { id: 'asc' } });
         const browser = await start();
