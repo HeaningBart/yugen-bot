@@ -369,14 +369,17 @@ const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
     }
 })
 
-const ridibooks_job = schedule.scheduleJob('59 10 * * 4', async function () {
+const ridibooks_job = schedule.scheduleJob('02 11 * * 4', async function () {
     try {
         const browser = await start();
         await ridiLogin(browser);
+        console.log('logged into ridibooks')
         try {
             const channel = client.channels.cache.get('961306163348144208');
             if (channel?.isText()) {
+                console.log('starting to get latest')
                 const chapter_id = await getLatestRidi('4291002928', browser);
+                console.log(chapter_id);
                 if(chapter_id) {
                     const file = await downloadChapter(chapter_id, browser, 'terrarium-adventure');
                     if (file) {
