@@ -2,6 +2,7 @@ import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
 import { getChapter, getLatestChapter, processNaver, getChaptersList, downloadSRChapter } from './rawhandler'
 import { start, logIn, buyTicket } from './rawhandler/kakao'
+import { logIn as ridiLogin, getLatestChapter as getLatestRidi , downloadChapter } from './rawhandler/ridibooks'
 import fs from 'fs/promises'
 import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
@@ -143,7 +144,7 @@ const tuesday_job = schedule.scheduleJob('01 22 * * 2', async function () {
 
 
 
-const rr_job = schedule.scheduleJob('31 00 * * 3', async function () {
+const rr_job = schedule.scheduleJob('01 00 * * 3', async function () {
     try {
         const browser = await start();
         await logIn(browser);
@@ -368,7 +369,36 @@ const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
     }
 })
 
-
+const ridibooks_job = schedule.scheduleJob('59 10 * * 4', async function () {
+    try {
+        const browser = await start();
+        await ridiLogin(browser);
+        try {
+            const channel = client.channels.cache.get('961306163348144208');
+            if (channel?.isText()) {
+                const chapter_id = await getLatestRidi('4291002928', browser);
+                if(chapter_id) {
+                    const file = await downloadChapter(chapter_id, browser, 'terrarium-adventure');
+                    if (file) {
+                        await channel.send({ content: `Weekly chapter of ${`Terrarium Adventure`}: https://raws.reaperscans.com/${file}` })
+                        // await channel.send(`<@&871239863792435221>, <@&946250134042329158>`);
+                        await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                        await channel.send('Weekly RP done.');
+                    }
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            const log_channel = client.channels.cache.get('948063125486329876');
+            if (log_channel?.isText()) {
+                await log_channel.send(`There was an error during the RP process of a series - Ranker's Return.`);
+                await log_channel.send(`Please, get the chapter through /getchapter or access the server via FTP and get the .7z file.`);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) {

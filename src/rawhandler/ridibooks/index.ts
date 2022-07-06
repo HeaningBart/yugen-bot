@@ -130,11 +130,11 @@ export async function downloadChapter(chapter_id: number | string, browser: Brow
 }
 
 
-const test = async () => {
-    const browser = await start();
-    await logIn(browser);
-    const chapter_id = await getLatestChapter(4291002928, browser);
-    if (chapter_id) await downloadChapter(chapter_id, browser, 'terrarium-adventure');
-}
+// const test = async () => {
+//     const browser = await start();
+//     await logIn(browser);
+//     const chapter_id = await getLatestChapter(4291002928, browser);
+//     if (chapter_id) await downloadChapter(chapter_id, browser, 'terrarium-adventure');
+// }
 
-test();
+// test();
