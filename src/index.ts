@@ -369,7 +369,7 @@ const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
     }
 })
 
-const ridibooks_job = schedule.scheduleJob('06 11 * * 3', async function () {
+const ridibooks_job = schedule.scheduleJob('30 22 * * 7', async function () {
     try {
         const browser = await start();
         await ridiLogin(browser);
