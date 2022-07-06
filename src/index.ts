@@ -369,7 +369,7 @@ const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
     }
 })
 
-const ridibooks_job = schedule.scheduleJob('04 11 * * 3', async function () {
+const ridibooks_job = schedule.scheduleJob('06 11 * * 3', async function () {
     try {
         const browser = await start();
         await ridiLogin(browser);
@@ -384,7 +384,7 @@ const ridibooks_job = schedule.scheduleJob('04 11 * * 3', async function () {
                     const file = await downloadChapter(chapter_id, browser, 'terrarium-adventure');
                     if (file) {
                         await channel.send({ content: `Weekly chapter of ${`Terrarium Adventure`}: https://raws.reaperscans.com/${file}` })
-                        // await channel.send(`<@&871239863792435221>, <@&946250134042329158>`);
+                        await channel.send(`<@&961305876692615218>, <@&946250134042329158>`);
                         await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                         await channel.send('Weekly RP done.');
                     }
