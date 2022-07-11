@@ -11,6 +11,7 @@ import axios from 'axios'
 const waifu = path.resolve(__dirname);
 import { logIn, buyTicket } from './kakao';
 import randomstring from 'randomstring'
+import Handler from '../handlers';
 
 type chapterItem = {
     id: string;
@@ -706,26 +707,27 @@ export async function processNaver(url: string, channel_name: string) {
             const files = await fs.readdir(`./${directory}`);
             const name = files[0].split('.')[0] + channel_name;
             const ext = files[0].split('.')[1];
+            const true_name = Handler.toUrl(name);
             if (ext == 'rar') {
                 await exec(`unrar e "./${files[0]}"`, { cwd: `./${directory}` });
                 await fs.unlink(`./${directory}/${files[0]}`);
                 await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
                 await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
-                await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
+                await exec(`7z a public/${true_name}.7z  "./${directory}/${name}/*"`);
                 console.log('Chapter processment done.');
                 await fs.rm(`./${directory}`, { recursive: true });
-                return `${name}.7z`;
+                return `${true_name}.7z`;
             } else {
                 await exec(`7z x "./${files[0]}"`, { cwd: `./${directory}` });
                 await fs.unlink(`./${directory}/${files[0]}`);
                 await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
                 await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
-                await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
+                await exec(`7z a public/${true_name}.7z  "./${directory}/${name}/*"`);
                 console.log('Chapter processment done.');
                 await fs.rm(`./${directory}`, { recursive: true });
-                return `${name}.7z`;
+                return `${true_name}.7z`;
             }
         } else if (url.includes('mediafire')) {
             console.log('initializing mediafire');
