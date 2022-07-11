@@ -701,7 +701,7 @@ export async function processNaver(url: string, channel_name: string) {
             }
         } else if (url.includes('drive.google')) {
             const file_id = url.replaceAll('https://drive.google.com/file/d/', '').replaceAll('/view?usp=sharing', '').replaceAll('/view', '');
-            const file_url = `https://drive.google.com/uc?export=download&id=${file_id}`;
+            const file_url = `https://drive.google.com/uc?export=download&id=${file_id}&confirm=t`;
             await download(file_url, `./${directory}`);
             const files = await fs.readdir(`./${directory}`);
             const name = files[0].split('.')[0] + channel_name;
