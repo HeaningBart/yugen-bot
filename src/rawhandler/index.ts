@@ -12,6 +12,7 @@ const waifu = path.resolve(__dirname);
 import { logIn, buyTicket } from './kakao';
 import randomstring from 'randomstring'
 import Handler from '../handlers';
+import downloader from 'nodejs-file-downloader'
 
 type chapterItem = {
     id: string;
@@ -674,9 +675,13 @@ export async function downloadSRChapter(chapter: chapter, series_title: string, 
 export async function processNaver(url: string, channel_name: string) {
     try {
         const directory = randomstring.generate();
+        const downloadd = new downloader({
+            url,
+            directory: `${directory}`
+        })
         console.log(url);
         if (url.includes('discord')) {
-            await download(`${url}`, `${directory}`);
+            await downloadd.download();
             const files = await fs.readdir(`./${directory}`);
             const name = files[0].split('.')[0] + channel_name;
             const ext = files[0].split('.')[1];
