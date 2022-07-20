@@ -675,7 +675,7 @@ export async function processNaver(url: string, channel_name: string) {
     try {
         const directory = randomstring.generate();
         if (url.includes('discord')) {
-            await download(url);
+            await download(url, `${directory}`);
             const files = await fs.readdir(`./${directory}`);
             const name = files[0].split('.')[0] + channel_name;
             const ext = files[0].split('.')[1];
