@@ -673,9 +673,9 @@ export async function downloadSRChapter(chapter: chapter, series_title: string, 
 
 export async function processNaver(url: string, channel_name: string) {
     try {
-        const directory = 'adasdasdasd';
+        const directory = randomstring.generate();
         if (url.includes('discord')) {
-            await download(url, `./${directory}`);
+            await download(url);
             const files = await fs.readdir(`./${directory}`);
             const name = files[0].split('.')[0] + channel_name;
             const ext = files[0].split('.')[1];
