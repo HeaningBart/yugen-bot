@@ -675,10 +675,12 @@ export async function downloadSRChapter(chapter: chapter, series_title: string, 
 export async function processNaver(url: string, channel_name: string) {
     try {
         const directory = randomstring.generate();
+        const array_of_variables = url.split('/');
+        const filename = array_of_variables[array_of_variables.length - 1];
         const downloadd = new downloader({
             url,
             directory: `${directory}`,
-            fileName: `chapter.rar`
+            fileName: `${filename}`
         })
         console.log(url);
         if (url.includes('discord')) {
