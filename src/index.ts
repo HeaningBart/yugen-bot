@@ -3,12 +3,11 @@ const { token } = require('../config.json')
 import { getChapter, getLatestChapter, processNaver, getChaptersList, downloadSRChapter } from './rawhandler'
 import { start, logIn, buyTicket } from './rawhandler/kakao'
 import { logIn as ridiLogin, getLatestChapter as getLatestRidi , downloadChapter } from './rawhandler/ridibooks'
-import fs from 'fs/promises'
 import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
 const allowedUsers = ['397857749938995201', '345938621137944577', '422790603064213528', '121671582044258306', '233286444083314699']
 import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
+import { getLatestChapter as JPLatestChapter, logIn as JPLogin } from './rawhandler/japan'
 
 const app:Express = express();
 const port = process.env.PORT || 3000;
@@ -144,7 +143,7 @@ const tuesday_job = schedule.scheduleJob('01 22 * * 2', async function () {
 
 
 
-const rr_job = schedule.scheduleJob('01 00 * * 3', async function () {
+const rr_job = schedule.scheduleJob('10 00 * * 3', async function () {
     try {
         const browser = await start();
         await logIn(browser);
@@ -164,6 +163,34 @@ const rr_job = schedule.scheduleJob('01 00 * * 3', async function () {
             const log_channel = client.channels.cache.get('948063125486329876');
             if (log_channel?.isText()) {
                 await log_channel.send(`There was an error during the RP process of a series - Ranker's Return.`);
+                await log_channel.send(`Please, get the chapter through /getchapter or access the server via FTP and get the .7z file.`);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+const dp_job = schedule.scheduleJob('36 02 * * 3', async function () {
+    try {
+        const browser = await start();
+        await JPLogin(browser);
+        try {
+            const channel = client.channels.cache.get('923252711821021184');
+            if (channel?.isText()) {
+                const file = await JPLatestChapter('81737', 'duke-pendragon', browser);
+                if (file) {
+                    await channel.send({ content: `Weekly chapter of ${`Duke Pendragon`}: https://raws.reaperscans.com/${file}` })
+                    await channel.send(`<@&888535846700085279>, <@&946250134042329158>`);
+                    await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                    await channel.send('Weekly RP done.');
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            const log_channel = client.channels.cache.get('948063125486329876');
+            if (log_channel?.isText()) {
+                await log_channel.send(`There was an error during the RP process of a series - Duke Pendragon.`);
                 await log_channel.send(`Please, get the chapter through /getchapter or access the server via FTP and get the .7z file.`);
             }
         }
