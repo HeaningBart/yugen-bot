@@ -10,7 +10,7 @@ import fs from 'fs/promises'
 import { waifu } from '../index';
 
 export async function start() {
-    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', `--proxy-server=https://jp608.nordvpn.com:89` ], headless: false });
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', `--proxy-server=https://jp608.nordvpn.com:89` ] });
     return browser;
 }
 
