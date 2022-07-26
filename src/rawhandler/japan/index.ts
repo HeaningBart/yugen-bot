@@ -3,7 +3,6 @@ import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 puppeteer.use(StealthPlugin())
 const { jp_login, jp_pwd, vpn_user, vpn_password, vpn_url } = require('../../../config.json');
-import download from 'download';
 import downloader from 'nodejs-file-downloader'
 import util from 'util';
 const exec = util.promisify(require('child_process').exec);
@@ -59,7 +58,7 @@ export async function logIn(browser: Browser) {
 }
 
 
-export async function getLatestChapter(series_id: string | number, browser: Browser, series_name: string){
+export async function getLatestChapter(series_id: string | number,  series_name: string, browser: Browser){
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
     await page.goto(`https://piccoma.com/web/product/${series_id}/episodes?etype=E`, {timeout: 0});
@@ -254,11 +253,11 @@ export async function getLatestChapter(series_id: string | number, browser: Brow
 // }
 
 
-const test = async () => {
-    const browser = await start();
-    await logIn(browser);
-    await getLatestChapter(81737, browser, 'duke-pendragon');
+// const test = async () => {
+//     const browser = await start();
+//     await logIn(browser);
+//     await getLatestChapter(81737, browser, 'duke-pendragon');
 
-}
+// }
 
-test();
+// test();
