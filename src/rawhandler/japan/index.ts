@@ -137,6 +137,7 @@ export async function getLatestChapter(series_id: string | number,  series_name:
     }
 
     try {
+        await fs.mkdir(waifu_directory, { recursive: true });
         await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}/output" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
         console.log('All images have been stitched.')
 
