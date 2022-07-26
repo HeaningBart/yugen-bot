@@ -61,7 +61,7 @@ export async function logIn(browser: Browser) {
 export async function getLatestChapter(series_id: string | number,  series_name: string, browser: Browser){
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
-    await page.goto(`https://piccoma.com/web/product/${series_id}/episodes?etype=E`, {timeout: 0});
+    await page.goto(`https://piccoma.com/web/product/${series_id}/episodes?etype=E`, {timeout: 0, waitUntil: 'networkidle0'});
     const chapter_id = await page.evaluate(() => {
         const chapters = document.querySelectorAll(`a[data-user_access="require"]`);
         const id = chapters[chapters.length - 1].getAttribute('data-episode_id');

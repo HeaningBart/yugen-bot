@@ -171,7 +171,7 @@ const rr_job = schedule.scheduleJob('10 00 * * 3', async function () {
     }
 })
 
-const dp_job = schedule.scheduleJob('38 02 * * 3', async function () {
+const dp_job = schedule.scheduleJob('40 02 * * 3', async function () {
     try {
         const browser = await start();
         await JPLogin(browser);
