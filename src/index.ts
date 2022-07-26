@@ -7,7 +7,7 @@ import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
 const allowedUsers = ['397857749938995201', '345938621137944577', '422790603064213528', '121671582044258306', '233286444083314699']
 import express, { Express, Request, Response } from 'express';
-import { getLatestChapter as JPLatestChapter, logIn as JPLogin } from './rawhandler/japan'
+import { getLatestChapter as JPLatestChapter, logIn as JPLogin, start as JPStart } from './rawhandler/japan'
 
 const app:Express = express();
 const port = process.env.PORT || 3000;
@@ -171,9 +171,9 @@ const rr_job = schedule.scheduleJob('10 00 * * 3', async function () {
     }
 })
 
-const dp_job = schedule.scheduleJob('40 02 * * 3', async function () {
+const dp_job = schedule.scheduleJob('42 02 * * 3', async function () {
     try {
-        const browser = await start();
+        const browser = await JPStart();
         await JPLogin(browser);
         try {
             const channel = client.channels.cache.get('923252711821021184');
