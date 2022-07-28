@@ -7,7 +7,7 @@ import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
 const allowedUsers = ['397857749938995201', '345938621137944577', '422790603064213528', '121671582044258306', '233286444083314699']
 import express, { Express, Request, Response } from 'express';
-import { getLatestChapter as JPLatestChapter, logIn as JPLogin, start as JPStart } from './rawhandler/japan'
+import { getLatestChapter as JPLatestChapter, logIn as JPLogin, start as JPStart, getListOfChapters, getSpecificChapter } from './rawhandler/japan'
 
 const app:Express = express();
 const port = process.env.PORT || 3000;
@@ -622,6 +622,25 @@ client.on('interactionCreate', async (interaction) => {
             }
             await interaction.editReply('Done.');
             return;
+        case 'jpchapter':
+            const jp_browser = await JPStart();
+            await JPLogin(jp_browser);
+            const jp_seriesid = interaction.options.getString('seriesid')!;
+            const number_of_chapters = interaction.options.getNumber('chapters')!;
+            const series_name = toUrl(interaction.options.getString('seriesname')!);
+            const jp_chapters = await getListOfChapters(number_of_chapters, jp_seriesid, jp_browser);
+
+            for(let i = 0; i <= jp_chapters.length - 1; i++){
+                try {
+                    const jp_file_url = await getSpecificChapter(jp_seriesid, jp_chapters[i], series_name, jp_browser);
+                    if (jp_file_url) {
+                            await interaction.channel?.send({ content: `https://raws.reaperscans.com/${jp_file_url}` })
+                            await interaction.channel?.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                    }
+                } catch (error) {   
+                }
+            }
+
         default:
             await interaction.editReply('Done.');
             return;
