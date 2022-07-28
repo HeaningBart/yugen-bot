@@ -41,8 +41,8 @@ export function toUrl(string: string): string {
 client.on('ready', async () => {
     console.log('The bot is ready!')
     await client.guilds.cache.get('794049571973890068')?.commands.create({
-        name: 'range',
-        description: 'rp chapters within a certain range',
+        name: 'jpchapter',
+        description: 'rp chapters from piccoma',
         type: 'CHAT_INPUT',
         options: [
             {
@@ -52,20 +52,20 @@ client.on('ready', async () => {
                 required: true
             },
             {
-                name: 'start',
-                description: 'what chapter the bot should start the rp process',
+                name: 'chapters',
+                description: 'number of latest chapters the bot should rp',
                 type: 'NUMBER',
                 required: true
             },
             {
-                name: 'end',
-                description: 'what chapter the bot should stop',
-                type: 'NUMBER',
+                name: 'seriesname',
+                description: 'series name, please use slugs',
+                type: 'STRING',
                 required: true
             }
         ]
     })
-    client.user?.setPresence({ status: 'dnd', activities: [{ name: 'Being enslaved by Ryuwuu', type: 'WATCHING', url: 'https://reaperscans.com' }] })
+    client.user?.setPresence({ status: 'dnd', activities: [{ name: 'im almost rping the world', type: 'WATCHING', url: 'https://reaperscans.com' }] })
 });
 
 
@@ -171,7 +171,7 @@ const rr_job = schedule.scheduleJob('10 00 * * 3', async function () {
     }
 })
 
-const dp_job = schedule.scheduleJob('57 02 * * 3', async function () {
+const dp_job = schedule.scheduleJob('01 00 * * 3', async function () {
     try {
         const browser = await JPStart();
         await JPLogin(browser);
@@ -232,7 +232,7 @@ const wednesday_job = schedule.scheduleJob('00 22 * * 3', async function () {
     }
 })
 
-const thursday_job = schedule.scheduleJob('30 22 * * 4', async function () {
+const thursday_job = schedule.scheduleJob('00 22 * * 4', async function () {
     try {
         const daily_series = await prisma.series.findMany({ where: { cron: 'thursday', weekly: true }, orderBy: { id: 'asc' } });
         const browser = await start();
