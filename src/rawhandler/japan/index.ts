@@ -23,7 +23,6 @@ export async function start() {
       "--disable-dev-shm-usage",
       `--proxy-server=https://jp608.nordvpn.com:89`,
     ],
-    headless: false
   });
   
   return browser;
@@ -345,20 +344,3 @@ export async function getSpecificChapter(
     return `${directory}.7z`;
   } catch (error) {}
 }
-
-async function test () {
-    const browser = await start();
-    await logIn(browser);
-
-    const jp_chapters = await getListOfChapters(5, '71915', browser);
-
-            for(let i = 0; i <= jp_chapters.length - 1; i++){
-                try {
-                    const jp_file_url = await getSpecificChapter('71915', jp_chapters[i], 'kijin', browser);
-                } catch (error) {   
-                }
-            }
-
-}
-
-test()
