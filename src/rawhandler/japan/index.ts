@@ -23,7 +23,6 @@ export async function start() {
       "--disable-dev-shm-usage",
       `--proxy-server=https://jp608.nordvpn.com:89`,
     ],
-    headless: false
   });
   
   return browser;
