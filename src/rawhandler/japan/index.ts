@@ -115,7 +115,7 @@ export async function getLatestChapter(
   console.log('this is pdata' + chapter_data);
 
   var img_data = chapter_data.img.map((item: any) => item.path);
-  const chapter_title = chapter_data.title;
+  const chapter_title = chapter_data.title.replaceAll(/\D/g, "");;
   const directory = `chapter-${chapter_title}-${series_name}`;
   const waifu_directory = `waifu-${chapter_title}-${series_name}`;
 
@@ -183,14 +183,14 @@ export async function getLatestChapter(
     );
     console.log("All images have been through waifu-2x-caffe.");
 
-    await exec(`7z a public/${directory}.7z  ./${waifu_directory}/*`);
+    await exec(`7z a public/${chapter_data.title}.7z  ./${waifu_directory}/*`);
 
     fs.rm(`./${directory}`, { recursive: true });
     fs.rm(`./${waifu_directory}`, { recursive: true });
 
     console.log("Temp directories are being removed.");
 
-    return `${directory}.7z`;
+    return `${chapter_data.title}.7z`;
   } catch (error) {}
 }
 
@@ -266,7 +266,7 @@ export async function getSpecificChapter(
   });
 
   var img_data = chapter_data.img.map((item: any) => item.path);
-  const chapter_title = chapter_data.title;
+  const chapter_title = chapter_data.title.replaceAll(/\D/g, "");
   const directory = `chapter-${chapter_title}-${series_name}`;
   const waifu_directory = `waifu-${chapter_title}-${series_name}`;
 
@@ -334,13 +334,13 @@ export async function getSpecificChapter(
     );
     console.log("All images have been through waifu-2x-caffe.");
 
-    await exec(`7z a public/${directory}.7z  ./${waifu_directory}/*`);
+    await exec(`7z a public/${chapter_data.title}.7z  ./${waifu_directory}/*`);
 
     fs.rm(`./${directory}`, { recursive: true });
     fs.rm(`./${waifu_directory}`, { recursive: true });
 
     console.log("Temp directories are being removed.");
 
-    return `${directory}.7z`;
+    return `${chapter_data.title}.7z`;
   } catch (error) {}
 }
