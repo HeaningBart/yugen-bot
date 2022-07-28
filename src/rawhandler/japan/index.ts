@@ -23,6 +23,7 @@ export async function start() {
       "--disable-dev-shm-usage",
       `--proxy-server=https://jp608.nordvpn.com:89`,
     ],
+    headless: false
   });
   
   return browser;
@@ -87,11 +88,19 @@ export async function getLatestChapter(
   });
   await page.click(`a[data-episode_id="${chapter_id}"]`);
 
+  await page.waitForTimeout(5000);
+
   try {
     await page.click("div.jconfirm-buttons > button", {
-      delay: 5000,
-      clickCount: 10,
-    });
+        delay: 5000,
+        clickCount: 20,
+      });
+    await page.evaluate(() => {
+        const button = document.querySelector<HTMLButtonElement>('div.jconfirm-buttons > button');
+        if(button){
+            button.click();
+        }
+    })
   } catch (error) {
     console.log(error);
   }
@@ -103,6 +112,8 @@ export async function getLatestChapter(
     const data = _pdata_;
     return data;
   });
+
+  console.log('this is pdata' + chapter_data);
 
   var img_data = chapter_data.img.map((item: any) => item.path);
   const chapter_title = chapter_data.title;
@@ -209,6 +220,8 @@ export async function getListOfChapters(
 
   console.log(selected_chapters);
 
+  await page.close();
+
   return selected_chapters;
 }
 
@@ -228,11 +241,19 @@ export async function getSpecificChapter(
   
   await page.click(`a[data-episode_id="${episode_id}"]`);
 
+  await page.waitForTimeout(5000);
+
   try {
     await page.click("div.jconfirm-buttons > button", {
-      delay: 5000,
-      clickCount: 10,
-    });
+        delay: 5000,
+        clickCount: 20,
+      });
+    await page.evaluate(() => {
+        const button = document.querySelector<HTMLButtonElement>('div.jconfirm-buttons > button');
+        if(button){
+            button.click();
+        }
+    })
   } catch (error) {
     console.log(error);
   }
@@ -325,3 +346,19 @@ export async function getSpecificChapter(
   } catch (error) {}
 }
 
+async function test () {
+    const browser = await start();
+    await logIn(browser);
+
+    const jp_chapters = await getListOfChapters(5, '71915', browser);
+
+            for(let i = 0; i <= jp_chapters.length - 1; i++){
+                try {
+                    const jp_file_url = await getSpecificChapter('71915', jp_chapters[i], 'kijin', browser);
+                } catch (error) {   
+                }
+            }
+
+}
+
+test()
