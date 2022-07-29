@@ -115,7 +115,7 @@ export async function getLatestChapter(
   console.log('this is pdata' + chapter_data);
 
   var img_data = chapter_data.img.map((item: any) => item.path);
-  const chapter_title = chapter_data.title.replaceAll(/\D/g, "") + `-${chapter_data.title.episode_id}`;
+  const chapter_title = chapter_data.title.replaceAll(/\D/g, "") + `-${chapter_data.episode_id}`;
   const directory = `chapter-${chapter_title}-${series_name}`;
   const waifu_directory = `waifu-${chapter_title}-${series_name}`;
 
@@ -266,7 +266,7 @@ export async function getSpecificChapter(
   });
 
   var img_data = chapter_data.img.map((item: any) => item.path);
-  const chapter_title = chapter_data.title.replaceAll(/\D/g, "") + `-${chapter_data.title.episode_id}`;
+  const chapter_title = chapter_data.title.replaceAll(/\D/g, "") + `-${chapter_data.episode_id}`;
   const directory = `chapter-${chapter_title}-${series_name}`;
   const waifu_directory = `waifu-${chapter_title}-${series_name}`;
 
