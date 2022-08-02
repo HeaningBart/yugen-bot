@@ -183,7 +183,7 @@ export async function getLatestChapter(
     );
     console.log("All images have been through waifu-2x-caffe.");
 
-    await exec(`7z a public/${chapter_data.title}.7z  ./${waifu_directory}/*`);
+    await exec(`7z a public/${directory}.7z  ./${waifu_directory}/*`);
 
     fs.rm(`./${directory}`, { recursive: true });
     fs.rm(`./${waifu_directory}`, { recursive: true });
