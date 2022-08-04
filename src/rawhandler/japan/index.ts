@@ -21,8 +21,9 @@ export async function start() {
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
-      `--proxy-server=https://jp608.nordvpn.com:89`,
+      `--proxy-server=https://jp547.nordvpn.com:89`,
     ],
+    headless: false,
   });
   
   return browser;
@@ -344,3 +345,6 @@ export async function getSpecificChapter(
     return `${directory}.7z`;
   } catch (error) {}
 }
+
+
+
