@@ -23,8 +23,9 @@ export async function start() {
       "--disable-dev-shm-usage",
       `--proxy-server=https://jp547.nordvpn.com:89`,
     ],
+    headless: false
   });
-  
+
   return browser;
 }
 
@@ -91,14 +92,14 @@ export async function getLatestChapter(
 
   try {
     await page.click("div.jconfirm-buttons > button", {
-        delay: 5000,
-        clickCount: 20,
-      });
+      delay: 5000,
+      clickCount: 20,
+    });
     await page.evaluate(() => {
-        const button = document.querySelector<HTMLButtonElement>('div.jconfirm-buttons > button');
-        if(button){
-            button.click();
-        }
+      const button = document.querySelector<HTMLButtonElement>('div.jconfirm-buttons > button');
+      if (button) {
+        button.click();
+      }
     })
   } catch (error) {
     console.log(error);
@@ -139,13 +140,13 @@ export async function getLatestChapter(
 
   const seeds_array = img_data.map((item: any, index: any) => {
     console.log(item);
-    const key = expires_array[index];
+    const key = `${expires_array[index]}`;
     var checksum = `${get_checksum(item)}`;
     console.log(checksum);
     console.log(key);
 
     for (let i = 0; i <= key.length - 1; i++) {
-      if (key[i] !== 0) {
+      if (key[i] !== '0') {
         checksum =
           checksum.slice(-key[i]) +
           checksum.slice(0, checksum.length - parseInt(key[i]));
@@ -167,7 +168,8 @@ export async function getLatestChapter(
       await exec(
         `pycasso ${directory}/${i}.jpg ${directory}/output/${i} scramble -n 50 50 -s ${seeds_array[i]} -f jpeg`
       );
-    } catch (error) {}
+    } catch (error) {
+    }
   }
 
   try {
@@ -191,7 +193,7 @@ export async function getLatestChapter(
     console.log("Temp directories are being removed.");
 
     return `${directory}.7z`;
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export async function getListOfChapters(
@@ -210,7 +212,7 @@ export async function getListOfChapters(
   const chapters_ids = await page.evaluate(() => {
     const chapters = Array.from(document.querySelectorAll(`a[data-user_access="require"]`));
     const filtered_chapters = chapters.map((item: any) => {
-        return item.getAttribute('data-episode_id');
+      return item.getAttribute('data-episode_id');
     })
     return filtered_chapters;
   });
@@ -219,39 +221,39 @@ export async function getListOfChapters(
 
   console.log(selected_chapters);
 
-//   await page.close();
+  //   await page.close();
 
   return selected_chapters;
 }
 
 export async function getSpecificChapter(
-   series_id: string | number,
-   episode_id: string | number,
-   series_name: string,
-   browser: Browser
-){
-    const page = await browser.newPage();
+  series_id: string | number,
+  episode_id: string | number,
+  series_name: string,
+  browser: Browser
+) {
+  const page = await browser.newPage();
   await page.setViewport({ width: 1920, height: 1080 });
 
   await page.goto(
     `https://piccoma.com/web/product/${series_id}/episodes?etype=E`,
     { timeout: 0, waitUntil: "networkidle0" }
   );
-  
+
   await page.click(`a[data-episode_id="${episode_id}"]`);
 
   await page.waitForTimeout(5000);
 
   try {
     await page.click("div.jconfirm-buttons > button", {
-        delay: 5000,
-        clickCount: 20,
-      });
+      delay: 5000,
+      clickCount: 20,
+    });
     await page.evaluate(() => {
-        const button = document.querySelector<HTMLButtonElement>('div.jconfirm-buttons > button');
-        if(button){
-            button.click();
-        }
+      const button = document.querySelector<HTMLButtonElement>('div.jconfirm-buttons > button');
+      if (button) {
+        button.click();
+      }
     })
   } catch (error) {
     console.log(error);
@@ -318,7 +320,7 @@ export async function getSpecificChapter(
       await exec(
         `pycasso ${directory}/${i}.jpg ${directory}/output/${i} scramble -n 50 50 -s ${seeds_array[i]} -f jpeg`
       );
-    } catch (error) {}
+    } catch (error) { }
   }
 
   try {
@@ -342,8 +344,7 @@ export async function getSpecificChapter(
     console.log("Temp directories are being removed.");
 
     return `${directory}.7z`;
-  } catch (error) {}
+  } catch (error) { }
 }
-
 
 
