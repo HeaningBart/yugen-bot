@@ -22,8 +22,7 @@ export async function start() {
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
       `--proxy-server=https://jp547.nordvpn.com:89`,
-    ],
-    headless: false
+    ]
   });
 
   return browser;
