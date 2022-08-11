@@ -137,12 +137,9 @@ export async function getLatestChapter(
     return x.get("expires");
   });
 
-  const seeds_array = img_data.map((item: any, index: any) => {
-    console.log(item);
-    const key = `${expires_array[index]}`;
-    var checksum = `${get_checksum(item)}`;
-    console.log(checksum);
-    console.log(key);
+
+  const functio = (checksum: string, expires: string) => {
+    const key = expires;
 
     for (let i = 0; i <= key.length - 1; i++) {
       if (key[i] !== '0') {
@@ -153,6 +150,12 @@ export async function getLatestChapter(
     }
 
     return checksum;
+
+  }
+
+  const seeds_array = img_data.map((item: any, index: any) => {
+    const seed = functio(get_checksum(item), expires_array[index]);
+    return seed;
   });
 
   try {
@@ -289,15 +292,11 @@ export async function getSpecificChapter(
     return x.get("expires");
   });
 
-  const seeds_array = img_data.map((item: any, index: any) => {
-    console.log(item);
-    const key = expires_array[index];
-    var checksum = `${get_checksum(item)}`;
-    console.log(checksum);
-    console.log(key);
+  const functio = (checksum: string, expires: string) => {
+    const key = expires;
 
     for (let i = 0; i <= key.length - 1; i++) {
-      if (key[i] !== 0) {
+      if (key[i] !== '0') {
         checksum =
           checksum.slice(-key[i]) +
           checksum.slice(0, checksum.length - parseInt(key[i]));
@@ -305,6 +304,12 @@ export async function getSpecificChapter(
     }
 
     return checksum;
+
+  }
+
+  const seeds_array = img_data.map((item: any, index: any) => {
+    const seed = functio(get_checksum(item), expires_array[index]);
+    return seed;
   });
 
   try {
@@ -345,5 +350,3 @@ export async function getSpecificChapter(
     return `${directory}.7z`;
   } catch (error) { }
 }
-
-
