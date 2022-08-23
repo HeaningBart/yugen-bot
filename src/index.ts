@@ -2,17 +2,17 @@ import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
 import { getChapter, getLatestChapter, processNaver, getChaptersList, downloadSRChapter } from './rawhandler'
 import { start, logIn, buyTicket } from './rawhandler/kakao'
-import { logIn as ridiLogin, getLatestChapter as getLatestRidi , downloadChapter } from './rawhandler/ridibooks'
+import { logIn as ridiLogin, getLatestChapter as getLatestRidi, downloadChapter } from './rawhandler/ridibooks'
 import schedule from 'node-schedule'
 import { PrismaClient, Series } from '@prisma/client';
-const allowedUsers = ['397857749938995201', '345938621137944577', '422790603064213528', '121671582044258306', '233286444083314699']
+const allowedUsers = ['397857749938995201', '345938621137944577', '422790603064213528', '121671582044258306', '233286444083314699', '324522444285280276']
 import express, { Express, Request, Response } from 'express';
 import { getLatestChapter as JPLatestChapter, logIn as JPLogin, start as JPStart, getListOfChapters, getSpecificChapter } from './rawhandler/japan'
 
-const app:Express = express();
+const app: Express = express();
 const port = process.env.PORT || 3000;
 
-  
+
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });
@@ -396,39 +396,7 @@ const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
     }
 })
 
-const ridibooks_job = schedule.scheduleJob('30 22 * * 7', async function () {
-    try {
-        const browser = await start();
-        await ridiLogin(browser);
-        console.log('logged into ridibooks')
-        try {
-            const channel = client.channels.cache.get('961306163348144208');
-            if (channel?.isText()) {
-                console.log('starting to get latest')
-                const chapter_id = await getLatestRidi('4291002928', browser);
-                console.log(chapter_id);
-                if(chapter_id) {
-                    const file = await downloadChapter(chapter_id, browser, 'terrarium-adventure');
-                    if (file) {
-                        await channel.send({ content: `Weekly chapter of ${`Terrarium Adventure`}: https://raws.reaperscans.com/${file}` })
-                        await channel.send(`<@&961305876692615218>, <@&946250134042329158>`);
-                        await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
-                        await channel.send('Weekly RP done.');
-                    }
-                }
-            }
-        } catch (error) {
-            console.log(error);
-            const log_channel = client.channels.cache.get('948063125486329876');
-            if (log_channel?.isText()) {
-                await log_channel.send(`There was an error during the RP process of a series - Ranker's Return.`);
-                await log_channel.send(`Please, get the chapter through /getchapter or access the server via FTP and get the .7z file.`);
-            }
-        }
-    } catch (error) {
-        console.log(error);
-    }
-})
+
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) {
@@ -630,14 +598,14 @@ client.on('interactionCreate', async (interaction) => {
             const series_name = toUrl(interaction.options.getString('seriesname')!);
             const jp_chapters = await getListOfChapters(number_of_chapters, jp_seriesid, jp_browser);
 
-            for(let i = 0; i <= jp_chapters.length - 1; i++){
+            for (let i = 0; i <= jp_chapters.length - 1; i++) {
                 try {
                     const jp_file_url = await getSpecificChapter(jp_seriesid, jp_chapters[i], series_name, jp_browser);
                     if (jp_file_url) {
-                            await interaction.channel?.send({ content: `https://raws.reaperscans.com/${jp_file_url}` })
-                            await interaction.channel?.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                        await interaction.channel?.send({ content: `https://raws.reaperscans.com/${jp_file_url}` })
+                        await interaction.channel?.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
                     }
-                } catch (error) {   
+                } catch (error) {
                 }
             }
 
