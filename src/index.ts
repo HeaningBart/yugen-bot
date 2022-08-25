@@ -618,5 +618,5 @@ client.on('interactionCreate', async (interaction) => {
 
 
 
-client.login(token);
+client.login(token).then((data) => console.log(data)).catch((error) => console.log(error));
 
