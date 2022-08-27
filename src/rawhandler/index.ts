@@ -41,7 +41,12 @@ async function handleChapter(images_array: string[], number: string, title: stri
         console.log(images_array);
 
         try {
-            await Promise.all(images_array.map((item, index) => download(item, directory, { filename: `${index}.jpeg` })))
+            await Promise.all(images_array.map((item, index) => download(item, directory, {
+                filename: `${index}.jpeg`,
+                headers: {
+                    'Cookie': ''
+                }
+            })))
             console.log("All images have been downloaded.");
         } catch (error) {
             console.log("There was an error downloading images: " + error);
@@ -495,6 +500,8 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
             const kakao_response = await response.json();
             const kakao_files = kakao_response.downloadData.members.files;
             const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
+            const cookie = await new_page.cookies();
+            console.log(cookie);
             const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
             await new_page.close();
             return file_to_be_returned;
