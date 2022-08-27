@@ -29,7 +29,7 @@ type ChapterProps = {
 
 type Chapter = HTMLDivElement & ChapterProps;
 
-async function handleChapter(images_array: string[], number: string, title: string) {
+async function handleChapter(images_array: string[], number: string, title: string, cookies: string) {
     try {
         const random = title;
         const directory = `dist-${number}-${random}`;
@@ -44,7 +44,7 @@ async function handleChapter(images_array: string[], number: string, title: stri
             await Promise.all(images_array.map((item, index) => download(item, directory, {
                 filename: `${index}.jpeg`,
                 headers: {
-                    'Cookie': ''
+                    'Cookie': `${cookies}`
                 }
             })))
             console.log("All images have been downloaded.");
@@ -74,6 +74,7 @@ async function handleChapter(images_array: string[], number: string, title: stri
     }
 }
 
+/*
 async function handleTicket(seriesId: string, starts_at: number, series_title: string) {
     try {
         const series_url = 'https://page.kakao.com/home?seriesId=' + seriesId;
@@ -221,12 +222,14 @@ async function handleTicket(seriesId: string, starts_at: number, series_title: s
         return ['./afterlogintrue.png']
     }
 }
+*/
 
 type SeriesItem = {
     id: string;
     title: string;
 }
 
+/*
 async function ripLatest(series_array: SeriesItem[]) {
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
@@ -379,6 +382,7 @@ async function ripLatest(series_array: SeriesItem[]) {
     await browser.close();
     return chapters;
 }
+*/
 
 
 type kakaoChapter = {
@@ -491,7 +495,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
             });
             const kakao_files = response.data.downloadData.members.files;
             const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-            const chapter_file = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+            const chapter_file = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, '');
             if (chapter_file) return chapter_file;
         } else if (chapter.free === true && chapter.age_15 == true) {
             const new_page = await browser.newPage();
@@ -500,9 +504,10 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
             const kakao_response = await response.json();
             const kakao_files = kakao_response.downloadData.members.files;
             const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-            const cookie = await new_page.cookies();
-            console.log(cookie);
-            const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+            const cookies = await new_page.cookies();
+            const new_cookies = cookies.map((item) => `${item.name}=${item.value};`)
+            const filtered_cookies = new_cookies.join(' ')
+            const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, filtered_cookies);
             await new_page.close();
             return file_to_be_returned;
         }
@@ -516,7 +521,10 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
                 const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                const cookies = await new_page.cookies();
+                const new_cookies = cookies.map((item) => `${item.name}=${item.value};`)
+                const filtered_cookies = new_cookies.join(' ')
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, filtered_cookies);
                 await new_page.screenshot({ path: './afterrp.png' })
                 console.log(file_to_be_returned);
                 return file_to_be_returned;
@@ -543,7 +551,10 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
                 const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                const cookies = await new_page.cookies();
+                const new_cookies = cookies.map((item) => `${item.name}=${item.value};`)
+                const filtered_cookies = new_cookies.join(' ')
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, filtered_cookies);
                 await new_page.screenshot({ path: './afterrp.png' })
                 console.log(file_to_be_returned);
                 await new_page.close();
@@ -568,7 +579,10 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
                 const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                const cookies = await new_page.cookies();
+                const new_cookies = cookies.map((item) => `${item.name}=${item.value};`)
+                const filtered_cookies = new_cookies.join(' ')
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, filtered_cookies);
                 await new_page.screenshot({ path: './afterrp.png' })
                 console.log(file_to_be_returned);
                 await new_page.close();
@@ -594,7 +608,7 @@ export async function downloadSRChapter(chapter: chapter, series_title: string, 
             });
             const kakao_files = response.data.downloadData.members.files;
             const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-            const chapter_file = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+            const chapter_file = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, '');
             if (chapter_file) return chapter_file;
         } else if (chapter.free === true && chapter.age_15 == true) {
             const new_page = await browser.newPage();
@@ -603,7 +617,10 @@ export async function downloadSRChapter(chapter: chapter, series_title: string, 
             const kakao_response = await response.json();
             const kakao_files = kakao_response.downloadData.members.files;
             const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-            const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+            const cookies = await new_page.cookies();
+            const new_cookies = cookies.map((item) => `${item.name}=${item.value};`)
+            const filtered_cookies = new_cookies.join(' ')
+            const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, filtered_cookies);
             await new_page.close();
             return file_to_be_returned;
         }
@@ -616,7 +633,10 @@ export async function downloadSRChapter(chapter: chapter, series_title: string, 
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
                 const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                const cookies = await new_page.cookies();
+                const new_cookies = cookies.map((item) => `${item.name}=${item.value};`)
+                const filtered_cookies = new_cookies.join(' ')
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, filtered_cookies);
                 await new_page.screenshot({ path: './afterrp.png' })
                 console.log(file_to_be_returned);
                 return file_to_be_returned;
@@ -643,7 +663,10 @@ export async function downloadSRChapter(chapter: chapter, series_title: string, 
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
                 const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                const cookies = await new_page.cookies();
+                const new_cookies = cookies.map((item) => `${item.name}=${item.value};`)
+                const filtered_cookies = new_cookies.join(' ')
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, filtered_cookies);
                 await new_page.screenshot({ path: './afterrp.png' })
                 console.log(file_to_be_returned);
                 await new_page.close();
@@ -668,7 +691,10 @@ export async function downloadSRChapter(chapter: chapter, series_title: string, 
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
                 const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
-                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
+                const cookies = await new_page.cookies();
+                const new_cookies = cookies.map((item) => `${item.name}=${item.value};`)
+                const filtered_cookies = new_cookies.join(' ')
+                const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title, filtered_cookies);
                 await new_page.screenshot({ path: './afterrp.png' })
                 console.log(file_to_be_returned);
                 await new_page.close();
@@ -802,7 +828,7 @@ export async function processNaver(url: string, channel_name: string) {
 
 
 
-export { handleChapter, handleTicket, ripLatest };
+export { handleChapter };
 
 
 

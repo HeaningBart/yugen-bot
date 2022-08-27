@@ -25,7 +25,7 @@ export async function logIn(browser: Browser) {
 }
 
 
-export async function getLatestChapter(series_id: string | number, browser: Browser){
+export async function getLatestChapter(series_id: string | number, browser: Browser) {
     const page = await browser.newPage();
     await page.setViewport({ width: 1080, height: 1080 });
     await page.goto(`https://ridibooks.com/books/${series_id}`);
@@ -39,10 +39,10 @@ export async function getLatestChapter(series_id: string | number, browser: Brow
 
 
 
-export async function downloadChapter(chapter_id: number | string, browser: Browser, series_name: string){
+export async function downloadChapter(chapter_id: number | string, browser: Browser, series_name: string) {
     const page = await browser.newPage();
     await page.setViewport({ width: 1080, height: 1080 });
-    await page.goto(`https://view.ridibooks.com/books/${chapter_id}`, { waitUntil: 'domcontentloaded'});
+    await page.goto(`https://view.ridibooks.com/books/${chapter_id}`, { waitUntil: 'domcontentloaded' });
     try {
         const chapter = await page.waitForResponse(`https://book-api.ridibooks.com/books/${chapter_id}`, { timeout: 5 * 1000 });
         const chapter_response = await chapter.json();
@@ -55,7 +55,7 @@ export async function downloadChapter(chapter_id: number | string, browser: Brow
         const files_url = ridi_files.map((file: any) => file.src);
         console.log(files_url);
         console.log(chapter_number);
-        const file_to_be_returned = await handleChapter(files_url, chapter_number, series_name);
+        const file_to_be_returned = await handleChapter(files_url, chapter_number, series_name, '');
         console.log(file_to_be_returned);
         return file_to_be_returned;
     } catch (error) {
@@ -67,30 +67,30 @@ export async function downloadChapter(chapter_id: number | string, browser: Brow
         await page.evaluate(() => {
             const button = document.querySelector('div.next_volume_checkout_wrapper > div.checkout_contents_wrapper > div.checkout_buttons > button.button_size_40')
             //@ts-ignore
-            if(button) button.click()
+            if (button) button.click()
         })
     } catch (error) {
-        
+
     }
     await page.waitForNetworkIdle();
     try {
         await page.evaluate(() => {
             const button = document.querySelector('div.serial_checkout_wrapper > div.checkout_contents_wrapper > div.checkout_buttons > button.button_size_40')
             //@ts-ignore
-            if(button) button.click()
+            if (button) button.click()
         })
     } catch (error) {
-        
+
     }
     await page.waitForNetworkIdle();
     try {
         await page.evaluate(() => {
             const button = document.querySelector('div.serial_checkout_wrapper > div.checkout_contents_wrapper > div.checkout_buttons > button.button_size_40')
             //@ts-ignore
-            if(button) button.click()
+            if (button) button.click()
         })
     } catch (error) {
-        
+
     }
     try {
         const chapter = await page.waitForResponse(`https://book-api.ridibooks.com/books/${chapter_id}`, { timeout: 5 * 1000 });
@@ -102,7 +102,7 @@ export async function downloadChapter(chapter_id: number | string, browser: Brow
         console.log(ridi_files);
         const files_url = ridi_files.map((file: any) => file.src);
         console.log(files_url);
-        const file_to_be_returned = await handleChapter(files_url, chapter_number, series_name);
+        const file_to_be_returned = await handleChapter(files_url, chapter_number, series_name, '');
         console.log(file_to_be_returned);
         return file_to_be_returned;
     } catch (error) {
@@ -120,7 +120,7 @@ export async function downloadChapter(chapter_id: number | string, browser: Brow
         console.log(ridi_files);
         const files_url = ridi_files.map((file: any) => file.src);
         console.log(files_url);
-        const file_to_be_returned = await handleChapter(files_url, chapter_number, series_name);
+        const file_to_be_returned = await handleChapter(files_url, chapter_number, series_name, '');
         console.log(file_to_be_returned);
         return file_to_be_returned;
     } catch (error) {
