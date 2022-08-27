@@ -39,17 +39,9 @@ async function handleChapter(images_array: string[], number: string, title: stri
         await fs.mkdir(waifu_directory, { recursive: true });
 
         console.log(images_array);
-        const img_array = images_array.map(
-            (item: any, index: any) =>
-                new downloader({
-                    url: item,
-                    directory: `./${directory}`,
-                    fileName: `${index}.jpeg`,
-                })
-        );
 
         try {
-            await Promise.all(img_array.map((item: any) => item.download()));
+            await Promise.all(images_array.map((item, index) => download(item, directory, { filename: `${index}.jpeg` })))
             console.log("All images have been downloaded.");
         } catch (error) {
             console.log("There was an error downloading images: " + error);
