@@ -515,7 +515,7 @@ export async function downloadChapter(chapter: chapter, series_title: string, br
                 const kakao_response = await response.json();
                 const kakao_files = kakao_response.downloadData.members.files;
                 console.log(kakao_files);
-                const files_url = kakao_files.map((file: any) => `https://page-edge-jz.kakao.com/sdownload/resource/${file.secureUrl}`)
+                const files_url = kakao_files.map((file: any) => `https://page-edge.kakao.com/sdownload/resource?kid=${file.secureUrl}`)
                 const file_to_be_returned = await handleChapter(files_url, chapter.chapter_number.toString(), series_title);
                 await new_page.screenshot({ path: './afterrp.png' })
                 console.log(file_to_be_returned);
