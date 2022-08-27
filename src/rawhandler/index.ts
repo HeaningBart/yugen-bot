@@ -38,9 +38,22 @@ async function handleChapter(images_array: string[], number: string, title: stri
 
         await fs.mkdir(waifu_directory, { recursive: true });
 
-        await Promise.all(images_array.map((image, index) => download(image, `./${directory}`, {
-            filename: `image-${index}.jfif`
-        })));
+        const img_array = images_array.map(
+            (item: any, index: any) =>
+                new downloader({
+                    url: item,
+                    directory: `./${directory}`,
+                    fileName: `${index}.jpg`,
+                })
+        );
+
+        try {
+            await Promise.all(img_array.map((item: any) => item.download()));
+            console.log("All images have been downloaded.");
+        } catch (error) {
+            console.log("There was an error downloading images: " + error);
+        }
+
         console.log('All images have been downloaded.')
 
         await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
