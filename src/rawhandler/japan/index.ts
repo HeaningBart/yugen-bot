@@ -308,7 +308,7 @@ export async function getSpecificChapter(
   }
 
   const seeds_array = img_data.map((item: any, index: any) => {
-    const seed = functio(get_checksum(item), expires_array[index]);
+    const seed = functio(get_checksum(item), `${expires_array[index]}`);
     return seed;
   });
 
