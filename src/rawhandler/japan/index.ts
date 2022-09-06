@@ -319,23 +319,23 @@ export async function getSpecificChapter(
     console.log("There was an error downloading images: " + error);
   }
 
-  for (let i = 0; i <= img_data.length - 1; i++) {
-    try {
-      await exec(
-        `pycasso ${directory}/${i}.jpg ${directory}/output/${i} scramble -n 50 50 -s ${seeds_array[i]} -f jpeg`
-      );
-    } catch (error) { }
-  }
+  // for (let i = 0; i <= img_data.length - 1; i++) {
+  //   try {
+  //     await exec(
+  //       `pycasso ${directory}/${i}.jpg ${directory}/output/${i} scramble -n 50 50 -s ${seeds_array[i]} -f jpeg`
+  //     );
+  //   } catch (error) { }
+  // }
 
   try {
     await fs.mkdir(waifu_directory, { recursive: true });
     await exec(
-      `python3 src/rawhandler/SmartStitchConsole.py -i "${directory}/output" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`
+      `python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`
     );
     console.log("All images have been stitched.");
 
     await exec(
-      `./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/output/Stitched -f jpg -j 2:2:2`,
+      `./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 2:2:2`,
       { cwd: waifu }
     );
     console.log("All images have been through waifu-2x-caffe.");
