@@ -129,6 +129,8 @@ export async function getLatestChapter(
         url: "https://" + item,
         directory: `./${directory}`,
         fileName: `${index}.jpg`,
+        timeout: 15000,
+        maxAttempts: 5,
       })
   );
 
