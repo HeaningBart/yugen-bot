@@ -176,7 +176,7 @@ const dp_job = schedule.scheduleJob('30 00 * * 3', async function () {
         const browser = await JPStart();
         await JPLogin(browser);
         try {
-            const channel = client.channels.cache.get('923252711821021184');
+            const channel = client.channels.cache.get('948063125486329876');
             if (channel?.isText()) {
                 const file = await JPLatestChapter('81737', 'duke-pendragon', browser);
                 if (file) {
