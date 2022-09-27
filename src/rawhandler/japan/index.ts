@@ -319,13 +319,13 @@ export async function getSpecificChapter(
     console.log("There was an error downloading images: " + error);
   }
 
-  // for (let i = 0; i <= img_data.length - 1; i++) {
-  //   try {
-  //     await exec(
-  //       `pycasso ${directory}/${i}.jpg ${directory}/output/${i} scramble -n 50 50 -s ${seeds_array[i]} -f jpeg`
-  //     );
-  //   } catch (error) { }
-  // }
+  for (let i = 0; i <= img_data.length - 1; i++) {
+    try {
+      await exec(
+        `pycasso ${directory}/${i}.jpg ${directory}/output/${i} scramble -n 50 50 -s ${seeds_array[i]} -f jpeg`
+      );
+    } catch (error) { }
+  }
 
   try {
     await fs.mkdir(waifu_directory, { recursive: true });
