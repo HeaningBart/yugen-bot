@@ -54,7 +54,7 @@ async function handleChapter(images_array: string[], number: string, title: stri
 
         console.log('All images have been downloaded.')
 
-        await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+        await exec(`python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
         console.log('All images have been stitched.')
 
         await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu })
@@ -730,7 +730,7 @@ export async function processNaver(url: string, channel_name: string) {
             if (ext == 'rar') {
                 await exec(`unrar e "./${files[0]}"`, { cwd: `./${directory}` });
                 await fs.unlink(`./${directory}/${files[0]}`);
-                await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+                await exec(`python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
                 await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
                 await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
@@ -740,7 +740,7 @@ export async function processNaver(url: string, channel_name: string) {
             } else {
                 await exec(`7z x "./${files[0]}"`, { cwd: `./${directory}` });
                 await fs.unlink(`./${directory}/${files[0]}`);
-                await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+                await exec(`python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
                 await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
                 await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
@@ -759,7 +759,7 @@ export async function processNaver(url: string, channel_name: string) {
             if (ext == 'rar') {
                 await exec(`unrar e "./${files[0]}"`, { cwd: `./${directory}` });
                 await fs.unlink(`./${directory}/${files[0]}`);
-                await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+                await exec(`python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
                 await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
                 await exec(`7z a public/${true_name}.7z  "./${directory}/${name}/*"`);
@@ -769,7 +769,7 @@ export async function processNaver(url: string, channel_name: string) {
             } else {
                 await exec(`7z x "./${files[0]}"`, { cwd: `./${directory}` });
                 await fs.unlink(`./${directory}/${files[0]}`);
-                await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+                await exec(`python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                 await fs.mkdir(`./${directory}/${name}`, { recursive: true });
                 await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
                 await exec(`7z a public/${true_name}.7z  "./${directory}/${name}/*"`);
@@ -797,7 +797,7 @@ export async function processNaver(url: string, channel_name: string) {
                 if (ext == 'rar') {
                     await exec(`unrar e "./${files[0]}"`, { cwd: `./${directory}` });
                     await fs.unlink(`./${directory}/${files[0]}`);
-                    await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+                    await exec(`python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                     await fs.mkdir(`./${directory}/${name}`, { recursive: true });
                     await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
                     await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
@@ -807,7 +807,7 @@ export async function processNaver(url: string, channel_name: string) {
                 } else {
                     await exec(`7z x "./${files[0]}"`, { cwd: `./${directory}` });
                     await fs.unlink(`./${directory}/${files[0]}`);
-                    await exec(`python3 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+                    await exec(`python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
                     await fs.mkdir(`./${directory}/${name}`, { recursive: true });
                     await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o "../../${directory}/${name}" -i "../../${directory}/Stitched" -f jpg`, { cwd: waifu });
                     await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);

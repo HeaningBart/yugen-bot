@@ -24,7 +24,7 @@ const handleChapter = async (images_array, number) => {
         })));
         console.log('All images have been downloaded.')
 
-        await exec(`python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -t ".jpg"`);
+        await exec(`python3.9.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -t ".jpg"`);
         console.log('All images have been stitched.')
 
         await exec(`waifu2x-caffe-cui.exe -m noise -n 3 -p gpu -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -e jpeg -q 100`, { cwd: waifu })
