@@ -14,14 +14,6 @@ const app: Express = express();
 const port = process.env.PORT || 3000;
 
 
-app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
-});
-
-app.use(express.static('public'));
-
-
-
 
 //const prisma = new PrismaClient();
 
@@ -41,9 +33,10 @@ export function toUrl(string: string): string {
 
 client.on('ready', async () => {
     console.log('The bot is ready!')
+    console.log('For sure!')
     await client.guilds.cache.get('794049571973890068')?.commands.create({
-        name: 'jpchapter',
-        description: 'rp chapters from piccoma',
+        name: 'rp',
+        description: 'rp chapters from kakao(new)',
         type: 'CHAT_INPUT',
         options: [
             {
@@ -53,8 +46,8 @@ client.on('ready', async () => {
                 required: true
             },
             {
-                name: 'chapters',
-                description: 'number of latest chapters the bot should rp',
+                name: 'chapternumber',
+                description: 'number of the chapter',
                 type: 'NUMBER',
                 required: true
             },
@@ -611,6 +604,27 @@ client.on('interactionCreate', async (interaction) => {
                 } catch (error) {
                 }
             }
+            return;
+
+        case 'rp':
+            const new_seriesid = interaction.options.getString('seriesid')!;
+            const new_chapter_number = interaction.options.getNumber('chapters')!;
+            const new_series_name = toUrl(interaction.options.getString('seriesname')!);
+            try {
+                const specified_file = await getChapter(
+                    new_seriesid,
+                    new_chapter_number,
+                    toUrl(new_series_name)
+                );
+                if (specified_file) {
+                    await interaction.channel?.send({ files: [`./public/${specified_file}`] });
+                }
+            } catch (error) {
+                console.log(error)
+            }
+            await interaction.editReply('RP done.');
+            return;
+
 
         default:
             await interaction.editReply('Done.');
