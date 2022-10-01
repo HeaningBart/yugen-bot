@@ -127,6 +127,8 @@ export async function getChapter(seriesId: string | number, chapter_number: stri
     try {
         title = toUrl(`${title}`);
         const chapters = (await getChaptersList(seriesId, 'desc'));
+        console.log(chapters)
+        console.log(seriesId, chapter_number, title);
         const chapter = chapters.find(chapter => chapter.chapter_number == chapter_number);
         if (chapter) {
             const tickets = await getTickets(seriesId);
@@ -146,4 +148,3 @@ export async function getChapter(seriesId: string | number, chapter_number: stri
         console.log(error);
     }
 }
-
