@@ -5,7 +5,7 @@ puppeteer.use(StealthPlugin())
 const { email, password } = require('../../../config.json');
 
 export async function start() {
-    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'], headless: false });
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'], headless: true });
     return browser;
 }
 
@@ -36,6 +36,9 @@ export async function logIn(browser: Browser) {
     }
     await page.waitForTimeout(15000);
     await page.goto('https://page.kakao.com/content/50289296')
+    const req = await page.waitForRequest('https://page.kakao.com/graphql');
+    console.log(await req.headers())
+    console.log(await req.response())
     const cookies = await page.cookies();
 
     const new_cookies = cookies.map((item) => `${item.name}=${item.value};`)
