@@ -860,7 +860,7 @@ function getGQLQuery_useTicket(productId: number | string) {
         query: "mutation UseTicket($input: TicketUseMutationInput!) {\n  useTicket(input: $input) {\n    waitfreeChargedAt\n    __typename\n  }\n}\n",
         variables: {
             input: {
-                ticketType: "RentSingle",
+                ticketType: "RentPackage",
                 productId
             }
         }
@@ -890,7 +890,6 @@ async function getTickets(seriesId: string | number) {
             Cookie: cookies
         }
     })
-    console.log(response.data)
     return {
         tickets: response.data.data.contentMyTicket.ticketRentalCount,
         status: response.status
@@ -916,6 +915,7 @@ async function useTicket(productId: number | string) {
             Cookie: cookies
         }
     })
+    console.log(response.data)
     return {
         status: response.status
     }
@@ -927,6 +927,7 @@ async function getChapterContent(seriesId: number | string, productId: number | 
             Cookie: cookies
         }
     })
+    console.log(response.data)
     return {
         status: response.status,
         files: response.data.data.viewerInfo.viewerData.imageDownloadData.files.map((file: any) => file.secureUrl)
@@ -959,7 +960,6 @@ async function getSpecificChapter(seriesId: string | number, chapter_number: str
         console.log(error);
     }
 }
-
 
 
 
