@@ -123,7 +123,7 @@ async function getChapterContent(seriesId: number | string, productId: number | 
 
 
 
-export async function getChapter(seriesId: string | number, chapter_number: string | number, title: string | number) {
+export default async function getSpecificChapter(seriesId: string | number, chapter_number: string | number, title: string | number) {
     try {
         title = toUrl(`${title}`);
         const chapters = (await getChaptersList(seriesId, 'desc'));

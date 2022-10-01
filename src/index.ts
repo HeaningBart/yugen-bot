@@ -1,7 +1,7 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
 import { getLatestChapter, processNaver, getChaptersList, downloadSRChapter } from './rawhandler'
-import { getChapter } from './rawhandler/new_index';
+import getChapter from './rawhandler/new_index';
 import { start, logIn, buyTicket } from './rawhandler/kakao'
 import { logIn as ridiLogin, getLatestChapter as getLatestRidi, downloadChapter } from './rawhandler/ridibooks'
 import schedule from 'node-schedule'
