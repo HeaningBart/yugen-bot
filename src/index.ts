@@ -494,8 +494,8 @@ client.on('interactionCreate', async (interaction) => {
             const kakao_title = interaction.options.getString('seriestitle')!;
             try {
                 const specified_file = await getChapter(
-                    chapter_number,
                     kakao_series_id,
+                    chapter_number,
                     toUrl(kakao_title)
                 );
                 if (specified_file) {
