@@ -409,21 +409,21 @@ client.on('interactionCreate', async (interaction) => {
     await interaction.deferReply();
     const user = interaction.member?.user.id!;
     switch (type) {
-        case 'mass':
-            // if (!allowedUsers.includes(user)) {
-            //     await interaction.editReply(`You're not allowed to use this command.`)
-            //     return;
-            // }
-            // const id = interaction.options.getString('kakaoid')!;
-            // const starts_at = interaction.options.getNumber('startsat')!;
-            // const series_title = interaction.options.getString('title')!;
-            // const chapters = await buyTicket(id, starts_at, series_title);
-            // await interaction.editReply('Done.');
-            // await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
-            // await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
-            // await interaction.channel?.send('RP done.')
-            // await interaction.editReply('Done.');
-            return;
+        // case 'mass':
+        // if (!allowedUsers.includes(user)) {
+        //     await interaction.editReply(`You're not allowed to use this command.`)
+        //     return;
+        // }
+        // const id = interaction.options.getString('kakaoid')!;
+        // const starts_at = interaction.options.getNumber('startsat')!;
+        // const series_title = interaction.options.getString('title')!;
+        // const chapters = await buyTicket(id, starts_at, series_title);
+        // await interaction.editReply('Done.');
+        // await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
+        // await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
+        // await interaction.channel?.send('RP done.')
+        // await interaction.editReply('Done.');
+        // return;
         // return;
         // case 'add':
         //     if (!allowedUsers.includes(user)) {
@@ -483,7 +483,7 @@ client.on('interactionCreate', async (interaction) => {
         // const removed_id = interaction.options.getString('kakaoid')!;
         // await prisma.series.deleteMany({ where: { kakaoId: removed_id } });
         // await interaction.editReply('Series removed.');
-        // return;
+        //return;
         case 'getchapter':
             if (!allowedUsers.includes(user)) {
                 await interaction.editReply(`You're not allowed to use this command.`)
