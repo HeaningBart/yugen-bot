@@ -78,8 +78,9 @@ async function getTickets(seriesId: string | number) {
             Cookie: cookies
         }
     })
+    console.log(response.data)
     return {
-        tickets: response.data.contentMyTicket.ticketRentalCount,
+        tickets: response.data.data.contentMyTicket.ticketRentalCount,
         status: response.status
     }
 }
@@ -145,3 +146,5 @@ export async function getChapter(seriesId: string | number, chapter_number: stri
         console.log(error);
     }
 }
+
+getChapter(58031028, 64, 'ssn');
