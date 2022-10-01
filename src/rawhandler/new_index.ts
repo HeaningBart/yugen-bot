@@ -147,4 +147,3 @@ export async function getChapter(seriesId: string | number, chapter_number: stri
     }
 }
 
-getChapter(58031028, 64, 'ssn');
