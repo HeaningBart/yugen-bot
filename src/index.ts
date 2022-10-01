@@ -1,6 +1,7 @@
 import { Client, Intents, MessageEmbed } from 'discord.js';
 const { token } = require('../config.json')
-import { getChapter, getLatestChapter, processNaver, getChaptersList, downloadSRChapter } from './rawhandler'
+import { getLatestChapter, processNaver, getChaptersList, downloadSRChapter } from './rawhandler'
+import { getChapter } from './rawhandler/new_index';
 import { start, logIn, buyTicket } from './rawhandler/kakao'
 import { logIn as ridiLogin, getLatestChapter as getLatestRidi, downloadChapter } from './rawhandler/ridibooks'
 import schedule from 'node-schedule'
@@ -498,7 +499,7 @@ client.on('interactionCreate', async (interaction) => {
                     toUrl(kakao_title)
                 );
                 if (specified_file) {
-                    await interaction.channel?.send({ content: `https://raws.reaperscans.com/${specified_file}` });
+                    await interaction.channel?.send({ files: [`./public/${specified_file}`] });
                 }
             } catch (error) { }
             await interaction.editReply('RP done.');
