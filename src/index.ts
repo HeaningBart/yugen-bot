@@ -22,7 +22,7 @@ app.use(express.static('public'));
 
 
 
-const prisma = new PrismaClient();
+//const prisma = new PrismaClient();
 
 const client = new Client({
     intents: [
@@ -74,6 +74,8 @@ type SeriesItem = {
     id: string;
     title: string;
 }
+
+/*
 
 const monday_job = schedule.scheduleJob('00 22 * * 1', async function () {
     try {
@@ -394,7 +396,7 @@ const sunday_job = schedule.scheduleJob('01 22 * * 7', async function () {
     } catch (error) {
         console.log(error);
     }
-})
+}) */
 
 
 
@@ -422,65 +424,65 @@ client.on('interactionCreate', async (interaction) => {
             // await interaction.editReply('Done.');
             return;
         // return;
-        case 'add':
-            if (!allowedUsers.includes(user)) {
-                await interaction.editReply(`You're not allowed to use this command.`)
-                return;
-            }
-            const role = interaction.options.getRole('role')!;
-            const channel = interaction.options.getChannel('channel')!;
-            const weekly = interaction.options.getBoolean('weekly')!;
-            const kakaoid = interaction.options.getString('kakaoid')!;
-            const title = interaction.options.getString('title')!;
-            const cron = interaction.options.getString('cron')!;
-            const slug = toUrl(title);
-            const series = await prisma.series.create({ data: { role: role.id, channel: channel.id, weekly, kakaoId: kakaoid, title, cron, slug } })
-            await interaction.editReply('Series added to the database.')
-            await interaction.channel?.send(`Series Title: ${series.title}, Release day: ${series.cron}, Role to be pinged: <@&${series.role}>, Channel: <#${series.channel}>`);
-            return;
-        case 'getseries':
-            const release_day = interaction.options.getString('releaseday')!;
-            const all_series = await prisma.series.findMany({ where: { cron: release_day }, orderBy: { id: 'asc' } });
-            let embeds: any = [];
-            all_series.map((series) => {
-                let embed = new MessageEmbed()
-                    .setTitle(series.title)
-                    .addField('Weekly', series.weekly.toString(), true)
-                    .addField('Slug', series.slug, true)
-                    .addField('ID', series.id.toString(), true)
-                    .addField('Release Day', series.cron, true)
-                    .addField('Role to be pinged', `<@&${series.role}>`, true)
-                    .addField('Channel for the message to be sent', `<#${series.channel}>`, true)
+        // case 'add':
+        //     if (!allowedUsers.includes(user)) {
+        //         await interaction.editReply(`You're not allowed to use this command.`)
+        //         return;
+        //     }
+        //     const role = interaction.options.getRole('role')!;
+        //     const channel = interaction.options.getChannel('channel')!;
+        //     const weekly = interaction.options.getBoolean('weekly')!;
+        //     const kakaoid = interaction.options.getString('kakaoid')!;
+        //     const title = interaction.options.getString('title')!;
+        //     const cron = interaction.options.getString('cron')!;
+        //     const slug = toUrl(title);
+        //     const series = await prisma.series.create({ data: { role: role.id, channel: channel.id, weekly, kakaoId: kakaoid, title, cron, slug } })
+        //     await interaction.editReply('Series added to the database.')
+        //     await interaction.channel?.send(`Series Title: ${series.title}, Release day: ${series.cron}, Role to be pinged: <@&${series.role}>, Channel: <#${series.channel}>`);
+        //     return;
+        // case 'getseries':
+        //     const release_day = interaction.options.getString('releaseday')!;
+        //     const all_series = await prisma.series.findMany({ where: { cron: release_day }, orderBy: { id: 'asc' } });
+        //     let embeds: any = [];
+        //     all_series.map((series) => {
+        //         let embed = new MessageEmbed()
+        //             .setTitle(series.title)
+        //             .addField('Weekly', series.weekly.toString(), true)
+        //             .addField('Slug', series.slug, true)
+        //             .addField('ID', series.id.toString(), true)
+        //             .addField('Release Day', series.cron, true)
+        //             .addField('Role to be pinged', `<@&${series.role}>`, true)
+        //             .addField('Channel for the message to be sent', `<#${series.channel}>`, true)
 
-                embeds.push(embed);
-            })
-            if (embeds.length > 0) await interaction.channel?.send({ embeds })
-            else await interaction.channel?.send('No series found.')
-            await interaction.editReply('Done.');
-            return;
-        case 'edit':
-            if (!allowedUsers.includes(user)) {
-                await interaction.editReply(`You're not allowed to use this command.`)
-                return;
-            }
-            const weekly_status = interaction.options.getBoolean('weekly')!;
-            const series_id = interaction.options.getNumber('id')!;
-            const exists = await prisma.series.findFirst({ where: { id: series_id } });
-            if (exists) {
-                await prisma.series.update({ where: { id: series_id }, data: { weekly: weekly_status } });
-                await interaction.channel?.send('Series updated.');
-            } else await interaction.channel?.send('Series does not exist.')
-            await interaction.editReply('Done.');
-            return;
-        case 'remove':
-            if (!allowedUsers.includes(user)) {
-                await interaction.editReply(`You're not allowed to use this command.`)
-                return;
-            }
-            const removed_id = interaction.options.getString('kakaoid')!;
-            await prisma.series.deleteMany({ where: { kakaoId: removed_id } });
-            await interaction.editReply('Series removed.');
-            return;
+        //         embeds.push(embed);
+        //     })
+        //     if (embeds.length > 0) await interaction.channel?.send({ embeds })
+        //     else await interaction.channel?.send('No series found.')
+        //     await interaction.editReply('Done.');
+        //     return;
+        // case 'edit':
+        //     if (!allowedUsers.includes(user)) {
+        //         await interaction.editReply(`You're not allowed to use this command.`)
+        //         return;
+        //     }
+        //     const weekly_status = interaction.options.getBoolean('weekly')!;
+        //     const series_id = interaction.options.getNumber('id')!;
+        //     const exists = await prisma.series.findFirst({ where: { id: series_id } });
+        //     if (exists) {
+        //         await prisma.series.update({ where: { id: series_id }, data: { weekly: weekly_status } });
+        //         await interaction.channel?.send('Series updated.');
+        //     } else await interaction.channel?.send('Series does not exist.')
+        //     await interaction.editReply('Done.');
+        //     return;
+        // case 'remove':
+        // if (!allowedUsers.includes(user)) {
+        //     await interaction.editReply(`You're not allowed to use this command.`)
+        //     return;
+        // }
+        // const removed_id = interaction.options.getString('kakaoid')!;
+        // await prisma.series.deleteMany({ where: { kakaoId: removed_id } });
+        // await interaction.editReply('Series removed.');
+        // return;
         case 'getchapter':
             if (!allowedUsers.includes(user)) {
                 await interaction.editReply(`You're not allowed to use this command.`)
