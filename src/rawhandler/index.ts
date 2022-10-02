@@ -1088,7 +1088,6 @@ async function getSpecificChapter(seriesId: string | number, chapter_number: str
     }
 }
 
-getSpecificChapter(58509736, 57, 'estio')
 
 
 
