@@ -29,6 +29,64 @@ type ChapterProps = {
 
 type Chapter = HTMLDivElement & ChapterProps;
 
+type handleProps = {
+    images_array: string[], number: string, title: string, cookies: string
+}
+import BetterQueue from 'better-queue';
+
+const chapterHandler = new BetterQueue(async function (object: handleProps, cb: any) {
+    const file = await newHandleChapter(object);
+    console.log('Chapter processed.')
+    //@ts-ignore
+    this.finishBatch(file)
+})
+
+
+async function newHandleChapter({ images_array, number, title, cookies }: handleProps) {
+    try {
+        const random = title;
+        const directory = `dist-${number}-${random}`;
+        const waifu_directory = `waifu-${number}-${random}`;
+        const chaptername = `chapter-${number}-${random}`;
+
+        await fs.mkdir(waifu_directory, { recursive: true });
+
+        console.log(images_array);
+
+        try {
+            await Promise.all(images_array.map((item, index) => download(item, directory, {
+                filename: `${index}.jpeg`,
+                headers: {
+                    'Cookie': `${cookies}`
+                }
+            })))
+            console.log("All images have been downloaded.");
+        } catch (error) {
+            console.log("There was an error downloading images: " + error);
+        }
+
+        console.log('All images have been downloaded.')
+
+        await exec(`python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`);
+        console.log('All images have been stitched.')
+
+        await exec(`./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 2:2:2`, { cwd: waifu })
+        console.log('All images have been through waifu-2x-caffe.')
+
+        await exec(`7z a public/${chaptername}.7z  ./${waifu_directory}/*`)
+
+        fs.rm(`./${directory}`, { recursive: true })
+        fs.rm(`./${waifu_directory}`, { recursive: true })
+
+        console.log('Temp directories are being removed.')
+
+        return `${chaptername}.7z`
+    } catch (error) {
+        console.log(error);
+        console.log(`An error in chapter ${number} has occurred during download/stitching/waifu.`)
+    }
+}
+
 async function handleChapter(images_array: string[], number: string, title: string, cookies: string) {
     try {
         const random = title;
@@ -881,6 +939,35 @@ function getGQLQuery_buyTicket(seriesId: number | string) {
     }
 }
 
+function getGQLQuery_readyToUseTicket(seriesId: number | string, productId: string | number) {
+    return {
+        operationName: "readyToUseTicket",
+        query: "query readyToUseTicket($seriesId: Long!, $productId: Long!, $queryFrom: QueryFromPage!, $nonstopWatching: Boolean!, $pickExactly: Boolean!, $slideType: SlideType, $isFree: Boolean) {\n  readyToUseTicket(\n    seriesId: $seriesId\n    productId: $productId\n    from: $queryFrom\n    nonstopWatching: $nonstopWatching\n    pickExactly: $pickExactly\n    slideType: $slideType\n    isFree: $isFree\n  ) {\n    process\n    nextProcess\n    series {\n      isWaitfree\n      isWaitfreePlus\n      waitfreeBlockCount\n      __typename\n    }\n    single {\n      readAccessType\n      title\n      waitfreeBlock\n      isDone\n      __typename\n    }\n    my {\n      cashAmount\n      ticketOwnCount\n      ticketRentalCount\n      __typename\n    }\n    available {\n      ticketOwnType\n      ticketRentalType\n      __typename\n    }\n    purchase {\n      ticketRental {\n        ticketId\n        ticketType\n        ticketKind\n        price\n        __typename\n      }\n      ticketOwn {\n        ticketId\n        ticketType\n        ticketKind\n        price\n        __typename\n      }\n      __typename\n    }\n    nextItem {\n      productId\n      isFree\n      slideType\n      ageGrade\n      __typename\n    }\n    __typename\n  }\n}\n",
+        variables: {
+            isFree: false,
+            nonstopWatching: false,
+            pickExactly: false,
+            productId,
+            queryFrom: "ContentHome",
+            seriesId,
+            slideType: "Comic"
+        }
+    }
+}
+
+function getGQLQuery_buyAndUseTicket(productId: number | string, seriesId: string | number) {
+    return {
+        operationName: "BuyAndUseTicket",
+        query: "mutation BuyAndUseTicket($input: TicketBuyAndUseMutationInput!) {\n  buyAndUseTicket(input: $input) {\n    buyTicketinfo\n    remainCash\n    __typename\n  }\n}\n",
+        variables: {
+            input: {
+                productId,
+                ticketId: `TKT020000000${seriesId}001`
+            }
+        }
+    }
+}
+
 
 
 
@@ -890,6 +977,7 @@ async function getTickets(seriesId: string | number) {
             Cookie: cookies
         }
     })
+    console.log(response.data)
     return {
         tickets: response.data.data.contentMyTicket.ticketRentalCount,
         status: response.status
@@ -915,9 +1003,37 @@ async function useTicket(productId: number | string) {
             Cookie: cookies
         }
     })
-    console.log(response.data)
     return {
-        status: response.status
+        status: response.status,
+        data: response.data
+    }
+}
+
+
+async function buyAndUseTicket(productId: number | string, seriesId: string | number) {
+    const response = await axios.post('https://page.kakao.com/graphql', getGQLQuery_buyAndUseTicket(productId, seriesId), {
+        headers: {
+            Cookie: cookies
+        }
+    })
+    console.log('response from buy and use ticket', response.data)
+    return {
+        status: response.status,
+        data: response.data
+    }
+}
+
+async function readyToUseTicket(productId: number | string, seriesId: number | string) {
+    console.log(getGQLQuery_readyToUseTicket(seriesId, productId))
+    const response = await axios.post('https://page.kakao.com/graphql', getGQLQuery_readyToUseTicket(seriesId, productId), {
+        headers: {
+            Cookie: cookies
+        }
+    })
+    console.log('response from ready to use ticket', response.data)
+    return {
+        status: response.status,
+        data: response.data
     }
 }
 
@@ -943,23 +1059,48 @@ async function getSpecificChapter(seriesId: string | number, chapter_number: str
         console.log(seriesId, chapter_number, title);
         const chapter = chapters.find(chapter => chapter.chapter_number == chapter_number);
         if (chapter) {
-            const tickets = await getTickets(seriesId);
-            if (!tickets) return;
-            if (tickets.tickets == 0) {
-                await buyTicket(seriesId);
-            } else {
-                await useTicket(chapter.id);
-                const content = await getChapterContent(seriesId, chapter.id);
-                if (content.files) {
-                    const chapter_file = await handleChapter(content.files, chapter.chapter_number.toString(), title.toString(), cookies);
-                    return chapter_file;
+            try {
+                const content_chapter = await getChapterContent(seriesId, chapter.id);
+                const chapter_file = await handleChapter(content_chapter.files, chapter.chapter_number.toString(), title.toString(), cookies);
+                return chapter_file;
+            } catch (error) {
+                const tickets = await getTickets(seriesId);
+                if (!tickets) return;
+                if (tickets.tickets == 0) {
+                    await buyTicket(seriesId);
+                } else {
+                    const useTicket_data = await useTicket(chapter.id);
+                    if (useTicket_data.data.errors && useTicket_data.data.errors.length > 0) {
+                        await readyToUseTicket(chapter.id, seriesId);
+                        await buyAndUseTicket(chapter.id, seriesId);
+                    }
+                    const content = await getChapterContent(seriesId, chapter.id);
+                    if (content.files) {
+                        const chapter_file = await handleChapter(content.files, chapter.chapter_number.toString(), title.toString(), cookies);
+                        return chapter_file;
+                    }
                 }
             }
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log(error);
+        console.log(error.data)
     }
 }
+
+getSpecificChapter(58509736, 57, 'estio')
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
