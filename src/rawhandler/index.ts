@@ -51,15 +51,20 @@ async function newHandleChapter({ images_array, number, title, cookies }: handle
 
         await fs.mkdir(waifu_directory, { recursive: true });
 
-        console.log(images_array);
+        const img_array = images_array.map(
+            (item: any, index: any) =>
+                new downloader({
+                    url: item,
+                    directory: `./${directory}`,
+                    fileName: `${index}.jpg`,
+                    headers: {
+                        'Cookie': cookies
+                    }
+                })
+        );
 
         try {
-            await Promise.all(images_array.map((item, index) => download(item, directory, {
-                filename: `${index}.jpeg`,
-                headers: {
-                    'Cookie': `${cookies}`
-                }
-            })))
+            await Promise.all(img_array.map((item: any) => item.download()));
             console.log("All images have been downloaded.");
         } catch (error) {
             console.log("There was an error downloading images: " + error);
