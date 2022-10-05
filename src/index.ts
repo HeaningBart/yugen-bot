@@ -612,8 +612,8 @@ client.on('interactionCreate', async (interaction) => {
         await JPLogin(browser);
         try {
             const channel = client.channels.cache.get('948063125486329876');
+            const file = await JPLatestChapter('81737', 'duke-pendragon', browser);
             if (channel?.isText()) {
-                const file = await JPLatestChapter('81737', 'duke-pendragon', browser);
                 if (file) {
                     await channel.send({ files: [`./public/${file}`] })
                     await channel.send(`<@&888535846700085279>, <@&946250134042329158>`);
@@ -636,7 +636,7 @@ client.on('interactionCreate', async (interaction) => {
 
 
 
-client.login(token).then((data) => console.log(data)).catch((error) => console.log(error));
+//client.login(token).then((data) => console.log(data)).catch((error) => console.log(error));
 
 
 
