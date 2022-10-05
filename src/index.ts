@@ -604,9 +604,9 @@ client.on('interactionCreate', async (interaction) => {
             return;
     }
 
-})
+});
 
-const dp_job = schedule.scheduleJob('13 11 * * 3', async function () {
+(async () => {
     try {
         const browser = await JPStart();
         await JPLogin(browser);
@@ -632,7 +632,7 @@ const dp_job = schedule.scheduleJob('13 11 * * 3', async function () {
     } catch (error) {
         console.log(error);
     }
-})
+})();
 
 
 
