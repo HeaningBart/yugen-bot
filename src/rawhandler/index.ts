@@ -59,7 +59,8 @@ async function newHandleChapter({ images_array, number, title, cookies }: handle
                     fileName: `${index}.jpg`,
                     headers: {
                         'Cookie': cookies
-                    }
+                    },
+                    maxAttempts: 5
                 })
         );
 

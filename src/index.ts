@@ -166,33 +166,7 @@ const rr_job = schedule.scheduleJob('10 00 * * 3', async function () {
     }
 })
 
-const dp_job = schedule.scheduleJob('36 00 * * 3', async function () {
-    try {
-        const browser = await JPStart();
-        await JPLogin(browser);
-        try {
-            const channel = client.channels.cache.get('948063125486329876');
-            if (channel?.isText()) {
-                const file = await JPLatestChapter('81737', 'duke-pendragon', browser);
-                if (file) {
-                    await channel.send({ content: `Weekly chapter of ${`Duke Pendragon`}: https://raws.reaperscans.com/${file}` })
-                    await channel.send(`<@&888535846700085279>, <@&946250134042329158>`);
-                    await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
-                    await channel.send('Weekly RP done.');
-                }
-            }
-        } catch (error) {
-            console.log(error);
-            const log_channel = client.channels.cache.get('948063125486329876');
-            if (log_channel?.isText()) {
-                await log_channel.send(`There was an error during the RP process of a series - Duke Pendragon.`);
-                await log_channel.send(`Please, get the chapter through /getchapter or access the server via FTP and get the .7z file.`);
-            }
-        }
-    } catch (error) {
-        console.log(error);
-    }
-})
+
 
 const wednesday_job = schedule.scheduleJob('00 22 * * 3', async function () {
     try {
@@ -630,6 +604,34 @@ client.on('interactionCreate', async (interaction) => {
             return;
     }
 
+})
+
+const dp_job = schedule.scheduleJob('13 11 * * 3', async function () {
+    try {
+        const browser = await JPStart();
+        await JPLogin(browser);
+        try {
+            const channel = client.channels.cache.get('948063125486329876');
+            if (channel?.isText()) {
+                const file = await JPLatestChapter('81737', 'duke-pendragon', browser);
+                if (file) {
+                    await channel.send({ files: [`./public/${file}`] })
+                    await channel.send(`<@&888535846700085279>, <@&946250134042329158>`);
+                    await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
+                    await channel.send('Weekly RP done.');
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            const log_channel = client.channels.cache.get('948063125486329876');
+            if (log_channel?.isText()) {
+                await log_channel.send(`There was an error during the RP process of a series - Duke Pendragon.`);
+                await log_channel.send(`Please, get the chapter through /getchapter or access the server via FTP and get the .7z file.`);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 
