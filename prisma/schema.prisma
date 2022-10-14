@@ -21,4 +21,5 @@ model Series {
   weekly    Boolean  @default(false)
   role      String   @db.VarChar(255)
   channel   String   @db.VarChar(255)
+  priority  Int      @db.Integer()
 }
