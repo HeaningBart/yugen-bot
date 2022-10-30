@@ -8,3 +8,4 @@ waifu-*
 __pycache__
 public/*
 public
+config.json
