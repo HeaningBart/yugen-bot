@@ -53,5 +53,5 @@ def main():
 if __name__ == '__main__':
   main()
 
-# Example of a basic run => python SmartStitchConsole.py -i "Review me" -H 7500 -t ".png" -b
+# Example of a basic run => python3.9 SmartStitchConsole.py -i "Review me" -H 7500 -t ".png" -b
 # This will Run the application on for input_folder of "./Review me" with split_height of 7500 and output_tyoe of ".png" and batch_mode enabled

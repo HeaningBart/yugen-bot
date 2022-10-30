@@ -4,7 +4,6 @@ import {
   getSpecificChapter as getChapter,
   processNaver,
   getChaptersList,
-  downloadSRChapter,
 } from "./rawhandler";
 import { start, logIn, buyTicket } from "./rawhandler/kakao";
 import {
@@ -525,7 +524,7 @@ client.on("interactionCreate", async (interaction) => {
             files: [`./public/${specified_file}`],
           });
         }
-      } catch (error) {}
+      } catch (error) { }
       await interaction.editReply("RP done.");
       return;
     case "process":
@@ -557,59 +556,6 @@ client.on("interactionCreate", async (interaction) => {
           await target_channel.send(
             `There was an error during the file upload to Discord.`
           );
-        }
-      }
-      await interaction.editReply("Done.");
-      return;
-    case "sr":
-      if (!allowedUsers.includes(user)) {
-        await interaction.editReply(`You're not allowed to use this command.`);
-        return;
-      }
-      const series_kakao_id = interaction.options.getString("seriesid")!;
-      const series_kakao_title = interaction.options.getString("title")!;
-      const chapters = await getChaptersList(series_kakao_id, "asc");
-      const free_chapters = chapters.filter((chapter) => chapter.free === true);
-      const paid_chapters = chapters.filter(
-        (chapter) => chapter.free === false
-      );
-
-      const browser = await start();
-
-      await interaction.editReply("Starting RP of free chapters");
-
-      const free_files = await Promise.all(
-        free_chapters.map((chapter) =>
-          downloadSRChapter(chapter, series_kakao_title, browser)
-        )
-      );
-      if (free_files)
-        await Promise.all(
-          free_files.map((chapter) => {
-            if (chapter) {
-              interaction.channel?.send({
-                files: [`./public/${chapter}`],
-              });
-            }
-          })
-        );
-
-      for (let i = 0; i <= paid_chapters.length - 1; i++) {
-        try {
-          const length = paid_chapters.length - 1;
-          await interaction.editReply(`RPing chapters... (${i + 1}/${length})`);
-          const chapter = await getChapter(
-            series_kakao_id,
-            paid_chapters[i].chapter_number,
-            series_kakao_title
-          );
-          if (chapter) {
-            await interaction.channel?.send({
-              files: [`./public/${chapter}`],
-            });
-          }
-        } catch (error) {
-          console.log(error);
         }
       }
       await interaction.editReply("Done.");
@@ -672,7 +618,7 @@ client.on("interactionCreate", async (interaction) => {
               `Don't forget to report your progress in <#794058643624034334> after you are done with your part.`
             );
           }
-        } catch (error) {}
+        } catch (error) { }
       }
       return;
 
@@ -709,3 +655,7 @@ client
   .login(token)
   .then((data) => console.log(data))
   .catch((error) => console.log(error));
+
+
+
+
