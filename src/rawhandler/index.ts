@@ -607,4 +607,75 @@ async function getSpecificChapter(
   }
 }
 
-export { handleChapter, getSpecificChapter };
+
+async function getLatestChapter(
+  seriesId: string | number,
+  title: string | number
+) {
+  try {
+    const browser = await start();
+    const cookies = await logIn(browser);
+    await browser.close();
+    console.log(cookies);
+    const chapters = await getChaptersList(seriesId, "desc");
+    console.log(chapters);
+    const chapter = chapters[0]
+    if (chapter) {
+      try {
+        const content_chapter = await getChapterContent(
+          seriesId,
+          chapter.id,
+          cookies
+        );
+        const chapter_file = await handleChapter(
+          content_chapter.files,
+          chapter.chapter_number.toString(),
+          title.toString(),
+          cookies
+        );
+        return chapter_file;
+      } catch (error) {
+        const tickets = await getTickets(seriesId, cookies);
+        if (!tickets) return;
+        if (tickets.tickets == 0) {
+          await buyTicket(seriesId, cookies);
+        } else {
+          const useTicket_data = await useTicket(chapter.id, cookies);
+          if (
+            useTicket_data.data.errors &&
+            useTicket_data.data.errors.length > 0
+          ) {
+            try {
+              await readyToUseTicket(chapter.id, seriesId, cookies);
+              await buyAndUseTicket(chapter.id, seriesId, cookies);
+            } catch (error) {
+              await buyAndUseTicket(chapter.id, seriesId, cookies);
+              console.log(error)
+            }
+          }
+          const content = await getChapterContent(
+            seriesId,
+            chapter.id,
+            cookies
+          );
+          if (content.files) {
+            const chapter_file = await handleChapter(
+              content.files,
+              chapter.chapter_number.toString(),
+              title.toString(),
+              cookies
+            );
+            return chapter_file;
+          }
+        }
+      }
+    }
+  } catch (error: any) {
+    console.log(error);
+    console.log(error.data);
+  }
+}
+
+
+
+export { handleChapter, getSpecificChapter, getLatestChapter };

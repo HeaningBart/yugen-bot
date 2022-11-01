@@ -34,19 +34,6 @@ const get_checksum = (img_url: string) => {
   return split_url[split_url.length - 2];
 };
 
-// const get_seed = (img_url: string, key: string) => {
-//     var checksum = get_checksum(img_url);
-//     const length = checksum.length;
-
-//     for(let i = 0; i <= key.length - 1; i++){
-//             if (parseInt(key[i]) !== 0){
-//                 checksum = checksum.slice(-key[i]) + checksum.slice(0, length - parseInt(key[i]));
-//             }
-//         }
-
-//     return checksum;
-
-// }
 
 export async function logIn(browser: Browser) {
   const page = await browser.newPage();
@@ -65,7 +52,7 @@ export async function logIn(browser: Browser) {
       form.submit();
     }
   });
-  await page.waitForTimeout(5000);
+  await page.waitForNavigation({ timeout: 30000 })
   await page.close();
 }
 
@@ -88,12 +75,15 @@ export async function getLatestChapter(
   });
   await page.click(`a[data-episode_id="${chapter_id}"]`);
 
-  await page.waitForTimeout(5000);
+  try {
+    await page.waitForNavigation({ timeout: 30000 })
+  } catch (error) {
+
+  }
 
   try {
     await page.click("div.jconfirm-buttons > button", {
-      delay: 5000,
-      clickCount: 20,
+      clickCount: 2000,
     });
     await page.evaluate(() => {
       const button = document.querySelector<HTMLButtonElement>('div.jconfirm-buttons > button');
@@ -104,14 +94,13 @@ export async function getLatestChapter(
   } catch (error) {
     console.log(error);
   }
-
-  await page.waitForTimeout(15000);
-
   const chapter_data = await page.evaluate(() => {
     //@ts-ignore
     const data = _pdata_;
     return data;
   });
+
+  await browser.close();
 
   console.log('this is pdata' + chapter_data);
 
@@ -198,7 +187,9 @@ export async function getLatestChapter(
     console.log("Temp directories are being removed.");
 
     return `${directory}.7z`;
-  } catch (error) { }
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 export async function getListOfChapters(
