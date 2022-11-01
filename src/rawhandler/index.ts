@@ -614,7 +614,10 @@ async function getLatestChapter(
 ) {
   try {
     const browser = await start();
-    const cookies = await logIn(browser);
+    var cookies = await logIn(browser);
+    if (!cookies) {
+      var cookies = await logIn(browser);
+    }
     await browser.close();
     console.log(cookies);
     const chapters = await getChaptersList(seriesId, "desc");
