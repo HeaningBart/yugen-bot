@@ -43,6 +43,9 @@ async function handleChapter(
         fileName: `${index}.jpg`,
         timeout: 15000,
         maxAttempts: 5,
+        headers: {
+          Cookie: cookies
+        }
       }))
 
       await Promise.all(img_array.map((item: any) => item.download()));
