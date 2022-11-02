@@ -13,12 +13,11 @@ import { logIn, start } from "./kakao";
 import randomstring from "randomstring";
 import Handler from "../handlers";
 import downloader from "nodejs-file-downloader";
-import { createClient } from 'redis';
+import Redis from 'ioredis';
+
+const redis = new Redis();
 
 
-const client = createClient();
-
-client.on('error', (err) => console.log('Redis Client Error', err));
 
 
 async function handleChapter(
@@ -549,15 +548,13 @@ async function getSpecificChapter(
 ) {
   try {
 
-    await client.connect();
-
-    var cookies = await client.get('kakao_cookies');
+    var cookies = await redis.get('kakao_cookies');
 
     if (!cookies) {
       const browser = await start();
       cookies = await logIn(browser);
       if (!cookies) cookies = await logIn(browser)
-      await client.set('kakao_cookies', cookies, { EX: 129600 })
+      await redis.set('kakao_cookies', cookies, 'EX', 129600)
       await browser.close();
     }
     console.log(cookies);
@@ -629,15 +626,15 @@ async function getLatestChapter(
   title: string | number
 ) {
   try {
-    await client.connect();
 
-    var cookies = await client.get('kakao_cookies');
+
+    var cookies = await redis.get('kakao_cookies');
 
     if (!cookies) {
       const browser = await start();
       cookies = await logIn(browser);
       if (!cookies) cookies = await logIn(browser)
-      await client.set('kakao_cookies', cookies, { EX: 129600 })
+      await redis.set('kakao_cookies', cookies, 'EX', 129600)
       await browser.close();
     }
     console.log(cookies);
