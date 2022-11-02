@@ -542,6 +542,16 @@ async function getChapterContent(
   };
 }
 
+
+async function checkCookiesValidity(cookies: string) {
+  try {
+    const device = await getDeviceCookie(cookies);
+    if (typeof device === 'string') return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 async function getSpecificChapter(
   seriesId: string | number,
   chapter_number: string | number,
@@ -551,6 +561,7 @@ async function getSpecificChapter(
 
     var cookies = await redis.get('kakao_cookies');
 
+
     if (!cookies) {
       const browser = await start();
       cookies = await logIn(browser);
@@ -558,6 +569,16 @@ async function getSpecificChapter(
       await redis.set('kakao_cookies', cookies, 'EX', 129600)
       await browser.close();
     }
+    const isValid = await checkCookiesValidity(cookies);
+
+    if (!isValid) {
+      const browser = await start();
+      cookies = await logIn(browser);
+      if (!cookies) cookies = await logIn(browser)
+      await redis.set('kakao_cookies', cookies, 'EX', 129600)
+      await browser.close();
+    }
+
     console.log(cookies);
     const chapters = await getChaptersList(seriesId, "desc");
     console.log(chapters);
@@ -581,13 +602,6 @@ async function getSpecificChapter(
         return chapter_file;
       } catch (error) {
         const tickets = await getTickets(seriesId, cookies);
-        if (!tickets) {
-          const browser = await start();
-          cookies = await logIn(browser);
-          if (!cookies) cookies = await logIn(browser)
-          await redis.set('kakao_cookies', cookies, 'EX', 129600)
-          await browser.close();
-        }
         if (tickets.tickets == 0) {
           await buyTicket(seriesId, cookies);
         } else {
@@ -644,6 +658,15 @@ async function getLatestChapter(
       await redis.set('kakao_cookies', cookies, 'EX', 129600)
       await browser.close();
     }
+    const isValid = await checkCookiesValidity(cookies);
+
+    if (!isValid) {
+      const browser = await start();
+      cookies = await logIn(browser);
+      if (!cookies) cookies = await logIn(browser)
+      await redis.set('kakao_cookies', cookies, 'EX', 129600)
+      await browser.close();
+    }
     console.log(cookies);
     const chapters = await getChaptersList(seriesId, "desc");
     console.log(chapters);
@@ -664,13 +687,6 @@ async function getLatestChapter(
         return chapter_file;
       } catch (error) {
         const tickets = await getTickets(seriesId, cookies);
-        if (!tickets) {
-          const browser = await start();
-          cookies = await logIn(browser);
-          if (!cookies) cookies = await logIn(browser)
-          await redis.set('kakao_cookies', cookies, 'EX', 129600)
-          await browser.close();
-        }
         if (tickets.tickets == 0) {
           await buyTicket(seriesId, cookies);
         } else {
