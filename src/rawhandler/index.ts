@@ -56,8 +56,6 @@ async function handleChapter(
       console.log("There was an error downloading images: " + error);
     }
 
-    console.log("All images have been downloaded.");
-
     await exec(
       `python3.9 src/rawhandler/SmartStitchConsole.py -i "${directory}" -H 12000 -cw 800 -w 2 -t ".jpeg" -s 90`
     );
@@ -583,7 +581,13 @@ async function getSpecificChapter(
         return chapter_file;
       } catch (error) {
         const tickets = await getTickets(seriesId, cookies);
-        if (!tickets) return;
+        if (!tickets) {
+          const browser = await start();
+          cookies = await logIn(browser);
+          if (!cookies) cookies = await logIn(browser)
+          await redis.set('kakao_cookies', cookies, 'EX', 129600)
+          await browser.close();
+        }
         if (tickets.tickets == 0) {
           await buyTicket(seriesId, cookies);
         } else {
@@ -660,7 +664,13 @@ async function getLatestChapter(
         return chapter_file;
       } catch (error) {
         const tickets = await getTickets(seriesId, cookies);
-        if (!tickets) return;
+        if (!tickets) {
+          const browser = await start();
+          cookies = await logIn(browser);
+          if (!cookies) cookies = await logIn(browser)
+          await redis.set('kakao_cookies', cookies, 'EX', 129600)
+          await browser.close();
+        }
         if (tickets.tickets == 0) {
           await buyTicket(seriesId, cookies);
         } else {
