@@ -36,6 +36,7 @@
     "puppeteer-extra-plugin-stealth": "^2.9.0",
     "puppeteer-extra-plugin-user-preferences": "^2.3.1",
     "randomstring": "^1.2.2",
+    "redis": "^4.4.0",
     "tsc": "^2.0.4"
   },
   "devDependencies": {
