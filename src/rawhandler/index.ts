@@ -616,7 +616,7 @@ async function getLatestChapter(
     const browser = await start();
     var cookies = await logIn(browser);
     if (!cookies) {
-      var cookies = await logIn(browser);
+      cookies = await logIn(browser);
     }
     await browser.close();
     console.log(cookies);
