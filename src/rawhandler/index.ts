@@ -559,25 +559,11 @@ async function getSpecificChapter(
 ) {
   try {
 
-    var cookies = await redis.get('kakao_cookies');
+    const browser = await start();
+    var cookies = await logIn(browser);
+    if (!cookies) cookies = await logIn(browser)
+    await browser.close();
 
-
-    if (!cookies) {
-      const browser = await start();
-      cookies = await logIn(browser);
-      if (!cookies) cookies = await logIn(browser)
-      await redis.set('kakao_cookies', cookies, 'EX', 129600)
-      await browser.close();
-    }
-    const isValid = await checkCookiesValidity(cookies);
-
-    if (!isValid) {
-      const browser = await start();
-      cookies = await logIn(browser);
-      if (!cookies) cookies = await logIn(browser)
-      await redis.set('kakao_cookies', cookies, 'EX', 129600)
-      await browser.close();
-    }
 
     console.log(cookies);
     const chapters = await getChaptersList(seriesId, "desc");
@@ -649,24 +635,10 @@ async function getLatestChapter(
   try {
 
 
-    var cookies = await redis.get('kakao_cookies');
-
-    if (!cookies) {
-      const browser = await start();
-      cookies = await logIn(browser);
-      if (!cookies) cookies = await logIn(browser)
-      await redis.set('kakao_cookies', cookies, 'EX', 129600)
-      await browser.close();
-    }
-    const isValid = await checkCookiesValidity(cookies);
-
-    if (!isValid) {
-      const browser = await start();
-      cookies = await logIn(browser);
-      if (!cookies) cookies = await logIn(browser)
-      await redis.set('kakao_cookies', cookies, 'EX', 129600)
-      await browser.close();
-    }
+    const browser = await start();
+    var cookies = await logIn(browser);
+    if (!cookies) cookies = await logIn(browser)
+    await browser.close();
     console.log(cookies);
     const chapters = await getChaptersList(seriesId, "desc");
     console.log(chapters);

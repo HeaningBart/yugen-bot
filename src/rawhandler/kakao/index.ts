@@ -38,11 +38,13 @@ export async function logIn(browser: Browser) {
     await newPage.keyboard.press("Enter");
   }
 
-  await page.waitForNavigation({ timeout: 15000 })
+  await page.waitForNavigation({ timeout: 300000 })
 
   const cookies = await page.cookies();
   const new_cookies = cookies.map((item) => `${item.name}=${item.value};`);
   const filtered_cookies = new_cookies.join(" ");
+
+  console.log(filtered_cookies)
 
   return filtered_cookies;
 
