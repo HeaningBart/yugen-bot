@@ -20,7 +20,7 @@ export async function logIn(browser: Browser) {
     await page.goto("https://page.kakao.com/", { timeout: 15000 });
   } catch (error) { }
   await page.setCookie({ name: '_kpdid', value: "a6f58d9219f044d4985f131c72b0085e", domain: ".kakao.com", httpOnly: true, path: '/' })
-  await page.click('img[alt="내 정보"]');
+  await page.click('div[data-t-obj="{"click":{"layer1":"숏컷"}}"]');
   const newTarget = await browser.waitForTarget(
     (target) => target.opener() === pageTarget
   );
