@@ -113,7 +113,9 @@ const monday_job = schedule.scheduleJob('00 9 * * 1', async function () {
         if (channel?.isText()) {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
-            await channel.send({ content: `Weekly chapter of ${series.title}:`, files: [`./public/${file}`], })
+            await channel.send({
+              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+            })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
             await channel.send('Weekly RP done.');
@@ -146,7 +148,9 @@ const tuesday_job = schedule.scheduleJob('01 9 * * 2', async function () {
         if (channel?.isText()) {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
-            await channel.send({ content: `Weekly chapter of ${series.title}:`, files: [`./public/${file}`], })
+            await channel.send({
+              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+            })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
             await channel.send('Weekly RP done.');
@@ -177,7 +181,9 @@ const rr_job = schedule.scheduleJob('10 11 * * 3', async function () {
       if (channel?.isText()) {
         const file = await getLatestChapter('57552517', 'rankers-return');
         if (file) {
-          await channel.send({ content: `Weekly chapter of ${`Ranker's Return`}:`, files: [`./public/${file}`], })
+          await channel.send({
+            content: `Weekly chapter of Ranker's Return: https://raws.reaperscans.com/${file}`
+          })
           await channel.send(`<@&871239863792435221>, <@&946250134042329158>`);
           await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
           await channel.send('Weekly RP done.');
@@ -211,7 +217,9 @@ const wednesday_job = schedule.scheduleJob('00 9 * * 3', async function () {
         if (channel?.isText()) {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
-            await channel.send({ content: `Weekly chapter of ${series.title}:`, files: [`./public/${file}`], })
+            await channel.send({
+              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+            })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
             await channel.send('Weekly RP done.');
@@ -244,7 +252,9 @@ const thursday_job = schedule.scheduleJob('00 9 * * 4', async function () {
         if (channel?.isText()) {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
-            await channel.send({ content: `Weekly chapter of ${series.title}:`, files: [`./public/${file}`], })
+            await channel.send({
+              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+            })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
             await channel.send('Weekly RP done.');
@@ -277,7 +287,9 @@ const friday_job = schedule.scheduleJob('01 9 * * 5', async function () {
         if (channel?.isText()) {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
-            await channel.send({ content: `Weekly chapter of ${series.title}:`, files: [`./public/${file}`], })
+            await channel.send({
+              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+            })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
             await channel.send('Weekly RP done.');
@@ -310,7 +322,9 @@ const saturday_job = schedule.scheduleJob('00 9 * * 6', async function () {
         if (channel?.isText()) {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
-            await channel.send({ content: `Weekly chapter of ${series.title}:`, files: [`./public/${file}`], })
+            await channel.send({
+              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+            })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
             await channel.send('Weekly RP done.');
@@ -343,7 +357,9 @@ const sunday_job = schedule.scheduleJob('01 9 * * 7', async function () {
         if (channel?.isText()) {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
-            await channel.send({ content: `Weekly chapter of ${series.title}:`, files: [`./public/${file}`], })
+            await channel.send({
+              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+            })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
             await channel.send('Weekly RP done.');
@@ -551,7 +567,7 @@ client.on("interactionCreate", async (interaction) => {
               range_seriesid
             );
             if (chapter) {
-              await interaction.channel?.send({ files: [`./public/${chapter}`] });
+              await interaction.channel?.send(`https://raws.reaperscans.com/${chapter}`)
             }
           } catch (error) {
             console.log(error);
@@ -591,9 +607,7 @@ client.on("interactionCreate", async (interaction) => {
             toUrl(new_series_name)
           );
           if (specified_file) {
-            await interaction.channel?.send({
-              files: [`./public/${specified_file}`],
-            });
+            await interaction.channel?.send(`https://raws.reaperscans.com/${specified_file}`)
           }
         } catch (error) {
           console.log(error);
