@@ -572,7 +572,6 @@ async function getSpecificChapter(
     if (!cookies) {
       const browser = await start();
       cookies = await logIn(browser);
-      if (!cookies) cookies = await logIn(browser)
       await browser.close();
       await redis.set('kakao_cookies', cookies, 'EX', 127600);
     }
@@ -582,7 +581,6 @@ async function getSpecificChapter(
     if (!isValid) {
       const browser = await start();
       cookies = await logIn(browser);
-      if (!cookies) cookies = await logIn(browser)
       await browser.close();
       await redis.set('kakao_cookies', cookies, 'EX', 127600);
     }
@@ -662,7 +660,6 @@ async function getLatestChapter(
     if (!cookies) {
       const browser = await start();
       cookies = await logIn(browser);
-      if (!cookies) cookies = await logIn(browser)
       await browser.close();
       await redis.set('kakao_cookies', cookies, 'EX', 127600);
     }
@@ -672,10 +669,10 @@ async function getLatestChapter(
     if (!isValid) {
       const browser = await start();
       cookies = await logIn(browser);
-      if (!cookies) cookies = await logIn(browser)
       await browser.close();
       await redis.set('kakao_cookies', cookies, 'EX', 127600);
     }
+
     console.log(cookies);
     const chapters = await getChaptersList(seriesId, "desc");
     console.log(chapters);
