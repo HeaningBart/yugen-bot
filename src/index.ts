@@ -507,9 +507,7 @@ client.on("interactionCreate", async (interaction) => {
             toUrl(kakao_title)
           );
           if (specified_file) {
-            await interaction.channel?.send({
-              files: [`./public/${specified_file}`],
-            });
+            await interaction.channel?.send(`https://raws.reaperscans.com/${specified_file}`)
           }
         } catch (error) { }
         await interaction.editReply("RP done.");
