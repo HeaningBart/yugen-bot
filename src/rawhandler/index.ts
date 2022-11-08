@@ -186,6 +186,7 @@ export async function processNaver(url: string, channel_name: string) {
           { cwd: waifu }
         );
         await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
+        await exec(`scp ./public/${name}.7z ${server_username}@${server_address}:/home/raws/`)
         console.log("Chapter processment done.");
         await fs.rm(`./${directory}`, { recursive: true });
         return `${name}.7z`;
@@ -201,6 +202,7 @@ export async function processNaver(url: string, channel_name: string) {
           { cwd: waifu }
         );
         await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
+        await exec(`scp ./public/${name}.7z ${server_username}@${server_address}:/home/raws/`)
         console.log("Chapter processment done.");
         await fs.rm(`./${directory}`, { recursive: true });
         return `${name}.7z`;
@@ -231,6 +233,7 @@ export async function processNaver(url: string, channel_name: string) {
         await exec(
           `7z a public/${true_name}.7z  "./${directory}/${name}/*"`
         );
+        await exec(`scp ./public/${name}.7z ${server_username}@${server_address}:/home/raws/`)
         console.log("Chapter processment done.");
         await fs.rm(`./${directory}`, { recursive: true });
         return `${true_name}.7z`;
@@ -248,6 +251,7 @@ export async function processNaver(url: string, channel_name: string) {
         await exec(
           `7z a public/${true_name}.7z  "./${directory}/${name}/*"`
         );
+        await exec(`scp ./public/${name}.7z ${server_username}@${server_address}:/home/raws/`)
         console.log("Chapter processment done.");
         await fs.rm(`./${directory}`, { recursive: true });
         return `${true_name}.7z`;
@@ -284,6 +288,7 @@ export async function processNaver(url: string, channel_name: string) {
             { cwd: waifu }
           );
           await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
+          await exec(`scp ./public/${name}.7z ${server_username}@${server_address}:/home/raws/`)
           console.log("Chapter processment done.");
           await fs.rm(`./${directory}`, { recursive: true });
           return `${name}.7z`;
@@ -299,6 +304,7 @@ export async function processNaver(url: string, channel_name: string) {
             { cwd: waifu }
           );
           await exec(`7z a public/${name}.7z  ./${directory}/${name}/*`);
+          await exec(`scp ./public/${name}.7z ${server_username}@${server_address}:/home/raws/`)
           console.log("Chapter processment done.");
           await fs.rm(`./${directory}`, { recursive: true });
           return `${name}.7z`;
