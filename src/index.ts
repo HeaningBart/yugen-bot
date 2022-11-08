@@ -172,7 +172,7 @@ const tuesday_job = schedule.scheduleJob('01 9 * * 2', async function () {
 
 
 
-const rr_job = schedule.scheduleJob('10 11 * * 3', async function () {
+const rr_job = schedule.scheduleJob('10 11 * * 2', async function () {
   try {
     const browser = await start();
     await logIn(browser);
