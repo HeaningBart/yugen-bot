@@ -23,6 +23,7 @@ export async function start() {
       "--disable-dev-shm-usage",
       `--proxy-server=https://jp547.nordvpn.com:89`,
     ],
+    headless: false
   });
 
   return browser;
@@ -83,6 +84,7 @@ export async function getLatestChapter(
   try {
     await page.click("div.jconfirm-buttons > button", {
       clickCount: 2000,
+      delay: 1000
     });
     await page.evaluate(() => {
       const button = document.querySelector<HTMLButtonElement>('div.jconfirm-buttons > button');

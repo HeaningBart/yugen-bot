@@ -5,7 +5,7 @@ import util from "util";
 const exec = util.promisify(require("child_process").exec);
 import fs from "fs/promises";
 import path from "path";
-const { email, password } = require("../../config.json");
+const { server_username, server_address } = require("../../config.json");
 import axios from "axios";
 // Relative paths
 export const waifu = path.resolve(__dirname);
@@ -68,6 +68,8 @@ async function handleChapter(
     console.log("All images have been through waifu-2x-caffe.");
 
     await exec(`7z a public/${chaptername}.7z  ./${waifu_directory}/*`);
+
+    await exec(`scp ./public/${chaptername}.7z ${server_username}@${server_address}:/home/raws/`)
 
     fs.rm(`./${directory}`, { recursive: true });
     fs.rm(`./${waifu_directory}`, { recursive: true });

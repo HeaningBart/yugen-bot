@@ -512,9 +512,7 @@ client.on("interactionCreate", async (interaction) => {
           if (processed_file) {
             const target_channel = client.channels.cache.get(channel_id);
             if (target_channel?.isText()) {
-              await target_channel.send({
-                files: [`./public/${processed_file}`],
-              });
+              await target_channel.send(`https://raws.reaperscans.com/${processed_file}`)
               await target_channel.send(`<@&${role_id}>, <@&946250134042329158>`);
               await target_channel.send(
                 `Don't forget to report your progress in <#794058643624034334> after you are done with your part.`
@@ -616,4 +614,8 @@ client
   .login(token)
   .then((data) => console.log(data))
   .catch((error) => console.log(error));
+
+
+
+
 
