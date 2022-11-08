@@ -62,7 +62,7 @@ async function handleChapter(
     console.log("All images have been stitched.");
 
     await exec(
-      `./waifu2x-ncnn-vulkan -n 2 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 2:2:2`,
+      `./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 2:2:2`,
       { cwd: waifu }
     );
     console.log("All images have been through waifu-2x-caffe.");
