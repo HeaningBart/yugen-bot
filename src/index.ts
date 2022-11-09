@@ -103,10 +103,18 @@ type SeriesItem = {
 const monday_job = schedule.scheduleJob('00 9 * * 1', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'monday', weekly: true }, orderBy: { priority: 'desc' } });
-    const browser = await start();
-    await logIn(browser);
     for (let i = 0; i <= daily_series.length - 1; i++) {
       try {
+        client.user?.setPresence({
+          status: "dnd",
+          activities: [
+            {
+              name: `RPing ${daily_series[i].title}`,
+              type: "WATCHING",
+              url: "https://reaperscans.com",
+            },
+          ],
+        });
         const series = daily_series[i];
         const channel = client.channels.cache.get(series.channel);
         const role = series.role;
@@ -138,10 +146,18 @@ const monday_job = schedule.scheduleJob('00 9 * * 1', async function () {
 const tuesday_job = schedule.scheduleJob('01 9 * * 2', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'tuesday', weekly: true }, orderBy: { priority: 'desc' } });
-    const browser = await start();
-    await logIn(browser);
     for (let i = 0; i <= daily_series.length - 1; i++) {
       try {
+        client.user?.setPresence({
+          status: "dnd",
+          activities: [
+            {
+              name: `RPing ${daily_series[i].title}`,
+              type: "WATCHING",
+              url: "https://reaperscans.com",
+            },
+          ],
+        });
         const series = daily_series[i];
         const channel = client.channels.cache.get(series.channel);
         const role = series.role;
@@ -174,9 +190,17 @@ const tuesday_job = schedule.scheduleJob('01 9 * * 2', async function () {
 
 const rr_job = schedule.scheduleJob('10 11 * * 2', async function () {
   try {
-    const browser = await start();
-    await logIn(browser);
     try {
+      client.user?.setPresence({
+        status: "dnd",
+        activities: [
+          {
+            name: `RPing Ranker's Return`,
+            type: "WATCHING",
+            url: "https://reaperscans.com",
+          },
+        ],
+      });
       const channel = client.channels.cache.get('871239733286674503');
       if (channel?.isText()) {
         const file = await getLatestChapter('57552517', 'rankers-return');
@@ -207,10 +231,18 @@ const rr_job = schedule.scheduleJob('10 11 * * 2', async function () {
 const wednesday_job = schedule.scheduleJob('00 9 * * 3', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday', weekly: true }, orderBy: { priority: 'desc' } });
-    const browser = await start();
-    await logIn(browser);
     for (let i = 0; i <= daily_series.length - 1; i++) {
       try {
+        client.user?.setPresence({
+          status: "dnd",
+          activities: [
+            {
+              name: `RPing ${daily_series[i].title}`,
+              type: "WATCHING",
+              url: "https://reaperscans.com",
+            },
+          ],
+        });
         const series = daily_series[i];
         const channel = client.channels.cache.get(series.channel);
         const role = series.role;
@@ -242,10 +274,18 @@ const wednesday_job = schedule.scheduleJob('00 9 * * 3', async function () {
 const thursday_job = schedule.scheduleJob('00 9 * * 4', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'thursday', weekly: true }, orderBy: { priority: 'desc' } });
-    const browser = await start();
-    await logIn(browser);
     for (let i = 0; i <= daily_series.length - 1; i++) {
       try {
+        client.user?.setPresence({
+          status: "dnd",
+          activities: [
+            {
+              name: `RPing ${daily_series[i].title}`,
+              type: "WATCHING",
+              url: "https://reaperscans.com",
+            },
+          ],
+        });
         const series = daily_series[i];
         const channel = client.channels.cache.get(series.channel);
         const role = series.role;
@@ -277,10 +317,18 @@ const thursday_job = schedule.scheduleJob('00 9 * * 4', async function () {
 const friday_job = schedule.scheduleJob('01 9 * * 5', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'friday', weekly: true }, orderBy: { priority: 'desc' } });
-    const browser = await start();
-    await logIn(browser);
     for (let i = 0; i <= daily_series.length - 1; i++) {
       try {
+        client.user?.setPresence({
+          status: "dnd",
+          activities: [
+            {
+              name: `RPing ${daily_series[i].title}`,
+              type: "WATCHING",
+              url: "https://reaperscans.com",
+            },
+          ],
+        });
         const series = daily_series[i];
         const channel = client.channels.cache.get(series.channel);
         const role = series.role;
@@ -312,10 +360,18 @@ const friday_job = schedule.scheduleJob('01 9 * * 5', async function () {
 const saturday_job = schedule.scheduleJob('00 9 * * 6', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'saturday', weekly: true }, orderBy: { priority: 'desc' } });
-    const browser = await start();
-    await logIn(browser);
     for (let i = 0; i <= daily_series.length - 1; i++) {
       try {
+        client.user?.setPresence({
+          status: "dnd",
+          activities: [
+            {
+              name: `RPing ${daily_series[i].title}`,
+              type: "WATCHING",
+              url: "https://reaperscans.com",
+            },
+          ],
+        });
         const series = daily_series[i];
         const channel = client.channels.cache.get(series.channel);
         const role = series.role;
@@ -347,10 +403,18 @@ const saturday_job = schedule.scheduleJob('00 9 * * 6', async function () {
 const sunday_job = schedule.scheduleJob('01 9 * * 7', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'sunday', weekly: true }, orderBy: { priority: 'desc' } });
-    const browser = await start();
-    await logIn(browser);
     for (let i = 0; i <= daily_series.length - 1; i++) {
       try {
+        client.user?.setPresence({
+          status: "dnd",
+          activities: [
+            {
+              name: `RPing ${daily_series[i].title}`,
+              type: "WATCHING",
+              url: "https://reaperscans.com",
+            },
+          ],
+        });
         const series = daily_series[i];
         const channel = client.channels.cache.get(series.channel);
         const role = series.role;
