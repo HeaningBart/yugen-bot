@@ -100,7 +100,7 @@ type SeriesItem = {
 
 
 
-const monday_job = schedule.scheduleJob('00 9 * * 1', async function () {
+const monday_job = schedule.scheduleJob('01 8 * * 1', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'monday', weekly: true }, orderBy: { priority: 'desc' } });
     for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -143,7 +143,7 @@ const monday_job = schedule.scheduleJob('00 9 * * 1', async function () {
   }
 })
 
-const tuesday_job = schedule.scheduleJob('01 9 * * 2', async function () {
+const tuesday_job = schedule.scheduleJob('01 8 * * 2', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'tuesday', weekly: true }, orderBy: { priority: 'desc' } });
     for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -188,7 +188,7 @@ const tuesday_job = schedule.scheduleJob('01 9 * * 2', async function () {
 
 
 
-const rr_job = schedule.scheduleJob('10 11 * * 2', async function () {
+const rr_job = schedule.scheduleJob('10 10 * * 2', async function () {
   try {
     try {
       client.user?.setPresence({
@@ -228,7 +228,7 @@ const rr_job = schedule.scheduleJob('10 11 * * 2', async function () {
 
 
 
-const wednesday_job = schedule.scheduleJob('04 9 * * 3', async function () {
+const wednesday_job = schedule.scheduleJob('01 8 * * 3', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday', weekly: true }, orderBy: { priority: 'desc' } });
     for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -271,7 +271,7 @@ const wednesday_job = schedule.scheduleJob('04 9 * * 3', async function () {
   }
 })
 
-const thursday_job = schedule.scheduleJob('00 9 * * 4', async function () {
+const thursday_job = schedule.scheduleJob('01 8 * * 4', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'thursday', weekly: true }, orderBy: { priority: 'desc' } });
     for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -314,7 +314,7 @@ const thursday_job = schedule.scheduleJob('00 9 * * 4', async function () {
   }
 })
 
-const friday_job = schedule.scheduleJob('01 9 * * 5', async function () {
+const friday_job = schedule.scheduleJob('01 8 * * 5', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'friday', weekly: true }, orderBy: { priority: 'desc' } });
     for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -357,7 +357,7 @@ const friday_job = schedule.scheduleJob('01 9 * * 5', async function () {
   }
 })
 
-const saturday_job = schedule.scheduleJob('00 9 * * 6', async function () {
+const saturday_job = schedule.scheduleJob('01 8 * * 6', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'saturday', weekly: true }, orderBy: { priority: 'desc' } });
     for (let i = 0; i <= daily_series.length - 1; i++) {
@@ -400,7 +400,7 @@ const saturday_job = schedule.scheduleJob('00 9 * * 6', async function () {
   }
 })
 
-const sunday_job = schedule.scheduleJob('01 9 * * 7', async function () {
+const sunday_job = schedule.scheduleJob('01 8 * * 7', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'sunday', weekly: true }, orderBy: { priority: 'desc' } });
     for (let i = 0; i <= daily_series.length - 1; i++) {
