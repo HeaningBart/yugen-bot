@@ -228,7 +228,7 @@ const rr_job = schedule.scheduleJob('10 11 * * 2', async function () {
 
 
 
-const wednesday_job = schedule.scheduleJob('03 9 * * 3', async function () {
+const wednesday_job = schedule.scheduleJob('04 9 * * 3', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday', weekly: true }, orderBy: { priority: 'desc' } });
     for (let i = 0; i <= daily_series.length - 1; i++) {
