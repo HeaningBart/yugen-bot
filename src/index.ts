@@ -617,7 +617,7 @@ client.on("interactionCreate", async (interaction) => {
           (chapter) =>
             chapter.chapter_number >= range_start &&
             chapter.chapter_number <= range_end
-        );
+        ).reverse();
 
         for (let i = 0; i <= chapters_to_rp.length - 1; i++) {
           try {
