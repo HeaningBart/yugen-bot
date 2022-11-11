@@ -16,15 +16,12 @@ const allowedUsers = [
   "233286444083314699",
   "324522444285280276",
 ];
-import express, { Express } from "express";
 import {
   getLatestChapter as JPLatestChapter,
   logIn as JPLogin,
   start as JPStart,
 } from "./rawhandler/japan";
-
-const app: Express = express();
-const port = process.env.PORT || 3000;
+import initialize from "./commands";
 
 const prisma = new PrismaClient();
 
@@ -48,6 +45,8 @@ export function toUrl(string: string): string {
 client.on("ready", async () => {
   console.log("The bot is ready!");
   console.log("For sure!");
+  await initialize();
+
   client.user?.setPresence({
     status: "dnd",
     activities: [
