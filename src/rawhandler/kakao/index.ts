@@ -67,9 +67,3 @@ export async function buyTicket(browser: Browser, series_id: string) {
   await new_page.waitForNetworkIdle();
   await new_page.close();
 }
-
-
-(async () => {
-  const browser = await start();
-  await logIn(browser);
-})()
