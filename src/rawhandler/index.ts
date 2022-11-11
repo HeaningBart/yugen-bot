@@ -61,10 +61,17 @@ async function handleChapter(
     );
     console.log("All images have been stitched.");
 
+    // await exec(
+    //   `./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 2:2:2`,
+    //   { cwd: waifu }
+    // );
+
+
     await exec(
-      `./waifu2x-ncnn-vulkan -n 3 -s 1 -o ../../${waifu_directory}/ -i ../../${directory}/Stitched -f jpg -j 2:2:2`,
+      `mv -i ../../${directory}/Stitched/* ../../${waifu_directory}/ `,
       { cwd: waifu }
     );
+
     console.log("All images have been through waifu-2x-caffe.");
 
     await exec(`7z a public/${chaptername}.7z  ./${waifu_directory}/*`);
