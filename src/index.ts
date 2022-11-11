@@ -6,14 +6,8 @@ import {
   getChaptersList,
   getLatestChapter
 } from "./rawhandler";
-import { start, logIn, buyTicket } from "./rawhandler/kakao";
-import {
-  logIn as ridiLogin,
-  getLatestChapter as getLatestRidi,
-  downloadChapter,
-} from "./rawhandler/ridibooks";
 import schedule from "node-schedule";
-import { PrismaClient, Series } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 const allowedUsers = [
   "397857749938995201",
   "345938621137944577",
@@ -22,13 +16,11 @@ const allowedUsers = [
   "233286444083314699",
   "324522444285280276",
 ];
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import {
   getLatestChapter as JPLatestChapter,
   logIn as JPLogin,
   start as JPStart,
-  getListOfChapters,
-  getSpecificChapter,
 } from "./rawhandler/japan";
 
 const app: Express = express();
@@ -56,47 +48,18 @@ export function toUrl(string: string): string {
 client.on("ready", async () => {
   console.log("The bot is ready!");
   console.log("For sure!");
-  await client.guilds.cache.get("794049571973890068")?.commands.create({
-    name: "edit",
-    description: "Edit a series from the database",
-    type: "CHAT_INPUT",
-    options: [
-      {
-        name: "id",
-        description: "Enter the series ID (from our database).",
-        type: "NUMBER",
-        required: true,
-      },
-      {
-        name: "weekly",
-        description: "Enter the weekly status of this series.",
-        type: "BOOLEAN",
-        required: true,
-      },
-      {
-        name: "priority",
-        description: "Enter the priority of the series",
-        type: "INTEGER",
-        required: true,
-      },
-    ],
-  });
   client.user?.setPresence({
     status: "dnd",
     activities: [
       {
         name: "im almost rping the world",
         type: "WATCHING",
-        url: "https://reaperscans.com",
+        url: "https://yugenmangas.com",
       },
     ],
   });
 });
 
-type SeriesItem = {
-  id: string;
-  title: string;
-};
 
 
 
@@ -111,7 +74,7 @@ const monday_job = schedule.scheduleJob('01 8 * * 1', async function () {
             {
               name: `RPing ${daily_series[i].title}`,
               type: "WATCHING",
-              url: "https://reaperscans.com",
+              url: "https://yugenmangas.com",
             },
           ],
         });
@@ -122,7 +85,7 @@ const monday_job = schedule.scheduleJob('01 8 * * 1', async function () {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
             await channel.send({
-              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+              content: `Weekly chapter of ${series.title}: https://raws.yugenmangas.com/${file}`
             })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
@@ -154,7 +117,7 @@ const tuesday_job = schedule.scheduleJob('01 8 * * 2', async function () {
             {
               name: `RPing ${daily_series[i].title}`,
               type: "WATCHING",
-              url: "https://reaperscans.com",
+              url: "https://yugenmangas.com",
             },
           ],
         });
@@ -165,7 +128,7 @@ const tuesday_job = schedule.scheduleJob('01 8 * * 2', async function () {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
             await channel.send({
-              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+              content: `Weekly chapter of ${series.title}: https://raws.yugenmangas.com/${file}`
             })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
@@ -186,8 +149,6 @@ const tuesday_job = schedule.scheduleJob('01 8 * * 2', async function () {
   }
 })
 
-
-
 const rr_job = schedule.scheduleJob('10 10 * * 2', async function () {
   try {
     try {
@@ -197,7 +158,7 @@ const rr_job = schedule.scheduleJob('10 10 * * 2', async function () {
           {
             name: `RPing Ranker's Return`,
             type: "WATCHING",
-            url: "https://reaperscans.com",
+            url: "https://yugenmangas.com",
           },
         ],
       });
@@ -206,7 +167,7 @@ const rr_job = schedule.scheduleJob('10 10 * * 2', async function () {
         const file = await getLatestChapter('57552517', 'rankers-return');
         if (file) {
           await channel.send({
-            content: `Weekly chapter of Ranker's Return: https://raws.reaperscans.com/${file}`
+            content: `Weekly chapter of Ranker's Return: https://raws.yugenmangas.com/${file}`
           })
           await channel.send(`<@&871239863792435221>, <@&946250134042329158>`);
           await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
@@ -227,7 +188,6 @@ const rr_job = schedule.scheduleJob('10 10 * * 2', async function () {
 })
 
 
-
 const wednesday_job = schedule.scheduleJob('01 8 * * 3', async function () {
   try {
     const daily_series = await prisma.series.findMany({ where: { cron: 'wednesday', weekly: true }, orderBy: { priority: 'desc' } });
@@ -239,7 +199,7 @@ const wednesday_job = schedule.scheduleJob('01 8 * * 3', async function () {
             {
               name: `RPing ${daily_series[i].title}`,
               type: "WATCHING",
-              url: "https://reaperscans.com",
+              url: "https://yugenmangas.com",
             },
           ],
         });
@@ -250,7 +210,7 @@ const wednesday_job = schedule.scheduleJob('01 8 * * 3', async function () {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
             await channel.send({
-              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+              content: `Weekly chapter of ${series.title}: https://raws.yugenmangas.com/${file}`
             })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
@@ -282,7 +242,7 @@ const thursday_job = schedule.scheduleJob('01 8 * * 4', async function () {
             {
               name: `RPing ${daily_series[i].title}`,
               type: "WATCHING",
-              url: "https://reaperscans.com",
+              url: "https://yugenmangas.com",
             },
           ],
         });
@@ -293,7 +253,7 @@ const thursday_job = schedule.scheduleJob('01 8 * * 4', async function () {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
             await channel.send({
-              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+              content: `Weekly chapter of ${series.title}: https://raws.yugenmangas.com/${file}`
             })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
@@ -325,7 +285,7 @@ const friday_job = schedule.scheduleJob('01 8 * * 5', async function () {
             {
               name: `RPing ${daily_series[i].title}`,
               type: "WATCHING",
-              url: "https://reaperscans.com",
+              url: "https://yugenmangas.com",
             },
           ],
         });
@@ -336,7 +296,7 @@ const friday_job = schedule.scheduleJob('01 8 * * 5', async function () {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
             await channel.send({
-              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+              content: `Weekly chapter of ${series.title}: https://raws.yugenmangas.com/${file}`
             })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
@@ -368,7 +328,7 @@ const saturday_job = schedule.scheduleJob('01 8 * * 6', async function () {
             {
               name: `RPing ${daily_series[i].title}`,
               type: "WATCHING",
-              url: "https://reaperscans.com",
+              url: "https://yugenmangas.com",
             },
           ],
         });
@@ -379,7 +339,7 @@ const saturday_job = schedule.scheduleJob('01 8 * * 6', async function () {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
             await channel.send({
-              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+              content: `Weekly chapter of ${series.title}: https://raws.yugenmangas.com/${file}`
             })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
@@ -411,7 +371,7 @@ const sunday_job = schedule.scheduleJob('01 8 * * 7', async function () {
             {
               name: `RPing ${daily_series[i].title}`,
               type: "WATCHING",
-              url: "https://reaperscans.com",
+              url: "https://yugenmangas.com",
             },
           ],
         });
@@ -422,7 +382,7 @@ const sunday_job = schedule.scheduleJob('01 8 * * 7', async function () {
           const file = await getLatestChapter(series.kakaoId, series.slug);
           if (file) {
             await channel.send({
-              content: `Weekly chapter of ${series.title}: https://raws.reaperscans.com/${file}`
+              content: `Weekly chapter of ${series.title}: https://raws.yugenmangas.com/${file}`
             })
             await channel.send(`<@&${role}>, <@&946250134042329158>`);
             await channel.send(`Don't forget to report your progress in <#794058643624034334> after you are done with your part.`)
@@ -453,22 +413,6 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.deferReply();
     const user = interaction.member?.user.id!;
     switch (type) {
-      // case 'mass':
-      // if (!allowedUsers.includes(user)) {
-      //     await interaction.editReply(`You're not allowed to use this command.`)
-      //     return;
-      // }
-      // const id = interaction.options.getString('kakaoid')!;
-      // const starts_at = interaction.options.getNumber('startsat')!;
-      // const series_title = interaction.options.getString('title')!;
-      // const chapters = await buyTicket(id, starts_at, series_title);
-      // await interaction.editReply('Done.');
-      // await Promise.all(chapters.map((file: any) => interaction.channel?.send({ files: [file] })))
-      // await Promise.all(chapters.map((chapter: any) => fs.unlink(chapter)));
-      // await interaction.channel?.send('RP done.')
-      // await interaction.editReply('Done.');
-      // return;
-      // return;
       case "add":
         if (!allowedUsers.includes(user)) {
           await interaction.editReply(`You're not allowed to use this command.`);
@@ -533,10 +477,10 @@ client.on("interactionCreate", async (interaction) => {
           return;
         }
         const weekly_status = interaction.options.getBoolean("weekly")!;
-        const series_id = interaction.options.getNumber("id")!;
+        const series_id = interaction.options.getNumber("kakaoid")!;
         const new_priority = interaction.options.getInteger("priority")!;
         const exists = await prisma.series.findFirst({
-          where: { id: series_id },
+          where: { kakaoId: series_id.toString() },
         });
         if (exists) {
           await prisma.series.update({
@@ -552,10 +496,10 @@ client.on("interactionCreate", async (interaction) => {
           await interaction.editReply(`You're not allowed to use this command.`);
           return;
         }
-      // const removed_id = interaction.options.getString('kakaoid')!;
-      // await prisma.series.deleteMany({ where: { kakaoId: removed_id } });
-      // await interaction.editReply('Series removed.');
-      //return;
+        const removed_id = interaction.options.getString('kakaoid')!;
+        await prisma.series.deleteMany({ where: { kakaoId: removed_id } });
+        await interaction.editReply('Series removed.');
+        return;
       case "getchapter":
         if (!allowedUsers.includes(user)) {
           await interaction.editReply(`You're not allowed to use this command.`);
@@ -571,7 +515,7 @@ client.on("interactionCreate", async (interaction) => {
             toUrl(kakao_title)
           );
           if (specified_file) {
-            await interaction.channel?.send(`https://raws.reaperscans.com/${specified_file}`)
+            await interaction.channel?.send(`https://raws.yugenmangas.com/${specified_file}`)
           }
         } catch (error) { }
         await interaction.editReply("RP done.");
@@ -590,7 +534,7 @@ client.on("interactionCreate", async (interaction) => {
           if (processed_file) {
             const target_channel = client.channels.cache.get(channel_id);
             if (target_channel?.isText()) {
-              await target_channel.send(`https://raws.reaperscans.com/${processed_file}`)
+              await target_channel.send(`https://raws.yugenmangas.com/${processed_file}`)
               await target_channel.send(`<@&${role_id}>, <@&946250134042329158>`);
               await target_channel.send(
                 `Don't forget to report your progress in <#794058643624034334> after you are done with your part.`
@@ -629,7 +573,7 @@ client.on("interactionCreate", async (interaction) => {
               range_seriesid
             );
             if (chapter) {
-              await interaction.channel?.send(`https://raws.reaperscans.com/${chapter}`)
+              await interaction.channel?.send(`https://raws.yugenmangas.com/${chapter}`)
             }
           } catch (error) {
             console.log(error);
@@ -656,27 +600,6 @@ client.on("interactionCreate", async (interaction) => {
           }
         } catch (error) { }
         return;
-      case "rp":
-        const new_seriesid = interaction.options.getString("seriesid")!;
-        const new_chapter_number = interaction.options.getNumber("chapters")!;
-        const new_series_name = toUrl(
-          interaction.options.getString("seriesname")!
-        );
-        try {
-          const specified_file = await getChapter(
-            new_seriesid,
-            new_chapter_number,
-            toUrl(new_series_name)
-          );
-          if (specified_file) {
-            await interaction.channel?.send(`https://raws.reaperscans.com/${specified_file}`)
-          }
-        } catch (error) {
-          console.log(error);
-        }
-        await interaction.editReply("RP done.");
-        return;
-
       default:
         await interaction.editReply("Done.");
         return;

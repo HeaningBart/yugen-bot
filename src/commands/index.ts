@@ -39,24 +39,11 @@ const commands = [
         .addChannelOption(channel =>
             channel.setName('channel')
                 .setDescription('channel in which the chapter will be sent')
-                .setRequired(true)),
-
-    new SlashCommandBuilder()
-        .setName('mass')
-        .setDescription('Mass download a series.')
-        .addStringOption(string =>
-            string.setName('kakaoid')
-                .setDescription('Type the kakaoID of the series.')
                 .setRequired(true))
-        .addNumberOption(number =>
-            number.setName('startsat')
-                .setDescription('enter the number that chapter numbering starts')
-                .setRequired(true))
-        .addStringOption(string =>
-            string.setName('title')
-                .setDescription('name of the series')
+        .addIntegerOption(integer =>
+            integer.setName('priority')
+                .setDescription('Priorty of the series')
                 .setRequired(true)),
-
     new SlashCommandBuilder()
         .setName('getseries')
         .setDescription('Get all series from database')
@@ -77,15 +64,18 @@ const commands = [
         .setName('edit')
         .setDescription('Edit a series from the database')
         .addNumberOption(number =>
-            number.setName('id')
-                .setDescription('Enter the series ID (from our database).')
+            number.setName('kakaoid')
+                .setDescription('Enter the kakao series ID.')
                 .setRequired(true)
         )
         .addBooleanOption(boolean =>
             boolean.setName('weekly')
                 .setDescription('Enter the weekly status of this series.')
+                .setRequired(true))
+        .addIntegerOption(integer =>
+            integer.setName('priority')
+                .setDescription('Priorty of the series')
                 .setRequired(true)),
-
     new SlashCommandBuilder()
         .setName('remove')
         .setDescription('Remove a series from our database')
@@ -94,13 +84,19 @@ const commands = [
                 .setDescription('Type the kakaoID of the series.')
                 .setRequired(true)),
 
+
     new SlashCommandBuilder()
-        .setName('listchapters')
-        .setDescription('List all the chapters of the specified series.')
+        .setName('getchapter')
+        .setDescription('RP a chapter from kakao')
         .addStringOption(string =>
             string.setName('kakaoid')
-                .setDescription('Type the kakaoID of the series.')
+                .setDescription('KAKAO ID of the series')
                 .setRequired(true))
+        .addIntegerOption(integer =>
+            integer.setName('chapternumber')
+                .setDescription('number of the chapter')
+                .setRequired(true))
+        .addStringOption(string => string.setName('seriestitle').setDescription('title of the series in your language').setRequired(true))
 
 ]
 
