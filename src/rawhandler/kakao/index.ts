@@ -7,6 +7,7 @@ const { email, password } = require("../../../config.json");
 export async function start() {
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: false
   });
   return browser;
 }
@@ -23,7 +24,6 @@ export async function logIn(browser: Browser) {
   await page.click('img[src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMi4wMDA5IDJDOS4yMzg5OSAyIDcgNC4yMzg5OCA3IDcuMDAwOTFDNyA5Ljc2Mjg1IDkuMjM4OTkgMTIuMDAxOCAxMi4wMDA5IDEyLjAwMThDMTQuNzYyOSAxMi4wMDE4IDE3LjAwMTggOS43NjI4NSAxNy4wMDE4IDcuMDAwOTFDMTcuMDAxOCA0LjIzODk4IDE0Ljc2MjkgMiAxMi4wMDA5IDJaTTguNSA3LjAwMDkxQzguNSA1LjA2NzQxIDEwLjA2NzQgMy41IDEyLjAwMDkgMy41QzEzLjkzNDQgMy41IDE1LjUwMTggNS4wNjc0MSAxNS41MDE4IDcuMDAwOTFDMTUuNTAxOCA4LjkzNDQxIDEzLjkzNDQgMTAuNTAxOCAxMi4wMDA5IDEwLjUwMThDMTAuMDY3NCAxMC41MDE4IDguNSA4LjkzNDQxIDguNSA3LjAwMDkxWiIgZmlsbD0iIzIyMjIyMiIvPgo8cGF0aCBkPSJNOC43NSAxNEM1LjAyMjA4IDE0IDIgMTcuMDIyMSAyIDIwLjc1VjIxLjk5NTNIMy41VjIwLjc1QzMuNSAxNy44NTA1IDUuODUwNTEgMTUuNSA4Ljc1IDE1LjVIMTUuMjUyN0MxOC4xNTIyIDE1LjUgMjAuNTAyNyAxNy44NTA1IDIwLjUwMjcgMjAuNzVWMjEuOTk1M0gyMi4wMDI3VjIwLjc1QzIyLjAwMjcgMTcuMDIyMSAxOC45ODA3IDE0IDE1LjI1MjcgMTRIOC43NVoiIGZpbGw9IiMyMjIyMjIiLz4KPC9zdmc+Cg=="',
     {
       clickCount: 2000,
-      delay: 100
     });
   const newTarget = await browser.waitForTarget(
     (target) => target.opener() === pageTarget
@@ -68,3 +68,9 @@ export async function buyTicket(browser: Browser, series_id: string) {
   await new_page.waitForNetworkIdle();
   await new_page.close();
 }
+
+
+(async () => {
+  const browser = await start();
+  await logIn(browser);
+})()
