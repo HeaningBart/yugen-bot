@@ -9,12 +9,11 @@ import {
 import schedule from "node-schedule";
 import { PrismaClient } from "@prisma/client";
 const allowedUsers = [
-  "397857749938995201",
+  "650402687476826112",
   "345938621137944577",
-  "422790603064213528",
-  "121671582044258306",
-  "233286444083314699",
-  "324522444285280276",
+  "420740032689602570",
+  "725305912293589023",
+  "813851586228256790",
 ];
 import {
   getLatestChapter as JPLatestChapter,
