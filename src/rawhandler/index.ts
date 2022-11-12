@@ -78,8 +78,6 @@ async function handleChapter(
 
     // await exec(`scp ./public/${chaptername}.7z ${server_username}@${server_address}:/home/raws/`)
 
-    await exec(`mv ./public/${chaptername}.7z /home/raws/`)
-
     fs.rm(`./${directory}`, { recursive: true });
     fs.rm(`./${waifu_directory}`, { recursive: true });
 
