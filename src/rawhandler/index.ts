@@ -68,7 +68,7 @@ async function handleChapter(
 
 
     await exec(
-      `mv -i ../../${directory}/Stitched/* ../../${waifu_directory}/ `,
+      `mv ../../${directory}/Stitched/* ../../${waifu_directory}/ `,
       { cwd: waifu }
     );
 
@@ -76,7 +76,9 @@ async function handleChapter(
 
     await exec(`7z a public/${chaptername}.7z  ./${waifu_directory}/*`);
 
-    await exec(`scp ./public/${chaptername}.7z ${server_username}@${server_address}:/home/raws/`)
+    // await exec(`scp ./public/${chaptername}.7z ${server_username}@${server_address}:/home/raws/`)
+
+    await exec(`mv ./public/${chaptername}.7z /home/raws/`)
 
     fs.rm(`./${directory}`, { recursive: true });
     fs.rm(`./${waifu_directory}`, { recursive: true });
